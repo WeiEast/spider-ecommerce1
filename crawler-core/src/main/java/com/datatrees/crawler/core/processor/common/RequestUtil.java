@@ -65,31 +65,17 @@ public class RequestUtil {
     }
 
     public static Configuration getConf(Request req) {
-        Configuration configuration = (Configuration) req.getAttribute(Constants.CRAWLER_RREQUEST_CONF);
-        if (configuration == null) {
-            configuration = PropertiesConfiguration.getInstance();
-        }
-        return configuration;
+        return (Configuration) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONF, k -> PropertiesConfiguration.getInstance());
     }
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getContext(Request req) {
-        Map<String, Object> context = (Map<String, Object>) req.getAttribute(Constants.CRAWLER_RREQUEST_CONTEXT);
-        if (context == null) {
-            context = new HashMap<String, Object>();
-            req.setAttribute(Constants.CRAWLER_RREQUEST_CONTEXT, context);
-        }
-        return context;
+        return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONTEXT, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
     public static Map<String, Object> getRequestVisibleFields(Request req) {
-        Map<String, Object> fields = (Map<String, Object>) req.getAttribute(Constants.RREQUEST_VISIBLE_FIELS);
-        if (fields == null) {
-            fields = new HashMap<String, Object>();
-            req.setAttribute(Constants.RREQUEST_VISIBLE_FIELS, fields);
-        }
-        return fields;
+        return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.RREQUEST_VISIBLE_FIELS, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
@@ -191,7 +177,15 @@ public class RequestUtil {
         return sourceMap;
     }
 
+    /**
+     * @see #getCurrentPage(Request)
+     */
+    @Deprecated
     public static Page getCurrenPage(Request req) {
+        return getCurrentPage(req);
+    }
+
+    public static Page getCurrentPage(Request req) {
         return (Page) req.getAttribute(Constants.CURRENT_PAGE);
     }
 

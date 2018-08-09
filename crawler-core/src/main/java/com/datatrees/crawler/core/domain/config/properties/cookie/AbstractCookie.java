@@ -11,8 +11,8 @@ package com.datatrees.crawler.core.domain.config.properties.cookie;
 import java.io.Serializable;
 
 import com.datatrees.common.util.json.annotation.Description;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
 import org.apache.commons.lang.BooleanUtils;
 
 /**

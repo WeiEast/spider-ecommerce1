@@ -21,13 +21,13 @@ import com.datatrees.crawler.core.domain.config.page.Regexp;
 import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -87,7 +87,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
                 plugin != null ? plugin.getId() : null);
 
         if (plugin != null) {
-            Object value = SourceFieldUtils.getFieldValue(input, source.getField());
+            Object value = FieldUtils.getFieldValue(input, source.getField());
             if (value instanceof Collection) {
                 Stream<String> stream = ((Collection) value).stream().map(obj -> this.getSourceContent(obj, plugin, request));
 
@@ -99,7 +99,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
         String value = RequestUtil.getAttribute(request, source.getField());
         if (StringUtils.isNotBlank(separator) || value == null) {
-            value = SourceFieldUtils.getFieldValueAsString(input, source.getField(), separator);
+            value = FieldUtils.getFieldValueAsString(input, source.getField(), separator);
         }
 
         return value;
@@ -107,12 +107,12 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
     private String getSourceContent(Object value, AbstractPlugin pluginDesc, Request request) {
         String content;
-        if (value instanceof FileWapper) {
+        if (value instanceof WrappedFile) {
             AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
             content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
-                FileWapper file = (FileWapper) value;
-                file.getFileInputStream();//download attachment to local
+                WrappedFile file = (WrappedFile) value;
+                file.download();//download attachment to local
                 params.put(PluginConstants.FILE_WAPPER_PATH, file.getAbsolutePath());
                 params.put(PluginConstants.FILE_MIME_TYPE, file.getMimeType());
                 params.put(PluginConstants.FILE_NAME, file.getName());

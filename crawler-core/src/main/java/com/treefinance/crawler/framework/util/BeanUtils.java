@@ -16,7 +16,10 @@
 
 package com.treefinance.crawler.framework.util;
 
+import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -38,14 +41,18 @@ public final class BeanUtils {
         return f.get(bean);
     }
 
-    public static Field getField(Object bean, String fieldName) throws NoSuchFieldException {
+    public static Field getField(@Nonnull Object bean, String fieldName) throws NoSuchFieldException {
         Class clazz = bean.getClass();
         return getField(clazz, fieldName);
     }
 
-    public static Field getField(Class clazz, String fieldName) throws NoSuchFieldException {
+    public static Field getField(@Nonnull Class clazz, String fieldName) throws NoSuchFieldException {
         Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
+        AccessController.doPrivileged((PrivilegedAction<Object>) () -> {
+            field.setAccessible(true);
+            return null;
+        });
         return field;
     }
+
 }

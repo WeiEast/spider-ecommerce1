@@ -5,8 +5,8 @@
 package com.datatrees.crawler.core.domain.config.service.impl;
 
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Path;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
  * TaskHttpClient代替DefautService

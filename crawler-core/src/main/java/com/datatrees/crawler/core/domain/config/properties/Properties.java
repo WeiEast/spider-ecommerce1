@@ -5,8 +5,8 @@ import java.io.Serializable;
 import com.datatrees.crawler.core.domain.config.properties.cookie.AbstractCookie;
 import com.datatrees.crawler.core.domain.config.properties.cookie.BaseCookie;
 import com.datatrees.crawler.core.domain.config.properties.cookie.CustomCookie;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 import org.apache.commons.lang.StringUtils;
 
 /**

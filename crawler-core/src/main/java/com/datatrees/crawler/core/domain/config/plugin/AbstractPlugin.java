@@ -14,10 +14,10 @@ import com.datatrees.common.util.json.annotation.Description;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.PythonPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.ShellPlugin;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
-import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Tag;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

@@ -1,16 +1,17 @@
-package com.datatrees.crawler.core.util.xml.Impl;
+package com.treefinance.crawler.framework.config.factory.xml;
 
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.util.ReflectionUtils;
-import com.datatrees.crawler.core.util.XmlParser;
-import com.datatrees.crawler.core.util.xml.ConfigParser;
-import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
-import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Path;
+import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.factory.ConfigParser;
+import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
+import com.treefinance.crawler.framework.exception.ConfigParseException;
+import com.treefinance.crawler.framework.util.XmlDocumentHelper;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.Attribute;
@@ -33,26 +34,30 @@ public class XmlConfigParser implements ConfigParser {
 
     private XmlConfigParser() {}
 
-    public static XmlConfigParser getInstance() {
+    public static XmlConfigParser newParser() {
         return new XmlConfigParser();
     }
 
     @Override
-    public <T> T parse(String config, Class<T> type, ParentConfigHandler handler) throws Exception {
+    public <T extends CrawlerConfig> T parse(String config, Class<T> type, ParentConfigHandler<T> handler) throws ConfigParseException {
         T result = parse(config, type);
         if (handler != null) {
-            result = handler.parse(result);
+            try {
+                result = handler.handle(result);
+            } catch (Exception e) {
+                throw new ConfigParseException("Error handing the parent config. class: " + type, e);
+            }
         }
         return result;
     }
 
     @Override
-    public synchronized <T> T parse(String config, Class<T> type) throws ParseException {
+    public <T extends CrawlerConfig> T parse(String config, Class<T> type) throws ConfigParseException {
         try {
-            Document document = XmlParser.createDocument(config);
+            Document document = XmlDocumentHelper.createDocument(config);
             return processNodes(document.getRootElement(), type);
         } catch (Exception e) {
-            throw new ParseException(e);
+            throw new ConfigParseException("Error parsing crawler config, class: " + type, e);
         } finally {
             contentMap.clear();
         }
@@ -102,7 +107,7 @@ public class XmlConfigParser implements ConfigParser {
         if (type.isAnnotationPresent(Path.class)) {
             Path path = type.getAnnotation(Path.class);
             if (StringUtils.isNotBlank(path.value())) {
-                e = XmlParser.getElementByXPath(e, path.value());
+                e = XmlDocumentHelper.getElementByXPath(e, path.value());
             }
         }
         return e;
@@ -113,7 +118,7 @@ public class XmlConfigParser implements ConfigParser {
         Node node = method.getAnnotation(Node.class);
         List<Object> elements;
         if (StringUtils.isNotBlank(node.value())) {
-            elements = XmlParser.getElementsByXPath(e, node.value());
+            elements = XmlDocumentHelper.getElementsByXPath(e, node.value());
         } else {
             elements = Collections.singletonList(e);
         }
@@ -166,7 +171,7 @@ public class XmlConfigParser implements ConfigParser {
                 String id = value.toString();
                 Object oldBeanDefinition = contentMap.get(id);
                 if (oldBeanDefinition != null) {
-                    throw new ParseException("exist the same BeanDefinition named " + id);
+                    throw new ConfigParseException("exist the same BeanDefinition named " + id);
                 } else {
                     contentMap.put(id, value);
                 }
@@ -177,7 +182,7 @@ public class XmlConfigParser implements ConfigParser {
     }
 
     private Object processValue(Object obj, Class<?> type) {
-        String value = XmlParser.getElementValue(obj);
+        String value = XmlDocumentHelper.getElementValue(obj);
         if (value != null && String.class.equals(type) && obj instanceof Attribute) {// Attribute
             // allow " "
             return value;

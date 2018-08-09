@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 
 import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.treefinance.crawler.framework.config.factory.xml.XmlConfigParser;
 import com.treefinance.toolkit.util.io.Streams;
 import org.junit.Test;
 
@@ -20,7 +21,7 @@ public class XmlConfigParserTest {
             text = Streams.readToString(stream,Charset.defaultCharset());
         }
 
-        SearchConfig searchConfig = XmlConfigParser.getInstance().parse(text, SearchConfig.class);
+        SearchConfig searchConfig = XmlConfigParser.newParser().parse(text, SearchConfig.class);
         System.out.println(searchConfig);
     }
 }

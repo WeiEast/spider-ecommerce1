@@ -14,9 +14,9 @@ import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
-import com.datatrees.crawler.core.util.xml.annotation.Node;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
+import com.treefinance.crawler.framework.config.annotation.Node;
+import com.treefinance.crawler.framework.config.annotation.Path;
+import com.treefinance.crawler.framework.config.annotation.Tag;
 import org.apache.commons.collections.CollectionUtils;
 
 /**

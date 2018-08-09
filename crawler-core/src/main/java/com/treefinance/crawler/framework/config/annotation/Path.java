@@ -1,4 +1,4 @@
-package com.datatrees.crawler.core.util.xml.annotation;
+package com.treefinance.crawler.framework.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -8,13 +8,11 @@ import java.lang.annotation.Target;
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
- * @since Jan 10, 2014 7:33:13 PM
+ * @since Feb 7, 2014 10:17:09 AM
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target({ElementType.TYPE, ElementType.METHOD})
-public @interface Attr {
+@Target({ElementType.TYPE})
+public @interface Path {
 
-    String value();
-
-    boolean referenced() default false;//ref in content
+    String value() default "";
 }

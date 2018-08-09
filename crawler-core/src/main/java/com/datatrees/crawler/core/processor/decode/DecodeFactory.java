@@ -23,8 +23,6 @@ public class DecodeFactory {
 
     private DecodeFactory() {}
 
-    ;
-
     public static DecodeFactory instance() {
         return instance;
     }

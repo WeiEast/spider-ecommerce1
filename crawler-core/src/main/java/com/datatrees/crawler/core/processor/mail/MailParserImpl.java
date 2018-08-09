@@ -20,7 +20,7 @@ import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.IPAddressUtil;
 import com.treefinance.toolkit.util.RegExp;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public final class MailParserImpl {
     private static final Logger logger                = LoggerFactory.getLogger(MailParserImpl.class);
     private static final String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
-    private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "attachment");
+    private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.attachmentType", "attachment");
 
     public static Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws IOException {
         try (InputStream fis = IOUtils.toInputStream(contentString)) {
@@ -161,29 +161,28 @@ public final class MailParserImpl {
     }
 
     private static void saveAttachment(Mail mimeMsg, Entity part) throws IOException {
-        FileWapper fileWapper = new FileWapper();
         File file = new File(FileUtils.getFileRandomPath(mimeMsg.getWebsiteName()));
+        WrappedFile wrappedFile = new WrappedFile(file);
+        wrappedFile.setName(getAttachmentFileName(part));
+        wrappedFile.setMimeType(part.getMimeType());
 
-        try (FileOutputStream fos = new FileOutputStream(file)) {
-            fileWapper.setName(getAttachmentFileName(part));
-            fileWapper.setMimeType(part.getMimeType());
-            // Get attach stream, write it to file
-            SingleBody body = (SingleBody) part.getBody();
-            try {
-                if (fileWapper.needDetectContent()) {
-                    String content = readContent(body, part.getHeader());
-                    fos.write(content.getBytes(CharsetUtil.UTF_8_NAME));
-                } else {
+        // Get attach stream, write it to file
+        SingleBody body = (SingleBody) part.getBody();
+        try {
+            if (wrappedFile.needDetectContent()) {
+                String content = readContent(body, part.getHeader());
+                wrappedFile.write(content.getBytes(CharsetUtil.UTF_8_NAME));
+            } else {
+                try (OutputStream fos = new FileOutputStream(wrappedFile.getFile())) {
                     body.writeTo(fos);
+                    wrappedFile.setSize(file.length());
                 }
-            } finally {
-                body.dispose();
             }
-            fileWapper.setFile(file);
-            fileWapper.setSize(file.length());
+        } finally {
+            body.dispose();
         }
 
-        mimeMsg.getAttachments().add(fileWapper);
+        mimeMsg.getAttachments().add(wrappedFile);
     }
 
     private static String getTxtPart(Entity part) throws IOException {

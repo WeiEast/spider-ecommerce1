@@ -1,4 +1,4 @@
-package com.datatrees.crawler.core.util.xml.annotation;
+package com.treefinance.crawler.framework.config.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

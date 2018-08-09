@@ -1,10 +1,7 @@
 package com.datatrees.spider.share.service.extra;
 
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.util.*;
 
-import com.datatrees.crawler.core.processor.bean.FileWapper;
 import com.datatrees.spider.share.service.constants.Constants;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
@@ -13,21 +10,18 @@ import com.datatrees.spider.share.service.oss.OssService;
 import com.datatrees.spider.share.service.oss.OssServiceProvider;
 import com.datatrees.spider.share.service.oss.OssUtils;
 import com.datatrees.spider.share.service.util.ZipCompressUtils;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UploadTask implements Runnable {
 
-    private static final Logger         LOGGER = LoggerFactory.getLogger(UploadTask.class);
-
-    private              ExtractMessage extractMessage;
-
-    private              List<String>   fieldList;
-
-    private              String         ossKey;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UploadTask.class);
+    private ExtractMessage extractMessage;
+    private List<String>   fieldList;
+    private String         ossKey;
 
     public UploadTask(ExtractMessage extractMessage, List<String> fieldList, String ossKey) {
         this.extractMessage = extractMessage;
@@ -43,10 +37,9 @@ public class UploadTask implements Runnable {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extract message object
             if (MapUtils.isNotEmpty(uploadMap)) {
-                ByteArrayOutputStream baos = new ByteArrayOutputStream();
-                ZipCompressUtils.compress(baos, uploadMap);
+                byte[] data = ZipCompressUtils.compress(uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
-                service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, baos.toByteArray());
+                service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, data);
                 LOGGER.debug("upload task completed! id: {}, ossKey: {}", extractMessage.getTaskLogId(), ossKey);
             } else {
                 LOGGER.info("no need to upload file for message: {}", extractMessage);
@@ -79,24 +72,6 @@ public class UploadTask implements Runnable {
         return uploadFieldMap;
     }
 
-    private byte[] readFileBytes(FileWapper fileWapper) {
-        byte[] fileBytes = null;
-        if (fileWapper != null) {
-            FileInputStream stream = null;
-            try {
-                stream = fileWapper.getFileInputStream();
-                if (stream != null) {
-                    fileBytes = IOUtils.toByteArray(stream); // remove file
-                    fileWapper.remove();
-                }
-            } catch (Exception e) {
-                LOGGER.error("read fileWapper error " + fileWapper, e);
-            } finally {
-                IOUtils.closeQuietly(stream);
-            }
-        }
-        return fileBytes;
-    }
 
     @SuppressWarnings("unused")
     private void setUploadFieldMap(Map<String, SubmitFile> uploadMap, List<SubmitFile> fileBytesList, String field) {
@@ -118,12 +93,12 @@ public class UploadTask implements Runnable {
         if (obj instanceof String) {
             SubmitFile file = new SubmitFile(null, ((String) obj).getBytes(Constants.DEFAULT_ENCODE_CHARSETNAME));
             result.add(file);
-        } else if (obj instanceof FileWapper) {
-            FileWapper fileWapper = (FileWapper) obj;
-            byte[] resultArray = readFileBytes(fileWapper);
+        } else if (obj instanceof WrappedFile) {
+            WrappedFile wrappedFile = (WrappedFile) obj;
+            byte[] resultArray = readFileBytes(wrappedFile);
 
             if (resultArray != null) {
-                SubmitFile file = new SubmitFile(fileWapper.getName(), resultArray);
+                SubmitFile file = new SubmitFile(wrappedFile.getName(), resultArray);
                 result.add(file);
             }
         } else if (obj instanceof Collection) {
@@ -135,5 +110,18 @@ public class UploadTask implements Runnable {
             result.add(file);
         }
         return result;
+    }
+
+    private byte[] readFileBytes(WrappedFile wrappedFile) {
+        byte[] fileBytes = null;
+        if (wrappedFile != null) {
+            try {
+                fileBytes = wrappedFile.readFull();
+                wrappedFile.remove();
+            } catch (Exception e) {
+                LOGGER.error("read wrappedFile error " + wrappedFile, e);
+            }
+        }
+        return fileBytes;
     }
 }

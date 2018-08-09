@@ -27,8 +27,8 @@ import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
-import com.datatrees.crawler.core.util.xml.exception.ParseException;
+import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -37,13 +37,13 @@ import com.datatrees.crawler.core.util.xml.exception.ParseException;
  */
 public abstract class BaseConfigTest {
 
-    protected static SearchConfig getSearchConfig(String fileName) throws ParseException {
+    protected static SearchConfig getSearchConfig(String fileName) {
         String content = ResourceUtil.getContent(fileName, null);
 
-        return XmlConfigParser.getInstance().parse(content, SearchConfig.class);
+        return CrawlerConfigFactory.build(content, SearchConfig.class);
     }
 
-    protected static SearchProcessorContext getProcessorContext(String fileName, String website) throws ParseException {
+    protected static SearchProcessorContext getProcessorContext(String fileName, String website) {
         Objects.requireNonNull(fileName);
         SearchConfig websiteConfig = getConfig(fileName, SearchConfig.class);
 
@@ -59,7 +59,7 @@ public abstract class BaseConfigTest {
         return context;
     }
 
-    protected static ExtractorProcessorContext getExtractorProcessorContext(String fileName, String website) throws ParseException {
+    protected static ExtractorProcessorContext getExtractorProcessorContext(String fileName, String website)  {
         Objects.requireNonNull(fileName);
         ExtractorConfig extractorConfig = getConfig(fileName, ExtractorConfig.class);
 
@@ -73,10 +73,10 @@ public abstract class BaseConfigTest {
         return context;
     }
 
-    private static <T> T getConfig(String filename, Class<T> configClass) throws ParseException {
+    private static <T extends CrawlerConfig> T getConfig(String filename, Class<T> configClass) {
         String content = ResourceUtil.getContent(filename, null);
 
-        return XmlConfigParser.getInstance().parse(content, configClass);
+        return CrawlerConfigFactory.build(content, configClass);
     }
 
     protected static String getContent(String fileName) {

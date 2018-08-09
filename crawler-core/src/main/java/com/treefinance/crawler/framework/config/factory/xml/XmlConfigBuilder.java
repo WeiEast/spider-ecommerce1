@@ -1,4 +1,4 @@
-package com.datatrees.crawler.core.util.xml.Impl;
+package com.treefinance.crawler.framework.config.factory.xml;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -6,11 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.datatrees.common.util.ReflectionUtils;
-import com.datatrees.crawler.core.util.xml.ConfigBuilder;
-import com.datatrees.crawler.core.util.xml.annotation.Attr;
-import com.datatrees.crawler.core.util.xml.annotation.ChildTag;
-import com.datatrees.crawler.core.util.xml.annotation.Tag;
-import com.datatrees.crawler.core.util.xml.definition.AbstractBeanDefinition;
+import com.treefinance.crawler.framework.config.annotation.Attr;
+import com.treefinance.crawler.framework.config.annotation.ChildTag;
+import com.treefinance.crawler.framework.config.annotation.Tag;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
+import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.factory.ConfigBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.CDATA;
 import org.jdom2.Document;
@@ -20,20 +21,20 @@ import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 5:49:13 PM
  */
-public enum XmlConfigBuilder implements ConfigBuilder {
-    INSTANCE;
+public class XmlConfigBuilder implements ConfigBuilder {
 
-    static final String splitRegex = "/";
+    private static final XmlConfigBuilder INSTANCE    = new XmlConfigBuilder();
+    private static final String           splitRegex  = "/";
+    private static final List<Class>      boxingTypes = Arrays.asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
 
-    @SuppressWarnings("unchecked")
-    List<Class> boxingTypes = Arrays
-            .asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
+    private XmlConfigBuilder() {
+    }
 
-    public static XmlConfigBuilder getInstance() {
+    public static XmlConfigBuilder newBuilder() {
         return INSTANCE;
     }
     
@@ -51,7 +52,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
     }*/
 
     @Override
-    public String buildConfig(Object obj) {
+    public <C extends CrawlerConfig> String build(C obj) {
         Document document = new Document();
         if (obj != null) {
             this.processObjectWithTag(document, obj);
@@ -87,8 +88,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
     }
 
     private void processObjectForTagMethods(Parent parent, Object obj) {
-        @SuppressWarnings("unchecked") List<Method> tagMethods = ReflectionUtils
-                .listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
+        @SuppressWarnings("unchecked") List<Method> tagMethods = ReflectionUtils.listGetMethodWithAnnotations(obj.getClass(), Tag.class, ChildTag.class);
         for (Method tagMethod : tagMethods) {
             if (tagMethod.isAnnotationPresent(Tag.class)) {
                 this.processTagMethod(parent, obj, tagMethod);
@@ -126,7 +126,7 @@ public enum XmlConfigBuilder implements ConfigBuilder {
 
     private void processChildTagMethod(Parent parent, Object obj, Method tagMethod) {
         Object child = ReflectionUtils.invokeMethod(tagMethod, obj);
-        if (child != null && ReflectionUtils.isColleciton(child)) {
+        if (ReflectionUtils.isColleciton(child)) {
             ChildTag tag = tagMethod.getAnnotation(ChildTag.class);
             String[] splitList = tag.value().split(splitRegex);
             String lastPath = splitList.length > 0 ? splitList[splitList.length - 1] : "";
@@ -169,27 +169,21 @@ public enum XmlConfigBuilder implements ConfigBuilder {
     }
 
     private boolean isValueObj(Object obj) {
-        if (obj.getClass().isPrimitive() || obj.getClass().isEnum() || boxingTypes.contains(obj.getClass())) {
-            return true;
-        } else {
-            return false;
-        }
+        return obj.getClass().isPrimitive() || obj.getClass().isEnum() || boxingTypes.contains(obj.getClass());
     }
 
     private Element createElementWithTag(Tag tag) {
-        if (tag.value() == null || tag.value().equals("")) {
+        if (tag.value().equals("")) {
             return null;
         }
-        Element element = createElement(tag.value());
-        return element;
+        return createElement(tag.value());
     }
 
     private Element createElementWithTag(String name) {
         if (name == null || name.equals("")) {
             return null;
         }
-        Element element = createElement(name);
-        return element;
+        return createElement(name);
     }
 
     private Element createElement(String name) {

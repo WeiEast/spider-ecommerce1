@@ -13,26 +13,23 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.FileWapper;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.james.mime4j.MimeIOException;
 import org.apache.james.mime4j.message.Message;
 import org.apache.james.mime4j.parser.MimeEntityConfig;
 import org.apache.james.mime4j.storage.StorageProvider;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 上午11:39:58
  */
 public class Mail extends Message {
 
-    private StringBuffer     txtBody     = new StringBuffer();
-
-    private StringBuffer     htmlBody    = new StringBuffer();
-
-    private List<FileWapper> attachments = new ArrayList<FileWapper>();
-
-    private String           websiteName;
+    private StringBuffer      txtBody     = new StringBuffer();
+    private StringBuffer      htmlBody    = new StringBuffer();
+    private List<WrappedFile> attachments = new ArrayList<WrappedFile>();
+    private String            websiteName;
 
     /**
      *
@@ -109,14 +106,14 @@ public class Mail extends Message {
     /**
      * @return the attachments
      */
-    public List<FileWapper> getAttachments() {
+    public List<WrappedFile> getAttachments() {
         return attachments;
     }
 
     /**
      * @param attachments the attachments to set
      */
-    public void setAttachments(List<FileWapper> attachments) {
+    public void setAttachments(List<WrappedFile> attachments) {
         this.attachments = attachments;
     }
 

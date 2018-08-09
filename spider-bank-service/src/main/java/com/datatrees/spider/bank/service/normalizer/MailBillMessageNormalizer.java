@@ -29,23 +29,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
 public class MailBillMessageNormalizer implements MessageNormalizer {
 
-    private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
-
+    private static final Logger logger = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
     @Resource
-    private              BankService  bankService;
-
-    private              String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
-
-    private              List<String> loadFileBankList  = null;
-
-    private              List<String> needLoadFieldList = null;
+    private BankService bankService;
+    private String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
+    private List<String> loadFileBankList  = null;
+    private List<String> needLoadFieldList = null;
 
     {
         loadFileBankList = Arrays.asList(loadFileBankIds.split(" *; *"));
@@ -65,8 +61,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
             return true;
-        } else if (object instanceof HashMap &&
-                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
             MailBillData mailBillData = new MailBillData();
             mailBillData.putAll((Map) object);
             mailBillData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
@@ -102,15 +97,15 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
     }
 
     private void loadFile(Object obj) throws Exception {
-        if (obj instanceof FileWapper) {
-            logger.info("need load file before extractor! fileName: " + ((FileWapper) obj).getName());
-            ((FileWapper) obj).getFileInputStream();
+        if (obj instanceof WrappedFile) {
+            logger.info("need load file before extractor! fileName: {}", ((WrappedFile) obj).getName());
+            ((WrappedFile) obj).download();
         } else if (obj instanceof Collection) {
             for (Object sub : (Collection) obj) {
                 loadFile(sub);
             }
         } else {
-            if (logger.isDebugEnabled()) logger.debug("only load file wapper and skip other type!");
+            logger.debug("only load file wrapper and skip other type!");
         }
     }
 
@@ -130,7 +125,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
 
         String pageContent;
         try {
-            pageContent = SourceFieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
+            pageContent = FieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
         } catch (InterruptedException e) {
             logger.warn(e.getMessage(), e);
             pageContent = StringUtils.EMPTY;

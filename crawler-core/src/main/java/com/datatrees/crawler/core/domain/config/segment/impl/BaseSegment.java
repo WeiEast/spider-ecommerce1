@@ -9,7 +9,7 @@
 package com.datatrees.crawler.core.domain.config.segment.impl;
 
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
-import com.datatrees.crawler.core.util.xml.annotation.Path;
+import com.treefinance.crawler.framework.config.annotation.Path;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

@@ -10,14 +10,14 @@ import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.util.xml.Impl.XmlConfigParser;
-import com.datatrees.crawler.core.util.xml.ParentConfigHandler;
-import com.datatrees.spider.share.service.extra.SimpleProxyManager;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.domain.GroupEnum;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.extra.SimpleProxyManager;
+import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -46,23 +46,20 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     private              WebsiteHolderService websiteHolderService;
 
     public WebsiteConfigServiceImpl() {
-        parentConfigHandler = new ParentConfigHandler() {
-            @Override
-            public <T> T parse(T type) throws Exception {
-                if (type instanceof AbstractWebsiteConfig && StringUtils.isNotBlank(((AbstractWebsiteConfig) type).getParentWebsiteName())) {
-                    String parentWebsiteName = ((AbstractWebsiteConfig) type).getParentWebsiteName();
-                    logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
-                    Website website = websiteHolderService.getWebsite(parentWebsiteName);
-                    if (website != null) {
-                        if (type instanceof SearchConfig) {
-                            ((SearchConfig) type).clone(website.getSearchConfig());
-                        } else if (type instanceof ExtractorConfig) {
-                            ((ExtractorConfig) type).clone(website.getExtractorConfig());
-                        }
+        parentConfigHandler = (ParentConfigHandler<AbstractWebsiteConfig>) type -> {
+            String parentWebsiteName = type.getParentWebsiteName();
+            if (StringUtils.isNotBlank(parentWebsiteName)) {
+                logger.info("do parentConfigHandler for parentWebsiteName named: " + parentWebsiteName + " for class " + type.getClass());
+                Website website = websiteHolderService.getWebsite(parentWebsiteName);
+                if (website != null) {
+                    if (type instanceof SearchConfig) {
+                        ((SearchConfig) type).clone(website.getSearchConfig());
+                    } else if (type instanceof ExtractorConfig) {
+                        ((ExtractorConfig) type).clone(website.getExtractorConfig());
                     }
                 }
-                return type;
             }
+            return type;
         };
     }
 
@@ -115,8 +112,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         Website website = new Website();
         if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
             try {
-                SearchConfig searchConfig = XmlConfigParser.getInstance()
-                        .parse(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
+                SearchConfig searchConfig = CrawlerConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
                 website.setSearchConfig(searchConfig);
                 website.setSearchConfigSource(websiteConfig.getSearchConfig());
             } catch (Exception e) {
@@ -126,8 +122,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = XmlConfigParser.getInstance()
-                        .parse(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = CrawlerConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {

@@ -13,6 +13,7 @@ package com.datatrees.crawler.core.processor.format.unit;
  * @version 1.0
  * @since Mar 13, 2014 10:00:08 PM
  */
+@Deprecated
 public enum TimeUnit {
 
     YEAR {

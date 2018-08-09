@@ -10,7 +10,7 @@ package com.datatrees.crawler.core.processor.common;
 
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
-import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +18,9 @@ import org.slf4j.LoggerFactory;
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月21日 下午7:24:26
+ * @see SourceUtils
  */
+@Deprecated
 public final class SourceUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SourceUtil.class);
@@ -27,11 +29,7 @@ public final class SourceUtil {
     }
 
     public static Object getSourceMap(String sourceId, Request request, Response response) {
-        Object result = FieldScopes.getVisibleField(sourceId, request, response);
-
-        LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);
-
-        return result;
+        return SourceUtils.getSourceFieldValue(sourceId, request, response);
     }
 
 }

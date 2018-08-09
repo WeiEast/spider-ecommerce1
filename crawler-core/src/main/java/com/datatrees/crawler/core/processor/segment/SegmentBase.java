@@ -20,13 +20,17 @@ import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.crawler.core.processor.common.ResultMapConverter;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.format.Formatter;
+import com.treefinance.crawler.framework.util.SourceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -54,7 +58,19 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
 
     @Override
     protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
-        return request.getInput() == null;
+        if (request.getInput() == null) {
+            logger.warn("Empty input content used for segment processing and skip. segment: {}, taskId: {}", segment.getName(), context.getTaskId());
+            return true;
+        }
+
+        context = RequestUtil.getProcessorContext(request);
+        String businessType = segment.getBusinessType();
+        if (!BusinessTypeDecider.support(businessType, context)) {
+            logger.warn("Business forbidden in segment processing and skip. segment: {}, businessType: {}, taskId: {}", segment.getName(), businessType, context.getTaskId());
+            return true;
+        }
+
+        return false;
     }
 
     @Override
@@ -66,17 +82,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                 throw new ResultEmptyException(segment + " result should not be Empty!");
             }
         } else {
-            context = RequestUtil.getProcessorContext(request);
-            String businessType = segment.getBusinessType();
-            if (BusinessTypeDecider.support(businessType, context)) {
-                String original = (String) request.getInput();
-                try {
-                    doProcess(request, response);
-                } finally {
-                    request.setInput(original);
-                }
-            } else {
-                logger.warn("Skip segment processor with the forbidden business. businessType: {}, taskId: {}", businessType, context.getTaskId());
+            String original = (String) request.getInput();
+            try {
+                doProcess(request, response);
+            } finally {
+                request.setInput(original);
             }
         }
 
@@ -165,7 +175,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     String content = split;
                     String sourceId = abstractSegment.getSourceId();
                     if (StringUtils.isNotEmpty(sourceId)) {
-                        Object result = SourceUtil.getSourceMap(sourceId, request, response);
+                        Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
                         if (result != null) {
                             content = result.toString();
                         }
