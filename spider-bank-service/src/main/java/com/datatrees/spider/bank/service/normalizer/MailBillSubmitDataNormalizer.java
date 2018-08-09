@@ -28,8 +28,7 @@ public class MailBillSubmitDataNormalizer implements SubmitNormalizer {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     @Override
-    public boolean normalize(Object data) {
-        SubmitMessage message = ((SubmitMessage) data);
+    public boolean normalize(SubmitMessage message) {
         if (message.getExtractMessage().getResultType().equals(ResultType.MAILBILL)) {
             MailExtractResult result = (MailExtractResult) message.getResult();
             Set<Map.Entry<String, Object>> entrySet = message.getExtractResultMap().entrySet();

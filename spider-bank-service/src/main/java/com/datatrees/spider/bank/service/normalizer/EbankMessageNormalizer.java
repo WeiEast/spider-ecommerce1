@@ -13,13 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
-import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.bank.domain.EBankData;
 import com.datatrees.spider.bank.domain.model.Bank;
 import com.datatrees.spider.bank.service.BankService;
-import org.apache.commons.lang.StringUtils;
+import com.datatrees.spider.share.domain.ResultType;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,17 +37,15 @@ public class EbankMessageNormalizer implements MessageNormalizer {
     private              BankService bankService;
 
     @Override
-    public boolean normalize(Object data) {
-        ExtractMessage message = ((ExtractMessage) data);
-        Object object = ((ExtractMessage) message).getMessageObject();
+    public boolean normalize(ExtractMessage message) {
+        Object object = message.getMessageObject();
         if (object instanceof EBankData) {
             message.setResultType(ResultType.EBANKBILL);
             message.setTypeId(this.getBankId(message));
             ((EBankData) object).setBankId(message.getTypeId());
             ((EBankData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap &&
-                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EBankData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && EBankData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
             EBankData eBankData = new EBankData();
             eBankData.putAll((Map) object);
             eBankData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

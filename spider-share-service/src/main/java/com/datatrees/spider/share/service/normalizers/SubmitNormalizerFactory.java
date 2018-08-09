@@ -11,6 +11,7 @@ package com.datatrees.spider.share.service.normalizers;
 import javax.annotation.Resource;
 import java.util.Collection;
 
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -29,7 +30,7 @@ public class SubmitNormalizerFactory {
     @Resource
     private              ApplicationContext context;
 
-    public boolean normalize(Object message) {
+    public boolean normalize(SubmitMessage message) {
         Collection<SubmitNormalizer> normalizers = context.getBeansOfType(SubmitNormalizer.class).values();
 
         for (SubmitNormalizer submitNormalizer : normalizers) {

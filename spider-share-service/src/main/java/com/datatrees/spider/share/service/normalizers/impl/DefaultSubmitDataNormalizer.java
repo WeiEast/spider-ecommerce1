@@ -22,12 +22,8 @@ import org.springframework.stereotype.Service;
 public class DefaultSubmitDataNormalizer implements SubmitNormalizer {
 
     @Override
-    public boolean normalize(Object data) {
-        SubmitMessage message = ((SubmitMessage) data);
-        if (message.getExtractMessage().getResultType().equals(ResultType.DEFAULT)) {
-            return true;
-        }
-        return false;
+    public boolean normalize(SubmitMessage message) {
+        return message.getExtractMessage().getResultType().equals(ResultType.DEFAULT);
     }
 
 }

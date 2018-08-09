@@ -27,8 +27,7 @@ import org.springframework.stereotype.Service;
 public class EbankSubmitDataNormalizer implements SubmitNormalizer {
 
     @Override
-    public boolean normalize(Object data) {
-        SubmitMessage message = ((SubmitMessage) data);
+    public boolean normalize(SubmitMessage message) {
         if (message.getExtractMessage().getResultType().equals(ResultType.EBANKBILL)) {
             EBankExtractResult result = (EBankExtractResult) message.getResult();
             Set<Map.Entry<String, Object>> entrySet = message.getExtractResultMap().entrySet();

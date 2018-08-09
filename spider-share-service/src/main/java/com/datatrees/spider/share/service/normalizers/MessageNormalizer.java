@@ -1,6 +1,7 @@
 package com.datatrees.spider.share.service.normalizers;
 
-public interface MessageNormalizer {
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 
-    boolean normalize(Object data);
+public interface MessageNormalizer extends Normalizer<ExtractMessage> {
+
 }

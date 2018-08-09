@@ -16,15 +16,14 @@ import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.spider.operator.domain.OperatorData;
 import com.datatrees.spider.operator.dao.OperatorDAO;
+import com.datatrees.spider.operator.domain.OperatorData;
 import com.datatrees.spider.operator.domain.model.Operator;
 import com.datatrees.spider.operator.domain.model.example.OperatorExample;
 import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.domain.ResultType;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -46,8 +45,7 @@ public class OperatorMessageNormalizer implements MessageNormalizer {
     private              OperatorDAO  operatorDAO;
 
     @Override
-    public boolean normalize(Object data) {
-        ExtractMessage message = ((ExtractMessage) data);
+    public boolean normalize(ExtractMessage message) {
         Object object = message.getMessageObject();
         if (object instanceof OperatorData) {
             message.setResultType(ResultType.OPERATOR);
@@ -55,8 +53,7 @@ public class OperatorMessageNormalizer implements MessageNormalizer {
             ((OperatorData) object).setOperatorId(message.getTypeId());
             ((OperatorData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap &&
-                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), OperatorData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && OperatorData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
             OperatorData operatorData = new OperatorData();
             operatorData.putAll((Map) object);
             operatorData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

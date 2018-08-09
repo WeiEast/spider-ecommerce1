@@ -12,13 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
-import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.domain.DefaultData;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.datatrees.spider.share.domain.ResultType;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import org.springframework.stereotype.Service;
 
 /**
@@ -29,18 +26,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class DefaultMessageNormalizer implements MessageNormalizer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultMessageNormalizer.class);
-
     @Override
-    public boolean normalize(Object data) {
-        ExtractMessage message = ((ExtractMessage) data);
-        Object object = ((ExtractMessage) message).getMessageObject();
+    public boolean normalize(ExtractMessage message) {
+        Object object = message.getMessageObject();
         if (object instanceof DefaultData) {
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             return true;
-        } else if (object instanceof HashMap &&
-                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), DefaultData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && DefaultData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
             DefaultData defaultData = new DefaultData();
             defaultData.putAll((Map) object);
             defaultData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

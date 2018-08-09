@@ -13,13 +13,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
-import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.spider.share.service.domain.data.EcommerceData;
-import com.datatrees.spider.share.domain.model.Ecommerce;
 import com.datatrees.spider.ecommerce.service.EcommerceService;
-import org.apache.commons.lang.StringUtils;
+import com.datatrees.spider.share.domain.ResultType;
+import com.datatrees.spider.share.domain.model.Ecommerce;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.domain.data.EcommerceData;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -38,16 +37,14 @@ public class EcommerceMessageNormalizer implements MessageNormalizer {
     private              EcommerceService ecommerceService;
 
     @Override
-    public boolean normalize(Object data) {
-        ExtractMessage message = ((ExtractMessage) data);
+    public boolean normalize(ExtractMessage message) {
         Object object = message.getMessageObject();
         if (object instanceof EcommerceData) {
             message.setResultType(ResultType.ECOMMERCE);
             message.setTypeId(this.getEcommerceId(message));
             ((EcommerceData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if ((object instanceof HashMap &&
-                StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), EcommerceData.class.getSimpleName()))) {
+        } else if ((object instanceof HashMap && EcommerceData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES)))) {
             EcommerceData ecommerceData = new EcommerceData();
             ecommerceData.putAll((Map) object);
             ecommerceData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

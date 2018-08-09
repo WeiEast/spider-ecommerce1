@@ -15,14 +15,14 @@ import java.util.regex.Pattern;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.bean.FileWapper;
-import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.datatrees.spider.bank.service.BankService;
+import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.data.MailBillData;
-import com.datatrees.spider.bank.service.BankService;
-import com.treefinance.crawler.framework.util.SourceFieldUtils;
+import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.framework.download.WrappedFile;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +50,8 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
     }
 
     @Override
-    public boolean normalize(Object data) {
-        ExtractMessage message = ((ExtractMessage) data);
-        Object object =  message.getMessageObject();
+    public boolean normalize(ExtractMessage message) {
+        Object object = message.getMessageObject();
         if (object instanceof MailBillData) {
             message.setResultType(ResultType.MAILBILL);
             message.setTypeId(this.getBankId((MailBillData) object));
@@ -61,7 +60,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
             return true;
-        } else if (object instanceof HashMap && StringUtils.equals((String) ((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES), MailBillData.class.getSimpleName())) {
+        } else if (object instanceof HashMap && MailBillData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
             MailBillData mailBillData = new MailBillData();
             mailBillData.putAll((Map) object);
             mailBillData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);

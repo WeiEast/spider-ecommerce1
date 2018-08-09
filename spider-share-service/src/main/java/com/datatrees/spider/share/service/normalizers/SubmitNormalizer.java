@@ -1,6 +1,7 @@
 package com.datatrees.spider.share.service.normalizers;
 
-public interface SubmitNormalizer {
+import com.datatrees.spider.share.service.domain.SubmitMessage;
 
-    boolean normalize(Object data);
+public interface SubmitNormalizer extends Normalizer<SubmitMessage> {
+
 }
