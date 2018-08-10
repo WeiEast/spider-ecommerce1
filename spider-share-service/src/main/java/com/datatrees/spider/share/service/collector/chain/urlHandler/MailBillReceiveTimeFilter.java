@@ -27,7 +27,7 @@ import com.datatrees.spider.share.domain.website.WebsiteType;
 public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
 
     private static long    maxMailReceiveInterval      = PropertiesConfiguration.getInstance()
-            .getLong("max.mail.receive.interval", new Double(1000L * 3600L * 24L * 365L * 1.5).longValue());
+            .getLong("max.mail.receive.interval", (long)(1000L * 3600L * 24 * 365 * 1.5));
 
     private static boolean mailReceiveTimeFilterSwitch = PropertiesConfiguration.getInstance().getBoolean("mail.receive.filter.switch", true);
 
@@ -40,9 +40,7 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
         if (searchProcessor.isLastLink() && currentLinkNode != null && currentLinkNode.getpNum() > 0) {
             logger.info("filter pageNode: {} as LastPageLink marked ,receiveAt: {}", fetchLinkNode, receiveAt);
             fetchLinkNode.setRemoved(true);
-        } else if (mailReceiveTimeFilterSwitch && receiveAt != null && receiveAt instanceof Date && websiteType != null &&
-                WebsiteType.MAIL.getValue().equals(websiteType) &&
-                SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
+        } else if (mailReceiveTimeFilterSwitch && receiveAt instanceof Date && WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             if ((UnifiedSysTime.INSTANCE.getSystemTime().getTime() - ((Date) receiveAt).getTime() > maxMailReceiveInterval)) {
                 logger.info("Node: {},receiveAt: {} receive time filtered...", fetchLinkNode, receiveAt);
                 fetchLinkNode.setRemoved(true);

@@ -159,7 +159,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                 while (matcher.find()) {
                     String pNumber = matcher.group(1);
                     try {
-                        int pNum = Integer.valueOf(pNumber);
+                        int pNum = Integer.parseInt(pNumber);
                         logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
                         String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,
                                 RequestUtil.getProcessorContext(request).getContext());
@@ -191,7 +191,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
 
                 int pNum = -1;
                 try {
-                    pNum = Integer.valueOf(pidS);
+                    pNum = Integer.parseInt(pidS);
                 } catch (NumberFormatException nfe) {
                     // eat it if not configured correctly.
                 }

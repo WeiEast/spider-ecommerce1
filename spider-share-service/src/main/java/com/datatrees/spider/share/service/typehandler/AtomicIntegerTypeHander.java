@@ -33,7 +33,7 @@ public class AtomicIntegerTypeHander implements TypeHandler {
     public Object getResult(ResultSet rs, String columnName) throws SQLException {
         String v = rs.getString(columnName);
         if (!StringUtils.isEmpty(v)) {
-            return new AtomicInteger(Integer.valueOf(v));
+            return new AtomicInteger(Integer.parseInt(v));
         }
         return null;
     }
@@ -42,7 +42,7 @@ public class AtomicIntegerTypeHander implements TypeHandler {
     public Object getResult(ResultSet rs, int columnIndex) throws SQLException {
         String v = rs.getString(columnIndex);
         if (!StringUtils.isEmpty(v)) {
-            return new AtomicInteger(Integer.valueOf(v));
+            return new AtomicInteger(Integer.parseInt(v));
         }
         return null;
     }

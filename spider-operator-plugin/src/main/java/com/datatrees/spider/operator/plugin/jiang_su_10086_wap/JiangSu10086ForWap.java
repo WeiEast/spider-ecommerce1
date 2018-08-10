@@ -123,12 +123,12 @@ public class JiangSu10086ForWap implements OperatorPlugin {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
                 return result.success();
             }
-            String logicCode = json.getString("logicCode");
-            switch (logicCode) {
-                default:
+            //String logicCode = json.getString("logicCode");
+            //switch (logicCode) {
+            //    default:
                     logger.error("详单-->短信验证码-->刷新失败,param={},pageContent={}", param, pageContent);
                     return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-            }
+            //}
         } catch (Exception e) {
             logger.error("详单-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);

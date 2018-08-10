@@ -36,7 +36,7 @@ public class URLRegexFilter extends RegexURLFilterBase {
         return null;
     }
 
-    private class Rule extends RegexRule {
+    private static class Rule extends RegexRule {
 
         private Pattern pattern;
 

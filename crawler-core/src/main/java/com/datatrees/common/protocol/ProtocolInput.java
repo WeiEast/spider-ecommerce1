@@ -173,11 +173,8 @@ public class ProtocolInput {
     private Collection<? extends NameValuePair> mapToList(Map<String, String> headers) {
         List<NameValuePair> pairs = new ArrayList<NameValuePair>();
         if (MapUtils.isNotEmpty(headers)) {
-            Iterator<String> keyIterator = headers.keySet().iterator();
-            while (keyIterator.hasNext()) {
-                String key = keyIterator.next();
-                String val = headers.get(key);
-                pairs.add(new NameValuePair(key, val));
+            for (Map.Entry<String, String> next : headers.entrySet()) {
+                pairs.add(new NameValuePair(next.getKey(), next.getValue()));
             }
         }
         return pairs;

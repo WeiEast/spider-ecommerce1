@@ -205,7 +205,7 @@ public class DirectiveResult<T> implements Serializable {
      * @return
      */
     public DirectiveResult<T> failTure(String status, String errorCode, String errorMsg) {
-        return failTure(status, errorCode, errorMsg);
+        return failTure(status, errorCode, errorMsg, null);
     }
 
     /**

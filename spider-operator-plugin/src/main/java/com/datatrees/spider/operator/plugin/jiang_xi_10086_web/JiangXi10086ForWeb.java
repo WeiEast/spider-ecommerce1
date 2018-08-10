@@ -411,7 +411,7 @@ public class JiangXi10086ForWeb implements OperatorPlugin {
         String templateUrl = "https://jx.ac.10086.cn/logout";
         Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
                 .setReferer(referer).invoke();
-        String pageContent = response.getPageContent();
+        //String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
         response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                 .setRequestBody("display=0").invoke();
@@ -423,7 +423,7 @@ public class JiangXi10086ForWeb implements OperatorPlugin {
         String templateUrl = "https://jx.ac.10086.cn/logout";
         Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl)
                 .setReferer(referer).invoke();
-        String pageContent = response.getPageContent();
+        //String pageContent = response.getPageContent();
         templateUrl = "http://www.jx.10086.cn/";
         response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                 .setRequestBody("display=0").invoke();

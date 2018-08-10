@@ -10,8 +10,8 @@ public class ImageUtils {
 
     public static BufferedImage rotateImage(BufferedImage image, double theta) {
         int degrees = (int) Math.abs(Math.toDegrees(theta));
-        double xCenter = image.getWidth() / 2;
-        double yCenter = image.getHeight() / 2;
+        double xCenter = image.getWidth() / 2.0d;
+        double yCenter = image.getHeight() / 2.0d;
         AffineTransform rotateTransform = AffineTransform.getRotateInstance(-theta, xCenter, yCenter);
         // Translation adjustments so image still centered after rotate width/height changes
         if (image.getHeight() != image.getWidth() && degrees != 180 && degrees != 0) {

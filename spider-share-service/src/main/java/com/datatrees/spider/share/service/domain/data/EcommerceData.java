@@ -9,5 +9,5 @@ import com.datatrees.spider.share.domain.AbstractData;
  */
 public class EcommerceData extends AbstractData {
 
-    public static String TITLE = "title";
+    public static final String TITLE = "title";
 }

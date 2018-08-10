@@ -212,7 +212,7 @@ public class GuangXi10086ForWeb implements OperatorPlugin {
             String relayState = TaskUtils.getTaskShare(param.getTaskId(), "relayState");
             String isValidateCode = TaskUtils.getTaskShare(param.getTaskId(), "isValidateCode");
             String imgUrl = TaskUtils.getTaskShare(param.getTaskId(), "imgUrl");
-            String dateTimeToken = TaskUtils.getTaskShare(param.getTaskId(), "dateTimeToken");
+            //String dateTimeToken = TaskUtils.getTaskShare(param.getTaskId(), "dateTimeToken");
             relayState = relayState.replace("type=B", "type=A");
 
             String referer = "http://www.gx.10086.cn/wodeyidong/indexMyMob.jsp";

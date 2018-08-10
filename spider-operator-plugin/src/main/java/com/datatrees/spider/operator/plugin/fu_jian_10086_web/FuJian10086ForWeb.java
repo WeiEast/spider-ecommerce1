@@ -223,7 +223,7 @@ public class FuJian10086ForWeb implements OperatorLoginPostPlugin {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(templateUrl, spid, param.getMobile(), param.getPicCode()).invoke();
-            String pageContent = response.getPageContent();
+            //String pageContent = response.getPageContent();
             String url = response.getRedirectUrl();
             if (url.contains("code=0000")) {
                 logger.info("详单-->图片验证码-->校验成功,param={}", param);

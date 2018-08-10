@@ -120,7 +120,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private boolean saveToRedis(SubmitMessage submitMessage) {
         Map<String, Object> extractResultMap = submitMessage.getExtractResultMap();
         ExtractMessage extractMessage = submitMessage.getExtractMessage();
-        int taskLogId = extractMessage.getTaskLogId();
+        //int taskLogId = extractMessage.getTaskLogId();
         if (MapUtils.isEmpty(extractResultMap)) {
             logger.warn("no data save to redis by taskid: " + submitMessage);
             return true;

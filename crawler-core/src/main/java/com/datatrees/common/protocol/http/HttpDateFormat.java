@@ -22,7 +22,7 @@ import java.util.TimeZone;
  */
 public class HttpDateFormat {
 
-    protected static SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
+    protected static final SimpleDateFormat format = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss zzz", Locale.US);
 
     /**
      * HTTP date uses TimeZone GMT

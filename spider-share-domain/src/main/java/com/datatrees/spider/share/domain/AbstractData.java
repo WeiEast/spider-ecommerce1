@@ -19,16 +19,16 @@ import java.util.Map;
 @SuppressWarnings({"rawtypes", "serial", "unchecked"})
 public abstract class AbstractData extends HashMap {
 
-    public static String UNIQUESIGN  = "uniqueSign";
+    public static final String UNIQUESIGN  = "uniqueSign";
 
-    public static String URL         = "url";
+    public static final String URL         = "url";
 
     // maybe collection
-    public static String PAGECONTENT = "pageContent";
+    public static final String PAGECONTENT = "pageContent";
 
-    public static String RESULTTYPE  = "resultType";
+    public static final String RESULTTYPE  = "resultType";
 
-    public static String EXTRAINFO   = "extraInfo";
+    public static final String EXTRAINFO   = "extraInfo";
 
     public String getResultType() {
         return (String) this.get(RESULTTYPE);

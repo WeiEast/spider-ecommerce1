@@ -393,7 +393,7 @@ public class XueXinWebPlugin implements CommonPlugin {
 
     private HttpResult<Object> submitForRegister(CommonPluginParam param) {
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
-                param.getPassword() == null || param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
+                param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null ||
                 param.getIdCardType() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -421,7 +421,6 @@ public class XueXinWebPlugin implements CommonPlugin {
                     .invoke();
             pageContent = response.getPageContent();
             logger.info("注册返回结果 responsePage={}", response.getPageContent());
-            Map<String, Object> map = new HashMap<>();
             if (pageContent.contains("校验码有误")) {
                 logger.error("注册失败--验证码有误，param={},response={}", param, response);
                 return result.failure("校验码有误,注册失败");

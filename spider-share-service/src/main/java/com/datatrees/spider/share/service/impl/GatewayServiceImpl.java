@@ -65,7 +65,7 @@ public class GatewayServiceImpl implements DataResource {
             ResultMessage resultMessage = new ResultMessage();
             resultMessage.putAll(parameters);
             resultMessage.setRemark(remark);
-            resultMessage.setTaskId(Long.valueOf(taskId));
+            resultMessage.setTaskId(Long.parseLong(taskId));
             resultMessage.setWebsiteName(websiteName);
             resultMessage.setResultEmpty(Boolean.valueOf(isEmpty));
             resultMessage.setStatus(status);

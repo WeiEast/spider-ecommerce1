@@ -18,7 +18,6 @@ public class PluginException extends com.treefinance.crawler.framework.exception
     private static final long serialVersionUID = 1221616889742123419L;
 
     public PluginException() {
-        super();
     }
 
     public PluginException(String message, Throwable cause) {

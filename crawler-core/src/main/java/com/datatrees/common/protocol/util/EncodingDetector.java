@@ -111,7 +111,7 @@ public class EncodingDetector {
     public static String resolveEncodingAlias(String encoding) {
         try {
             if (encoding == null || !Charset.isSupported(encoding)) return null;
-            String canonicalName = new String(Charset.forName(encoding).name());
+            String canonicalName = Charset.forName(encoding).name();
             return ALIASES.containsKey(canonicalName) ? ALIASES.get(canonicalName) : canonicalName;
         } catch (Exception e) {
             LOG.warn("Invalid encoding " + encoding + " detected, using default.");

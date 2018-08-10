@@ -1,7 +1,5 @@
 package com.datatrees.spider.operator.plugin.an_hui_10000_web;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang.StringUtils;
@@ -33,9 +31,4 @@ public class PdfUtils {
         return StringUtils.EMPTY;
     }
 
-    public static void main(String[] args) throws Exception {
-        File file = new File("/Users/yaojun-2/20160516.pdf");
-        String htmlContent = PdfUtils.pdfToHtml(new FileInputStream(file));
-        System.out.println(htmlContent);
-    }
 }

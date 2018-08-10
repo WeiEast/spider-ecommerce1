@@ -5,21 +5,20 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
-import org.joda.time.DurationFieldType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,7 +192,7 @@ public class HuNan10000ForWap implements OperatorPlugin {
         Response response = null;
         try {
             String queryMonth = new DateTime().toString("yyyy-MM");
-            String lastMonth = new DateTime().withFieldAdded(DurationFieldType.months(), -1).toString("yyyy-MM");
+            //String lastMonth = new DateTime().withFieldAdded(DurationFieldType.months(), -1).toString("yyyy-MM");
 
             String referer = "http://waphn.189.cn/hnselfservice/billquery/queryBillList.action?patitype=2";
             String templateUrl = "http://waphn.189.cn/hnselfservice/billquery/queryBillListx" +

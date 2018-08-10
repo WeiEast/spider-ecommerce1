@@ -1,15 +1,11 @@
 package com.datatrees.spider.share.common.http;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -77,24 +73,14 @@ public class URIUtils {
                 }
                 String[] ss = StringUtils.split(kv, "=");
                 if (ss.length == 1) {
-                    map.put(ss[0], "");
-                    continue;
-                } else if (ss.length == 1) {
                     logger.warn("invalid namevalue kv={}", kv);
-                    continue;
+                    map.put(ss[0], "");
                 } else {
                     map.put(ss[0], ss[1]);
                 }
             }
         }
         return map;
-    }
-
-    public static void main(String[] args) throws IOException {
-        String fullUrl = FileUtils.readFileToString(new File("/data/url.txt"), Charset.forName("UTF-8"));
-        URI uri = create(fullUrl);
-        System.out.println(uri.toString());
-
     }
 
 }

@@ -218,10 +218,10 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
         Long taskId = param.getTaskId();
         String latestSendSmsTime = TaskUtils.getTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME);
         if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
-            long endTime = Long.valueOf(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
+            long endTime = Long.parseLong(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
             if (System.currentTimeMillis() < endTime) {
                 try {
-                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(Long.valueOf(latestSendSmsTime)),
+                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(Long.parseLong(latestSendSmsTime)),
                             DateUtils.getUsedTime(System.currentTimeMillis(), endTime));
                     TimeUnit.MILLISECONDS.sleep(endTime - System.currentTimeMillis());
                 } catch (InterruptedException e) {
@@ -540,7 +540,7 @@ public class OperatorApiImpl implements OperatorApi, InitializingBean {
 
                 @Override
                 public boolean check() {
-                    return StringUtils.isNotBlank(stepCode) && Integer.valueOf(stepCode) >= StepEnum.INIT_SUCCESS.getStepCode();
+                    return StringUtils.isNotBlank(stepCode) && Integer.parseInt(stepCode) >= StepEnum.INIT_SUCCESS.getStepCode();
                 }
             }, 6, 500L);
             return StringUtils.isNotBlank(stepCode);

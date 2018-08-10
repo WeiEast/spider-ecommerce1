@@ -97,7 +97,7 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     @Override
     public void updateWebsite(WebsiteOperator config) {
-        String env = TaskUtils.getSassEnv();
+        //String env = TaskUtils.getSassEnv();
         WebsiteOperator operatorDb = getByWebsiteName(config.getWebsiteName());
         if (null == operatorDb) {
             throw new CommonException("websiteName not found,websiteName=" + config.getWebsiteName());

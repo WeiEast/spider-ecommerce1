@@ -74,7 +74,7 @@ public class SearchTemplateConfig extends AbstractBeanDefinition implements Seri
 
     @Attr("auto-start")
     public Boolean getAutoStart() {
-        return autoStart == null ? true : autoStart;
+        return autoStart == null ? Boolean.TRUE : autoStart;
     }
 
     @Node("@auto-start")

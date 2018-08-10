@@ -96,7 +96,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(websiteName);
         String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
@@ -112,7 +112,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(nickGroupCode);
         String redisKey = getRedisKeyForNickGroupLastInfo(nickGroupCode);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
@@ -129,7 +129,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(nickGroupCode);
         String redisKey = getRedisKeyForWebsiteGroupLastInfo(websiteName, nickGroupCode);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
@@ -145,7 +145,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(websiteName);
         String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.FAIL_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TASK_ID, String.valueOf(taskId));
@@ -161,7 +161,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(nickGroupCode);
         String redisKey = getRedisKeyForNickGroupLastInfo(nickGroupCode);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.FAIL_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TASK_ID, String.valueOf(taskId));
@@ -178,7 +178,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(nickGroupCode);
         String redisKey = getRedisKeyForWebsiteGroupLastInfo(websiteName, nickGroupCode);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.FAIL_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.FAIL_TASK_ID, String.valueOf(taskId));
@@ -194,7 +194,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(websiteName);
         String redisKey = getRedisKeyForWebsiteLastInfo(websiteName);
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.WARN_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.WARN_TIMESTAMP, String.valueOf(timestamp));
             logger.info("upate website last info with warnTimestamp,websiteName={},taskId={},timestamp={}", websiteName,
@@ -209,7 +209,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0L;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static int getSuccessUserCount(@Nonnull String websiteName) {
@@ -219,7 +219,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static int getSuccessUserCountForNickGroup(@Nonnull String nickGroupCode) {
@@ -229,7 +229,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static int getSuccessUserCountForWebsiteGroup(@Nonnull String websiteName, @Nonnull String nickGroupCode) {
@@ -240,7 +240,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static int getFailUserCount(@Nonnull String websiteName) {
@@ -250,7 +250,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static int getFailUserCountForNickGroup(@Nonnull String nickGroupCode) {
@@ -260,7 +260,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static int getFailUserCountForWebsiteGroup(@Nonnull String websiteName, @Nonnull String nickGroupCode) {
@@ -271,7 +271,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Integer.valueOf(value);
+        return Integer.parseInt(value);
     }
 
     public static long getStatisticsTimestamp(@Nonnull String websiteName) {
@@ -281,7 +281,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static long getSuccessTimestamp(String websiteName) {
@@ -291,7 +291,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static long getSuccessTimestampForNickGroup(@Nonnull String nickGroupCode) {
@@ -301,7 +301,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static long getSuccessTimestampForWebsiteGroup(@Nonnull String websiteName, @Nonnull String nickGroupCode) {
@@ -312,7 +312,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static Long getWebisteMonitorId(@Nonnull String websiteName, @Nonnull Long preId, @Nonnull Date orderDate) {
@@ -411,7 +411,7 @@ public class WebsiteUtils {
         Preconditions.checkNotNull(groupCode);
         String redisKey = RedisKeyPrefixEnum.GROUP_LAST_INFO.getRedisKey(TaskUtils.getSassEnv(groupCode));
         String redisTimestamp = RedisUtils.hget(redisKey, AttributeKey.SUCCESS_TIMESTAMP);
-        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.valueOf(redisTimestamp);
+        boolean update = StringUtils.isBlank(redisTimestamp) || timestamp > Long.parseLong(redisTimestamp);
         if (update) {
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TIMESTAMP, String.valueOf(timestamp));
             RedisUtils.hset(redisKey, AttributeKey.SUCCESS_TASK_ID, String.valueOf(taskId));
@@ -427,7 +427,7 @@ public class WebsiteUtils {
         if (StringUtils.isBlank(value)) {
             return 0;
         }
-        return Long.valueOf(value);
+        return Long.parseLong(value);
     }
 
     public static String getRedisKeyForWebsiteLastInfo(@Nonnull String websiteName) {

@@ -1,7 +1,6 @@
 package com.datatrees.spider.operator.plugin.he_bei_10086_web;
 
 import javax.script.Invocable;
-import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -10,18 +9,18 @@ import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -179,7 +178,7 @@ public class HeBei10086ForWeb implements OperatorPlugin {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String relayState = TaskUtils.getTaskShare(param.getTaskId(), "relayState");
 
-            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("he_bei_10086_web/des.js");
+            //InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("he_bei_10086_web/des.js");
             Invocable invocable = ScriptEngineUtil.createInvocableFromBase64(javaScript);
             String encodePassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
 

@@ -59,7 +59,6 @@ public class SinaMailPlugin implements CommonPlugin {
         logger.info("新浪邮箱开始初始化taskId={}", param.getTaskId());
         TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "新浪邮箱h5");
         HttpResult<Object> result = new HttpResult<>();
-        Map<String, Object> map = new HashMap<>();
         Response response = null;
         MonitorService monitorService = BeanFactoryUtils.getBean(MonitorService.class);
         MessageService messageService = BeanFactoryUtils.getBean(MessageService.class);

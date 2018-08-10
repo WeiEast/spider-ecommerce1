@@ -33,7 +33,7 @@ public class AtomicLongTypeHander implements TypeHandler {
     public Object getResult(ResultSet rs, String columnName) throws SQLException {
         String v = rs.getString(columnName);
         if (!StringUtils.isEmpty(v)) {
-            return new AtomicLong(Long.valueOf(v));
+            return new AtomicLong(Long.parseLong(v));
         }
         return null;
     }
@@ -42,7 +42,7 @@ public class AtomicLongTypeHander implements TypeHandler {
     public Object getResult(ResultSet rs, int columnIndex) throws SQLException {
         String v = rs.getString(columnIndex);
         if (!StringUtils.isEmpty(v)) {
-            return new AtomicLong(Long.valueOf(v));
+            return new AtomicLong(Long.parseLong(v));
         }
         return null;
     }

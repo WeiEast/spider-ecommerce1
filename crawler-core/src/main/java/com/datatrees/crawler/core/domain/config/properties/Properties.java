@@ -102,7 +102,7 @@ public class Properties implements Serializable {
      */
     @Tag("duplicate-removal")
     public Boolean getDuplicateRemoval() {
-        return duplicateRemoval == null ? true : duplicateRemoval;
+        return duplicateRemoval == null ? Boolean.TRUE : duplicateRemoval;
     }
 
     /**

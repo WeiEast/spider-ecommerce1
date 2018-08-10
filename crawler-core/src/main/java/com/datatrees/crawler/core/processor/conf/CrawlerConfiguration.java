@@ -45,7 +45,7 @@ public class CrawlerConfiguration extends DefaultConfiguration {
         if (StringUtils.isEmpty(val) && defaultConf != null) {
             val = defaultConf.get(name);
         }
-        return null;
+        return val;
     }
 
     /**

@@ -18,7 +18,7 @@ import com.datatrees.spider.share.domain.AbstractData;
 @SuppressWarnings("serial")
 public class OperatorData extends AbstractData {
 
-    public static String OPERATORID = "operatorid";
+    public static final String OPERATORID = "operatorid";
 
     public Integer getOperatorId() {
         return (Integer) this.get(OPERATORID);

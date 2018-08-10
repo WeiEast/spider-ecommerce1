@@ -166,7 +166,7 @@ public class BDBOperator implements Operator {
                             ", lastFetchedId : " + lastFetchId);
                 }
             } else {
-                log.debug("already exists in queue" + foundValue.getData());
+                log.debug("already exists in queue: {}", foundValue.getData());
             }
         } catch (Exception ex) {
             log.error("Catch exception when add link [" + link.getUrl() + "] to BDB ");

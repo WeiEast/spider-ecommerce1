@@ -29,7 +29,7 @@ public class AppendOperation extends AbstractOperation {
 
     @Attr("index")
     public Integer getIndex() {
-        return index == null ? -1 : index;
+        return index == null ? Integer.valueOf(-1) : index;
     }
 
     @Node("@index")

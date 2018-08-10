@@ -408,7 +408,7 @@ public class CollectorWorker {
         return this;
     }
 
-    class ExtractCount {
+    static class ExtractCount {
 
         int extractedCount      = 0;
 

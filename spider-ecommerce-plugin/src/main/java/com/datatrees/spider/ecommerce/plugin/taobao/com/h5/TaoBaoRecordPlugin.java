@@ -71,7 +71,7 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         String pageContent = (String) getResponseByWebRequest(checkNode, AbstractLoginPlugin.ContentType.Content, null);
         logger.debug("访问安全页1：{}", pageContent);
         url = JsonPathUtil.readAsString(pageContent, "$.url");
-        String smApp = PatternUtils.group(url, "smApp=([^&]+)", 1);
+        //String smApp = PatternUtils.group(url, "smApp=([^&]+)", 1);
         String smPolicy = PatternUtils.group(url, "smPolicy=([^&]+)", 1);
         String smTag = PatternUtils.group(url, "smTag=([^&]+)", 1);
         String smReturn = PatternUtils.group(url, "smReturn=([^&]+)", 1);

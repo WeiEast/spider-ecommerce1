@@ -1,7 +1,6 @@
 package com.datatrees.spider.operator.plugin.an_hui_10086_web;
 
 import javax.script.Invocable;
-import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -268,7 +267,7 @@ public class AnHui10086ForWeb implements OperatorPlugin {
 
     public HttpResult<Map<String, Object>> submitForBillDetail(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
-        BigDecimal db = new BigDecimal(Math.random() * (1 - 0) + 0);
+        //BigDecimal db = new BigDecimal(Math.random() * (1 - 0) + 0);
         Response response = null;
         try {
             String referer = "https://service.ah.10086.cn/pub-page/qry/qryDetail/billDetailIndex.html?kind=200011522&f=200011538&area=cd";

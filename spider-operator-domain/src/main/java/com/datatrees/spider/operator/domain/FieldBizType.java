@@ -27,7 +27,7 @@ public enum FieldBizType {
     /**
      * bizType对应的input标签属性
      */
-    public static Map<String, InputField> fields = new HashMap<>();
+    public static final Map<String, InputField> fields = new HashMap<>();
 
     static {
         for (FieldBizType type : FieldBizType.values()) {

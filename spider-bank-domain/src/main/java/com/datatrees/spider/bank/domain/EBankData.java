@@ -18,7 +18,7 @@ import com.datatrees.spider.share.domain.AbstractData;
 @SuppressWarnings({"serial", "unchecked"})
 public class EBankData extends AbstractData {
 
-    public static String BANKID = "bankid";
+    public static final String BANKID = "bankid";
 
     public Integer getBankId() {
         return (Integer) this.get(BANKID);

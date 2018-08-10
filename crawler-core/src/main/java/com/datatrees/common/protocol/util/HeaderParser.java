@@ -31,15 +31,9 @@ public class HeaderParser {
         List<NameValuePair> headers = new ArrayList<NameValuePair>();
         try {
             if (StringUtils.isNotEmpty(header)) {
-                Map<String, String> headerMap = (Map) GsonUtils.fromJson(header, new TypeToken<Map<String, String>>() {}.getType());
-                Iterator<String> iterator = headerMap.keySet().iterator();
-                int i = 0;
-                NameValuePair temp = null;
-                while (iterator.hasNext()) {
-                    String key = iterator.next();
-                    String value = headerMap.get(key);
-                    temp = new NameValuePair(key, value);
-                    headers.add(temp);
+                Map<String, String> headerMap = GsonUtils.fromJson(header, new TypeToken<Map<String, String>>() {}.getType());
+                for (Map.Entry<String, String> next : headerMap.entrySet()) {
+                    headers.add(new NameValuePair(next.getKey(), next.getValue()));
                 }
             }
 

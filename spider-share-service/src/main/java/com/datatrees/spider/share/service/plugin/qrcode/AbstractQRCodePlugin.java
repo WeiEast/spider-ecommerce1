@@ -1,6 +1,5 @@
 package com.datatrees.spider.share.service.plugin.qrcode;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -10,14 +9,14 @@ import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
-import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
-import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
+import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveType;
+import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -46,7 +45,7 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
         Map<String, String> resultMap = new LinkedHashMap<String, String>();
         Map paramsMap = perpareParam(paramMap);
 
-        Map<String, Object> redisMap = new HashMap<String, Object>();
+        //Map<String, Object> redisMap = new HashMap<String, Object>();
         if (null == taskId || StringUtils.isBlank(websiteName)) {
             logger.error("invalid params taskId or websitename is empty! taskId={},websiteName={}", taskId, websiteName);
             resultMap.put(AttributeKey.ERROR_CODE, "-1");
@@ -123,7 +122,7 @@ public abstract class AbstractQRCodePlugin extends AbstractRawdataPlugin impleme
             getRedisService().saveDirectiveResult(directiveId, sendDirective);
         }
 
-        redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
+        //redisMap.put(PluginConstants.FIELD, DirectiveRedisCode.SKIP);
         logger.info("qrcode valid fail, taskId={},directiveId={},websiteName={},status={}", taskId, directiveId, websiteName,
                 DirectiveRedisCode.SKIP);
         //ThreadInterruptedUtil.setInterrupt(Thread.currentThread());

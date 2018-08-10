@@ -47,7 +47,7 @@ public class SimpleProxyManager extends ProxyManager {
             try {
                 com.treefinance.proxy.domain.Proxy proxy = proxyService.getProxy(taskId, websiteName);
                 if (null != proxy) {
-                    last = new Proxy(proxy.getIp(), Integer.valueOf(proxy.getPort()));
+                    last = new Proxy(proxy.getIp(), Integer.parseInt(proxy.getPort()));
                 }
             } catch (Exception e) {
                 logger.error("getProxy error taskId={},websiteName={}", taskId, websiteName, e);

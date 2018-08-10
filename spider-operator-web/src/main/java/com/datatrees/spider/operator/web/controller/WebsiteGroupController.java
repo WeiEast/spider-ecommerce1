@@ -74,7 +74,6 @@ public class WebsiteGroupController {
 
     @RequestMapping("/updateEnable")
     public SaasResult updateEnable(HttpServletResponse response, @RequestBody WebsiteGroup websiteGroup) {
-        HttpResult<Object> result = new HttpResult<>();
         response.setHeader("Access-Control-Allow-Origin", "*");
         try {
             if (null == websiteGroup) return Results.newFailedResult(CommonStateCode.PARAMETER_LACK, "请求参数websiteGroup不能为空！");
@@ -91,7 +90,6 @@ public class WebsiteGroupController {
     @RequestMapping("/getwebsitenamelist")
     public Object getwebsitenamelist(HttpServletResponse response, String enable, String groupCode, String operatorType) {
         logger.info("getwebsitenamelist() enable={},groupCode={},operatorType={}", enable, groupCode, operatorType);
-        HttpResult<Object> result = new HttpResult<>();
         response.setHeader("Access-Control-Allow-Origin", "*");
         return websiteGroupService.getWebsiteNameList(enable, groupCode, operatorType);
     }

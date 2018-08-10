@@ -29,7 +29,7 @@ class b {
 
     private static final char   b[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-    private final        String c   = "";
+    private static final String c = "";
 
     protected static int a(char c1, int i) {
         int j = Character.digit(c1, 16);

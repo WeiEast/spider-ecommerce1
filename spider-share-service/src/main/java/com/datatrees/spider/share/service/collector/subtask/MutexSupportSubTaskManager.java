@@ -173,7 +173,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         }
     }
 
-    class SubTaskFuture {
+    static class SubTaskFuture {
 
         String      mutexKey;
 
@@ -206,7 +206,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         private       int             subTaskCorePoolSize     = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
 
         private       long            maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 *
-                1000;
+                1000L;
 
         private       SubTaskExecutor subTaskExecutor;
 

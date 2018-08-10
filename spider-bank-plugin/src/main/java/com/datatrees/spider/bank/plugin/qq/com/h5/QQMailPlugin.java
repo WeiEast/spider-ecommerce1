@@ -210,8 +210,8 @@ public class QQMailPlugin implements CommonPlugin, QRPlugin {
             int bg_img_with = bgImg.getSize().getWidth();
             int bg_img_height = bgImg.getSize().getHeight();
             int side_bar_with = sideBar.getSize().getWidth();
-            int side_bar_left = Integer.valueOf(sideBar.getCssValue("left").replaceAll("px", ""));
-            int side_bar_top = Integer.valueOf(sideBar.getCssValue("top").replaceAll("px", ""));
+            int side_bar_left = Integer.parseInt(sideBar.getCssValue("left").replaceAll("px", ""));
+            int side_bar_top = Integer.parseInt(sideBar.getCssValue("top").replaceAll("px", ""));
             if (null != bgImg) {
                 String src = bgImg.getAttribute("src");
                 logger.info("src={}", src);
@@ -236,7 +236,6 @@ public class QQMailPlugin implements CommonPlugin, QRPlugin {
                 WebElement el = driver.findElement(By.id("tcaptcha_drag_thumb"));
                 Actions actions = new Actions(driver);
                 new Actions(driver).clickAndHold(el).perform();
-                List<Integer> list = new ArrayList<>();
                 int left = move;
                 //if (RedisUtils.incr("move.side.bar.count." + processId) <= 2) {
                 //    left += 30;
@@ -425,8 +424,8 @@ public class QQMailPlugin implements CommonPlugin, QRPlugin {
             Long taskId = param.getTaskId();
             String websiteName = param.getWebsiteName();
             //发送MQ指令(要求独立密码)
-            Map<String, String> data = new HashMap<>();
-            data.put(AttributeKey.REMARK, "请输入QQ邮箱的独立密码");
+            //Map<String, String> data = new HashMap<>();
+            //data.put(AttributeKey.REMARK, "请输入QQ邮箱的独立密码");
             String directiveId = redisService.createDirectiveId();
             processResult.setProcessStatus(ProcessStatus.REQUIRE_SECOND_PASSWORD);
             processResult.setData(directiveId);

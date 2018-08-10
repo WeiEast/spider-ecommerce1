@@ -45,34 +45,34 @@ public class BoxStyle {
      * @param units Units used for lengths (e.g. 'pt')
      */
     public BoxStyle(String units) {
-        this.units = new String(units);
-        fontFamily = null;
-        fontSize = 0;
-        fontWeight = null;
-        fontStyle = null;
-        lineHeight = 0;
-        wordSpacing = 0;
-        letterSpacing = 0;
-        color = null;
-        position = null;
-        left = 0;
-        top = 0;
+        this.units = units;
+        this.fontFamily = null;
+        this.fontSize = 0;
+        this.fontWeight = null;
+        this.fontStyle = null;
+        this.lineHeight = 0;
+        this.wordSpacing = 0;
+        this.letterSpacing = 0;
+        this.color = null;
+        this.position = null;
+        this.left = 0;
+        this.top = 0;
     }
 
     public BoxStyle(BoxStyle src) {
-        this.units = new String(src.units);
-        fontFamily = src.fontFamily == null ? null : new String(src.fontFamily);
-        fontSize = src.fontSize;
-        fontWeight = src.fontWeight == null ? null : new String(src.fontWeight);
-        fontStyle = src.fontStyle == null ? null : new String(src.fontStyle);
-        lineHeight = src.lineHeight;
-        wordSpacing = src.wordSpacing;
-        letterSpacing = src.letterSpacing;
-        color = src.color == null ? null : new String(src.color);
-        position = src.position == null ? null : new String(src.position);
-        left = src.left;
-        top = src.top;
-        strokeColor = src.strokeColor;
+        this.units = src.units;
+        this.fontFamily = src.fontFamily;
+        this.fontSize = src.fontSize;
+        this.fontWeight = src.fontWeight;
+        this.fontStyle = src.fontStyle;
+        this.lineHeight = src.lineHeight;
+        this.wordSpacing = src.wordSpacing;
+        this.letterSpacing = src.letterSpacing;
+        this.color = src.color;
+        this.position = src.position;
+        this.left = src.left;
+        this.top = src.top;
+        this.strokeColor = src.strokeColor;
     }
 
     public String toString() {

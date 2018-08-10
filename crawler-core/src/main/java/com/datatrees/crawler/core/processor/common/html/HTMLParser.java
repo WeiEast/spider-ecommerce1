@@ -51,7 +51,7 @@ public class HTMLParser {
         if (StringUtils.isNotEmpty(title) && title.length() > 2048) {
             title = title.substring(0, 2048);
         }
-        return new String(title);
+        return title;
     }
 
     /**

@@ -127,7 +127,7 @@ public class Request implements Serializable {
 
     @Tag("full-search-sign")
     public Boolean getFullSearchSign() {
-        return fullSearchSign == null ? true : fullSearchSign;
+        return fullSearchSign == null ? Boolean.TRUE : fullSearchSign;
     }
 
     @Node("full-search-sign/text()")
