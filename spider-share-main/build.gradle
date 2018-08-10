@@ -1,7 +1,3 @@
-plugins {
-    id "org.springframework.boot" version "1.5.9.RELEASE"
-}
-
 bootRepackage {
     mainClass = "com.datatrees.spider.share.main.Application"
 }
