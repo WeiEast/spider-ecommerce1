@@ -1,10 +1,20 @@
 allprojects {
     group = 'com.datatrees.spider'
-    version = '3.0.3-SNAPSHOT'
+    version = '3.0.4-SNAPSHOT'
 }
 
 ext {
     env = System.getProperty("env", "dev")
+}
+
+buildscript {
+    repositories {
+        maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+    }
+    dependencies {
+        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE'
+    }
 }
 
 subprojects {
@@ -13,6 +23,8 @@ subprojects {
     apply plugin: "idea"
     apply plugin: "eclipse"
     apply plugin: "maven"
+
+
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -52,7 +64,6 @@ subprojects {
     repositories {
         maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-        mavenLocal()
     }
 
     configurations.all {

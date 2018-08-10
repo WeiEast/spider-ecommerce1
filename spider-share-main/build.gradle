@@ -1,6 +1,4 @@
-plugins {
-    id "org.springframework.boot" version "1.5.9.RELEASE"
-}
+apply plugin: 'org.springframework.boot'
 
 bootRepackage {
     mainClass = "com.datatrees.spider.share.main.Application"
@@ -27,8 +25,8 @@ dependencies {
         exclude(module: "guava")
     }
 }
-apply from: rootProject.file("printLib.gradle")
 
+apply from: rootProject.file("printLib.gradle")
 
 
 
