@@ -226,10 +226,6 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         }
     }
 
-    @Override
-    public ProcessResult<Object> queryProcessResult(long processId) {
-        return ProcessResultUtils.queryProcessResult(processId);
-    }
 
     @Override
     public void sendLoginSuccessMsg(LoginMessage loginMessage) {

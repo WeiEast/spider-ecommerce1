@@ -161,4 +161,9 @@ public class SpiderTaskApiImpl implements SpiderTaskApi {
         monitorService.sendTaskCompleteMsg(taskId, null, errorCode.getErrorCode(), errorCode.getErrorMsg());
         return result.failure();
     }
+
+    @Override
+    public ProcessResult queryProcessResult(long processId) {
+        return ProcessResultUtils.queryProcessResult(processId);
+    }
 }

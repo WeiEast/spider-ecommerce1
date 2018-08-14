@@ -2,6 +2,7 @@ package com.datatrees.spider.share.api;
 
 import java.util.Map;
 
+import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
 
@@ -59,4 +60,12 @@ public interface SpiderTaskApi {
      * @return
      */
     HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
+
+
+    /**
+     * 查询处理结果
+     * @param processId 处理号
+     * @return
+     */
+    ProcessResult queryProcessResult(long processId);
 }

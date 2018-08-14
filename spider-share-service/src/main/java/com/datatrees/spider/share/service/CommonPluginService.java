@@ -4,7 +4,6 @@ import java.util.List;
 
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.spider.share.domain.http.HttpResult;
 
@@ -51,13 +50,6 @@ public interface CommonPluginService {
      * @return
      */
     HttpResult<Object> defineProcess(CommonPluginParam param);
-
-    /**
-     * 查询处理结果
-     * @param processId 处理号
-     * @return
-     */
-    ProcessResult queryProcessResult(long processId);
 
     /**
      * 发送登陆成功消息
