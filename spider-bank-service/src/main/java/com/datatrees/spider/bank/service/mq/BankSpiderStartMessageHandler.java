@@ -1,9 +1,10 @@
-package com.datatrees.spider.share.service.collector.listener.handler;
+package com.datatrees.spider.bank.service.mq;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.rocketmq.common.message.MessageExt;
+import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.TopicTag;
 import com.datatrees.spider.share.service.mq.CommonMqService;
 import com.datatrees.spider.share.service.mq.MessageHandler;
@@ -12,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginInfoMessageHandler implements MessageHandler {
+public class BankSpiderStartMessageHandler implements MessageHandler {
 
-    private static final Logger          logger = LoggerFactory.getLogger(LoginInfoMessageHandler.class);
+    private static final Logger          logger = LoggerFactory.getLogger(BankSpiderStartMessageHandler.class);
 
     @Resource
     private              CommonMqService commonMqService;
@@ -46,8 +47,7 @@ public class LoginInfoMessageHandler implements MessageHandler {
 
     @Override
     public String getTopic() {
-        //return TopicEnum.RAWDATA_INPUT.getCode();
-        return null;
+        return TopicEnum.SPIDER_BANK.getCode();
     }
 
 }

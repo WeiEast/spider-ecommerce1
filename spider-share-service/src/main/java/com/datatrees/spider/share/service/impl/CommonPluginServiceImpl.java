@@ -8,8 +8,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.spider.share.service.ClassLoaderService;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
@@ -17,9 +15,7 @@ import com.datatrees.spider.share.common.utils.*;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.spider.share.domain.http.HttpResult;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.WebsiteHolderService;
+import com.datatrees.spider.share.service.*;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -226,14 +222,13 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         }
     }
 
-
     @Override
-    public void sendLoginSuccessMsg(LoginMessage loginMessage) {
-        sendLoginSuccessMsg(loginMessage, null);
+    public void sendLoginSuccessMsg(String topic, LoginMessage loginMessage) {
+        sendLoginSuccessMsg(topic, loginMessage, null);
     }
 
     @Override
-    public void sendLoginSuccessMsg(LoginMessage loginMessage, List<Cookie> cookies) {
+    public void sendLoginSuccessMsg(String topic, LoginMessage loginMessage, List<Cookie> cookies) {
         Map<String, Object> map = new HashMap<>();
         map.put(AttributeKey.END_URL, loginMessage.getEndUrl());
         map.put(AttributeKey.TASK_ID, loginMessage.getTaskId());
@@ -251,7 +246,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
             String cookieString = TaskUtils.getCookieString(cookies);
             map.put(AttributeKey.COOKIE, cookieString);
         }
-        //BeanFactoryUtils.getBean(MessageService.class).sendMessage(TopicEnum.RAWDATA_INPUT.getCode(), TopicTag.LOGIN_INFO.getTag(), map);
+        BeanFactoryUtils.getBean(MessageService.class).sendMessage(topic, TopicTag.LOGIN_INFO.getTag(), map);
     }
 
     @Override

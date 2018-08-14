@@ -55,13 +55,13 @@ public interface CommonPluginService {
      * 发送登陆成功消息
      * @param loginMessage
      */
-    void sendLoginSuccessMsg(LoginMessage loginMessage);
+    void sendLoginSuccessMsg(String topic,LoginMessage loginMessage);
 
     /**
      * 发送登陆成功消息
      * @param loginMessage
      */
-    void sendLoginSuccessMsg(LoginMessage loginMessage, List<Cookie> cookies);
+    void sendLoginSuccessMsg(String topic, LoginMessage loginMessage, List<Cookie> cookies);
 
     /**
      * 刷新登陆二维码

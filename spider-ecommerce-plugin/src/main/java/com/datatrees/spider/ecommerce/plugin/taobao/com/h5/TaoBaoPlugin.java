@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
@@ -26,14 +27,8 @@ import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.treefinance.proxy.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
@@ -438,7 +433,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
             TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
 
-            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(loginMessage);
+            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(TopicEnum.SPIDER_ECOMMERCE.getCode(),loginMessage);
         }
 
         /**
