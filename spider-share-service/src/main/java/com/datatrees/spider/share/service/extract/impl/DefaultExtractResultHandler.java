@@ -19,7 +19,7 @@ public class DefaultExtractResultHandler implements ExtractResultHandler {
 
     @Override
     public ResultType getSupportResultType() {
-        return ResultType.MAILBILL;
+        return ResultType.DEFAULT;
     }
 
     @Override
