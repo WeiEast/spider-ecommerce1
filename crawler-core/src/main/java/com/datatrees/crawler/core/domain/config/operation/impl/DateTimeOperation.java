@@ -100,8 +100,7 @@ public class DateTimeOperation extends AbstractOperation {
      */
     @Override
     public String toString() {
-        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format +
-                ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
+        return "DateTimeOperation [baseType=" + baseType + ", dateTimeFieldType=" + dateTimeFieldType + ", offset=" + offset + ", format=" + format + ", calibrate=" + calibrate + ", sourceFormat=" + sourceFormat + "]";
     }
 
 }

@@ -14,7 +14,7 @@ import com.treefinance.crawler.framework.config.annotation.Path;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 上午10:31:08
  */

@@ -16,12 +16,11 @@ import com.treefinance.crawler.framework.config.annotation.Node;
 import org.apache.commons.lang.BooleanUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Mar 31, 2014 4:24:13 PM
  */
-@Description(value = "scope", keys = {"REQUEST", "USER_SESSION", "SESSION", "CUSTOM"}, types = {BaseCookie.class, BaseCookie.class, BaseCookie.class,
-        CustomCookie.class})
+@Description(value = "scope", keys = {"REQUEST", "USER_SESSION", "SESSION", "CUSTOM"}, types = {BaseCookie.class, BaseCookie.class, BaseCookie.class, CustomCookie.class})
 public abstract class AbstractCookie implements Serializable, Cloneable {
 
     /**
@@ -29,9 +28,9 @@ public abstract class AbstractCookie implements Serializable, Cloneable {
      */
     private static final long serialVersionUID = 2174790445783602115L;
 
-    CookieScope scope;
+    private CookieScope scope;
 
-    private Boolean retainQuote;
+    private Boolean     retainQuote;
 
     @Attr("scope")
     public CookieScope getScope() {

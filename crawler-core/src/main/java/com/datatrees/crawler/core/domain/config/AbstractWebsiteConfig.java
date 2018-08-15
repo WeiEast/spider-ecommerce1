@@ -16,14 +16,14 @@ import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.PythonPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.impl.ShellPlugin;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
-import com.treefinance.crawler.framework.config.SpiderConfig;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月7日 下午7:05:31
  */

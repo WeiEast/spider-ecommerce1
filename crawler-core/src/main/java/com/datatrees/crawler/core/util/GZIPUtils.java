@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A collection of utility methods for working on GZIPed data.
  */
+@Deprecated
 public class GZIPUtils {
 
     private static final Logger LOG                        = LoggerFactory.getLogger(GZIPUtils.class);

@@ -5,13 +5,12 @@
  * strictly prohibited. All rights are reserved.
  * Copyright (c) datatrees.com Inc. 2015
  */
-
 package com.datatrees.common.pipeline;
 
 import com.treefinance.crawler.framework.context.function.SpiderGenericRequest;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:08:31 PM
  */
@@ -21,15 +20,6 @@ public class Request extends SpiderGenericRequest {
         super();
     }
 
-    public Request(String content) {
-        setInput(content);
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
         return "Request [Input()=" + getInput() + "]";

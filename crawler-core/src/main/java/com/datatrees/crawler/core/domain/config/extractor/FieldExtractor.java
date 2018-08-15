@@ -20,6 +20,7 @@ import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -32,19 +33,31 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
     /**
      *
      */
-    private static final long serialVersionUID = 169636932735670442L;
-    private String                  field;
-    private String                  sourceId;
-    private String                  encoding;
-    private ResultType              resultType;
-    private String                  format;
-    private AbstractPlugin          plugin;
-    private List<AbstractOperation> operationList;
-    private Boolean                 notEmpty;
-    private FieldVisibleType        fieldVisibleType;
-    private Boolean                 standBy;
-    private String                  defaultValue;
-    private String                  businessType;
+    private static final long                    serialVersionUID = 169636932735670442L;
+
+    private              String                  field;
+
+    private              String                  sourceId;
+
+    private              String                  encoding;
+
+    private              ResultType              resultType;
+
+    private              String                  format;
+
+    private              AbstractPlugin          plugin;
+
+    private              List<AbstractOperation> operationList;
+
+    private              Boolean                 notEmpty;
+
+    private              FieldVisibleType        fieldVisibleType;
+
+    private              Boolean                 standBy;
+
+    private              String                  defaultValue;
+
+    private              String                  businessType;
 
     public FieldExtractor() {
         super();
@@ -68,7 +81,7 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
 
     @Node("@field")
     public void setField(String field) {
-        this.field = field;
+        this.field = StringUtils.trimToEmpty(field);
     }
 
     @Attr("source")
@@ -168,7 +181,7 @@ public class FieldExtractor extends AbstractBeanDefinition implements Serializab
 
     @Node("@business-type")
     public void setBusinessType(String businessType) {
-        this.businessType = businessType;
+        this.businessType = StringUtils.trim(businessType);
     }
 
     @Override

@@ -20,7 +20,7 @@ import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月30日 下午2:06:42
  */
@@ -51,8 +51,7 @@ public class LoginCheckConfig {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
-            CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }

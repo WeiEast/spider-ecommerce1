@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 7:18:24 PM
  */
 public enum ServiceType {
     Default("default"),
-    Grab_Service("grab"),
     Task_Http_Service("task_http"),
     Plugin_Service("plugin");
 

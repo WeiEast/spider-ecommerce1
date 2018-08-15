@@ -63,18 +63,6 @@ public enum BusinessType {
         this.enable = enable;
     }
 
-    public static BusinessType getBusinessType(String code) {
-        return Arrays.stream(BusinessType.values()).filter(businessType -> businessType.getCode().equals(code)).findFirst().orElse(null);
-    }
-
-    public static Map<WebsiteType, List<BusinessType>> getGroup() {
-        return Holder.MAP;
-    }
-
-    public static List<BusinessType> getBusinessTypeList(WebsiteType websiteType) {
-        return getGroup().get(websiteType);
-    }
-
     public String getCode() {
         return code;
     }
@@ -99,15 +87,25 @@ public enum BusinessType {
         return enable;
     }
 
+    public static BusinessType getBusinessType(String code) {
+        return Arrays.stream(BusinessType.values()).filter(businessType -> businessType.getCode().equals(code)).findFirst().orElse(null);
+    }
+
+    public static Map<WebsiteType, List<BusinessType>> getGroup() {
+        return Holder.MAP;
+    }
+
+    public static List<BusinessType> getBusinessTypeList(WebsiteType websiteType) {
+        return getGroup().get(websiteType);
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("code", code).append("name", name).append("websiteType", websiteType)
-                .append("open", open).append("enable", enable).toString();
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("code", code).append("name", name).append("websiteType", websiteType).append("open", open).append("enable", enable).toString();
     }
 
     private static class Holder {
 
-        private static final Map<WebsiteType, List<BusinessType>> MAP = Arrays.stream(BusinessType.values())
-                .collect(Collectors.groupingBy(BusinessType::getWebsiteType));
+        private static final Map<WebsiteType, List<BusinessType>> MAP = Arrays.stream(BusinessType.values()).collect(Collectors.groupingBy(BusinessType::getWebsiteType));
     }
 }

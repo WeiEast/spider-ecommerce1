@@ -16,7 +16,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2016年1月8日 上午11:47:35
  */
@@ -27,8 +27,7 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
     private final ReadWriteLock readWriteLock;
 
     public SynchronizedMap() {
-        super();
-        map = new HashMap<K, V>();
+        map = new HashMap<>();
         readWriteLock = new ReentrantReadWriteLock();
     }
 

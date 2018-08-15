@@ -11,7 +11,7 @@ package com.datatrees.common.pipeline;
 import com.treefinance.crawler.framework.context.function.SpiderGenericResponse;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 18, 2014 2:08:43 PM
  */
@@ -19,10 +19,6 @@ public class Response extends SpiderGenericResponse {
 
     public Response() {
         super();
-    }
-
-    public Response(String content) {
-        setOutPut(content);
     }
 
 }

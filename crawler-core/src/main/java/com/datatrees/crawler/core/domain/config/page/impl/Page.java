@@ -21,12 +21,13 @@ import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 2:02:36 PM
  */
 @Tag("page")
 public class Page extends AbstractPage {
+
     public static final Page NULL = new Page();
 
     private String            path;

@@ -12,7 +12,7 @@ import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.treefinance.crawler.framework.config.annotation.Path;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 25, 2014 12:50:25 PM
  */

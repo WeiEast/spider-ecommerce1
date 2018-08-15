@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月6日 上午12:06:37
  */
@@ -150,7 +150,7 @@ public class XPathUtil {
                         if (extractText) {
                             String text;
                             if (StringUtils.isEmpty(separate)) {
-                                 text = resultNode.getText().toString();
+                                text = resultNode.getText().toString();
                             } else {
                                 text = text(resultNode, separate);
                             }

@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.crawler.core.domain.config.segment;
@@ -20,14 +28,14 @@ import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.ChildTag;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 4:56:49 PM
  */
-@Description(value = "type", keys = {"XPATH", "JSONPATH", "REGEX", "SPLIT", "CALCULATE", "BASE"}, types = {XpathSegment.class, JsonPathSegment.class,
-        RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
+@Description(value = "type", keys = {"XPATH", "JSONPATH", "REGEX", "SPLIT", "CALCULATE", "BASE"}, types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
 public abstract class AbstractSegment implements Serializable {
 
     /**  */
@@ -126,7 +134,7 @@ public abstract class AbstractSegment implements Serializable {
 
     @Node("@name")
     public void setName(String name) {
-        this.name = name;
+        this.name = StringUtils.trim(name);
     }
 
     @Attr("result-class")
@@ -136,7 +144,7 @@ public abstract class AbstractSegment implements Serializable {
 
     @Node("@result-class")
     public void setResultClass(String resultClass) {
-        this.resultClass = resultClass;
+        this.resultClass = StringUtils.trim(resultClass);
     }
 
     @ChildTag("object-segment")
@@ -144,8 +152,7 @@ public abstract class AbstractSegment implements Serializable {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
-            CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }
@@ -177,7 +184,7 @@ public abstract class AbstractSegment implements Serializable {
 
     @Node("@source")
     public void setSourceId(String sourceId) {
-        this.sourceId = sourceId;
+        this.sourceId = StringUtils.trim(sourceId);
     }
 
     @Attr("not-empty")
@@ -192,7 +199,7 @@ public abstract class AbstractSegment implements Serializable {
 
     @Attr("max-cycles")
     public Integer getMaxCycles() {
-        return maxCycles;
+        return maxCycles == null || maxCycles < -1 ? Integer.valueOf(-1) : maxCycles;
     }
 
     @Node("@max-cycles")
@@ -267,7 +274,7 @@ public abstract class AbstractSegment implements Serializable {
 
     @Node("@business-type")
     public void setBusinessType(String businessType) {
-        this.businessType = businessType;
+        this.businessType = StringUtils.trim(businessType);
     }
 
     /*

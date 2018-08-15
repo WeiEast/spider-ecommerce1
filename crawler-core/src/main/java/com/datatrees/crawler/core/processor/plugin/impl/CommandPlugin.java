@@ -10,13 +10,12 @@ package com.datatrees.crawler.core.processor.plugin.impl;
 
 import java.io.File;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.PluginType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.datatrees.crawler.core.util.CommandLineExecutor;
+import com.treefinance.crawler.framework.util.CommandLineExecutor;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.slf4j.Logger;

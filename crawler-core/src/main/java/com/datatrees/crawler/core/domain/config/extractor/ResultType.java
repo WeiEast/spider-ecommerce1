@@ -8,11 +8,12 @@
 
 package com.datatrees.crawler.core.domain.config.extractor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Feb 7, 2014 4:29:24 PM
  */
@@ -21,22 +22,14 @@ public enum ResultType {
     NUMBER("number"),
     DATE("date"),
     PAYMENT("payment"),
-    RESOURCESTRING("resource_string"),
+    RESOURCE_STRING("resource_string"),
     FILE("file"),
     CURRENCY("currency"),
-    CURRENCYPAYMENT("currency_payment"),
+    CURRENCY_PAYMENT("currency_payment"),
     RMB("rmb"),
     BOOLEAN("boolean"),
     INT("int"),
     LONG("long");
-
-    private static Map<String, ResultType> ResultTypeMap = new HashMap<String, ResultType>();
-
-    static {
-        for (ResultType obj : values()) {
-            ResultTypeMap.put(obj.getValue(), obj);
-        }
-    }
 
     private final String value;
 
@@ -45,7 +38,11 @@ public enum ResultType {
     }
 
     public static ResultType getResultType(String value) {
-        return ResultTypeMap.get(value);
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+
+        return Arrays.stream(values()).filter(item -> item.getValue().equalsIgnoreCase(value)).findFirst().orElse(null);
     }
 
     public String getValue() {

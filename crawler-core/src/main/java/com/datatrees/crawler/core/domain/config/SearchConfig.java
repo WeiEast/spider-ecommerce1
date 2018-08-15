@@ -11,7 +11,6 @@ import com.datatrees.crawler.core.domain.config.parser.Parser;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.GrabService;
 import com.datatrees.crawler.core.domain.config.service.impl.PluginService;
 import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.treefinance.crawler.framework.config.annotation.ChildTag;
@@ -32,16 +31,25 @@ public class SearchConfig extends AbstractWebsiteConfig {
     /**
      *
      */
-    private static final long serialVersionUID = -3594853402134944912L;
-    private List<String>               protocolTypeList = new ArrayList<>();
-    private List<UrlFilter>            urlFilterList = new ArrayList<>();
-    private Properties                 properties;
-    private List<AbstractService>      serviceList = new ArrayList<>();
-    private List<Parser>               parserList = new ArrayList<>();
-    private List<Page>                 pageList = new ArrayList<>();
-    private List<SearchTemplateConfig> searchTemplateConfigList = new ArrayList<>();
-    private LoginConfig                loginConfig;
-    private List<String>               resultTagList = new ArrayList<>();
+    private static final long                       serialVersionUID         = -3594853402134944912L;
+
+    private              List<String>               protocolTypeList         = new ArrayList<>();
+
+    private              List<UrlFilter>            urlFilterList            = new ArrayList<>();
+
+    private              Properties                 properties;
+
+    private              List<AbstractService>      serviceList              = new ArrayList<>();
+
+    private              List<Parser>               parserList               = new ArrayList<>();
+
+    private              List<Page>                 pageList                 = new ArrayList<>();
+
+    private              List<SearchTemplateConfig> searchTemplateConfigList = new ArrayList<>();
+
+    private              LoginConfig                loginConfig;
+
+    private              List<String>               resultTagList            = new ArrayList<>();
 
     public SearchConfig() {
         super();
@@ -92,7 +100,7 @@ public class SearchConfig extends AbstractWebsiteConfig {
         return Collections.unmodifiableList(serviceList);
     }
 
-    @Node(value = "service-definition/service", types = {PluginService.class, GrabService.class, TaskHttpService.class}, registered = true)
+    @Node(value = "service-definition/service", types = {PluginService.class, TaskHttpService.class}, registered = true)
     public void setServiceList(AbstractService service) {
         this.serviceList.add(service);
     }

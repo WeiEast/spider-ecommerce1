@@ -19,29 +19,20 @@ import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 上午11:43:48
  */
 public abstract class AbstractPage extends AbstractBeanDefinition {
 
-    private List<AbstractSegment> segmentList;
-
-    /**
-     *
-     */
-    public AbstractPage() {
-        super();
-        segmentList = new ArrayList<AbstractSegment>();
-    }
+    private List<AbstractSegment> segmentList = new ArrayList<>();
 
     @ChildTag("object-segment")
     public List<AbstractSegment> getSegmentList() {
         return Collections.unmodifiableList(segmentList);
     }
 
-    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class,
-            CalculateSegment.class, BaseSegment.class})
+    @Node(value = "object-segment", types = {XpathSegment.class, JsonPathSegment.class, RegexSegment.class, SplitSegment.class, CalculateSegment.class, BaseSegment.class})
     public void setSegmentList(AbstractSegment segment) {
         this.segmentList.add(segment);
     }

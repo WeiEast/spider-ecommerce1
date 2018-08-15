@@ -21,6 +21,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A collection of utility methods for working on deflated data.
  */
+@Deprecated
 public class DeflateUtils {
 
     private static final Logger LOG                        = LoggerFactory.getLogger(DeflateUtils.class);

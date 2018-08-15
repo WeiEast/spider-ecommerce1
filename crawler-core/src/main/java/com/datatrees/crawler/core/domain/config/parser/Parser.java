@@ -10,7 +10,7 @@ import com.treefinance.crawler.framework.config.annotation.Tag;
 import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 9:28:58 PM
  */
@@ -22,7 +22,7 @@ public class Parser extends AbstractBeanDefinition implements Serializable {
      */
     private static final long                serialVersionUID = -1249743371163334883L;
 
-    private              List<ParserPattern> patterns;
+    private              List<ParserPattern> patterns = new ArrayList<ParserPattern>();
 
     private              String              urlTemplate;
 
@@ -34,7 +34,6 @@ public class Parser extends AbstractBeanDefinition implements Serializable {
 
     public Parser() {
         super();
-        patterns = new ArrayList<ParserPattern>();
     }
 
     @Tag("url-template")

@@ -9,7 +9,7 @@ import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since Jan 9, 2014 9:24:57 PM
  */
@@ -23,11 +23,10 @@ public class ParserPattern implements Serializable {
 
     private              String             regex;
 
-    private              List<IndexMapping> indexMappings;// not necessary
+    private              List<IndexMapping> indexMappings = new ArrayList<IndexMapping>();// not necessary
 
     public ParserPattern() {
         super();
-        indexMappings = new ArrayList<IndexMapping>();
     }
 
     @Tag("regex")
