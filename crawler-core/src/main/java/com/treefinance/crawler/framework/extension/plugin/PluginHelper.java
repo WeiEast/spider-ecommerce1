@@ -19,20 +19,14 @@ package com.treefinance.crawler.framework.extension.plugin;
 import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.util.ServiceUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,24 +69,8 @@ public final class PluginHelper {
             Integer retry) throws Exception {
         Objects.requireNonNull(linkNode);
         Objects.requireNonNull(processorContext);
-        SpiderRequest request = SpiderRequestFactory.make();
-        RequestUtil.setCurrentUrl(request, linkNode);
-        RequestUtil.setProcessorContext(request, processorContext);
-        RequestUtil.setContext(request, processorContext.getContext());
-        if (configuration != null) {
-            RequestUtil.setConf(request, configuration);
-        } else {
-            RequestUtil.setConf(request, PropertiesConfiguration.getInstance());
-        }
-        if (retry != null) {
-            RequestUtil.setRetryCount(request, retry);
-        }
 
-        SpiderResponse response = SpiderResponseFactory.make();
-        ServiceBase serviceProcessor = ProcessorFactory.getService(null);
-        serviceProcessor.invoke(request, response);
-
-        return response;
+        return ServiceUtils.invoke(null, linkNode, processorContext, configuration, processorContext.getContext(), retry);
     }
 
     public static String getProxy(String url) throws Exception {

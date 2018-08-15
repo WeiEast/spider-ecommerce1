@@ -12,15 +12,20 @@ import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.service.MessageService;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.util.ServiceUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -120,6 +125,28 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
         getDataResource().ttlSave(key, GsonUtils.toJson(map), 10 * 60 * 1000);
     }
 
+    protected Object sendRequest(LinkNode linkNode, ResultType resultType, Integer retries) {
+        try {
+            AbstractProcessorContext processorContext = PluginFactory.getProcessorContext();
+
+            SpiderResponse newResponse = ServiceUtils.invoke(null, linkNode, processorContext, null, processorContext.getContext(), retries);
+            if (resultType == ResultType.ValidCode) {
+                return ResponseUtil.getProtocolResponse(newResponse).getContent().getContent();
+            } else {
+                return org.apache.commons.lang3.StringUtils.defaultString((String) newResponse.getOutPut());
+            }
+
+        } catch (Exception e) {
+            logger.error("execute request error! " + e.getMessage(), e);
+        }
+
+        if (resultType == ResultType.ValidCode) {
+            return new byte[0];
+        } else {
+            return org.apache.commons.lang3.StringUtils.EMPTY;
+        }
+    }
+
     /**
      * 获取DataResource
      * @return
@@ -153,4 +180,8 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
         return PluginFactory.getProcessorContext().getLong(AttributeKey.TASK_ID);
     }
 
+    public enum ResultType {
+        ValidCode,
+        Content
+    }
 }

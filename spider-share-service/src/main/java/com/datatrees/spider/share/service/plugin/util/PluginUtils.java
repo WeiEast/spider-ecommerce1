@@ -1,18 +1,11 @@
 package com.datatrees.spider.share.service.plugin.util;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginContext;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
-import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.util.ServiceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,20 +33,15 @@ public class PluginUtils {
      * @return
      */
     public static String getResponseByWebRequest(LinkNode linkNode) {
-        SpiderRequest newRequest = SpiderRequestFactory.make();
         AbstractProcessorContext processorContext = PluginContext.getProcessorContext();
-        RequestUtil.setProcessorContext(newRequest, processorContext);
-        RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
-        RequestUtil.setContext(newRequest, processorContext.getContext());
-        SpiderResponse newResponse = SpiderResponseFactory.make();
+
         try {
-            RequestUtil.setCurrentUrl(newRequest, linkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
-            serviceProcessor.invoke(newRequest, newResponse);
+            return ServiceUtils.invokeAsString(null, linkNode, processorContext, null, processorContext.getContext());
         } catch (Exception e) {
             logger.error("getResponseByWebRequest error! url={}", linkNode.getUrl(), e);
         }
-        return StringUtils.defaultString(RequestUtil.getContent(newRequest));
+
+        return StringUtils.EMPTY;
     }
 
     /**

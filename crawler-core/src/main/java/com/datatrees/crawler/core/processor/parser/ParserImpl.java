@@ -23,19 +23,16 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionParser;
+import com.treefinance.crawler.framework.util.ServiceUtils;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -88,13 +85,8 @@ public class ParserImpl {
                 logger.info("sleep {}s before parser request.", parser.getSleepSecond());
                 TimeUnit.SECONDS.sleep(parser.getSleepSecond());
             }
-            SpiderRequest newRequest = SpiderRequestFactory.make();
-            RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
-            RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
-            RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
-            SpiderResponse newResponse = SpiderResponseFactory.make();
 
-            return getResponseByWebRequest(newRequest, newResponse, results.get(0));
+            return sendRequest(results.get(0), request);
         } else if (isNeedReturnUrlList()) {
             // support multi parsers
             return results;
@@ -182,7 +174,7 @@ public class ParserImpl {
         return fieldScopes;
     }
 
-    private String getResponseByWebRequest(SpiderRequest newRequest, SpiderResponse newResponse, String complexUrl) throws InvokeException, ResultEmptyException {
+    private String sendRequest(String complexUrl, SpiderRequest request) throws InvokeException, ResultEmptyException {
         String datas[] = ParserURLCombiner.decodeParserUrl(complexUrl);
         String url = datas[0];
         String referer = datas[1];
@@ -195,22 +187,20 @@ public class ParserImpl {
         }
 
         LinkNode currentLinkNode = new LinkNode(url);
-        // add referer
-        if (StringUtils.isNotEmpty(referer)) {
-            currentLinkNode.getHeaders().put(Constants.HTTP_HEADER_REFERER, referer);
-        }
         // // add json headers
         if (StringUtils.isNotEmpty(headers)) {
             Map<String, String> headersMap = GsonUtils.fromJson(headers, new TypeToken<Map<String, String>>() {}.getType());
             currentLinkNode.addHeaders(headersMap);
         }
-        RequestUtil.setCurrentUrl(newRequest, currentLinkNode);
-        AbstractProcessorContext context = RequestUtil.getProcessorContext(newRequest);
-        AbstractService service = context.getDefaultService();
-        ServiceBase serviceProcessor = ProcessorFactory.getService(service);
-        serviceProcessor.invoke(newRequest, newResponse);
+        // add referer
+        if (StringUtils.isNotEmpty(referer)) {
+            currentLinkNode.addHeader(Constants.HTTP_HEADER_REFERER, referer);
+        }
 
-        return StringUtils.defaultString(RequestUtil.getContent(newRequest));
+        AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(request);
+        AbstractService service = processorContext.getDefaultService();
+
+        return ServiceUtils.invokeAsString(service, currentLinkNode, processorContext, RequestUtil.getConf(request), RequestUtil.getContext(request));
     }
 
     public boolean isNeedRequest() {

@@ -1,0 +1,78 @@
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.treefinance.crawler.framework.util;
+
+import java.util.Map;
+
+import com.datatrees.common.conf.Configuration;
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.crawler.core.processor.common.ProcessorFactory;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.InvokeException;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * notice: service invoking must be effective in search processing context
+ * @author Jerry
+ * @since 01:10 2018/7/24
+ */
+public final class ServiceUtils {
+
+    public static String invokeAsString(AbstractService service, LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration, Map<String, Object> extra) throws InvokeException, ResultEmptyException {
+        SpiderResponse response = invoke(service, linkNode, processorContext, configuration, extra, null);
+
+        return StringUtils.defaultString((String) response.getOutPut());
+    }
+
+    public static SpiderResponse invoke(AbstractService service, LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration, Map<String, Object> extra) throws InvokeException, ResultEmptyException {
+        return invoke(service, linkNode, processorContext, configuration, extra, null);
+    }
+
+    public static SpiderResponse invoke(AbstractService service, LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration, Map<String, Object> extra, Integer retry) throws InvokeException, ResultEmptyException {
+        if (!(processorContext instanceof SearchProcessorContext)) {
+            throw new UnsupportedOperationException("Service invoking must be effective in search processing context.");
+        }
+
+        SpiderRequest request = SpiderRequestFactory.make();
+        RequestUtil.setCurrentUrl(request, linkNode);
+        RequestUtil.setProcessorContext(request, processorContext);
+        RequestUtil.setConf(request, configuration == null ? PropertiesConfiguration.getInstance() : configuration);
+        if (extra != null) {
+            RequestUtil.setContext(request, extra);
+        }
+        if (retry != null) {
+            RequestUtil.setRetryCount(request, retry);
+        }
+
+        SpiderResponse response = SpiderResponseFactory.make();
+
+        ServiceBase serviceProcessor = ProcessorFactory.getService(service);
+        serviceProcessor.invoke(request, response);
+
+        return response;
+    }
+}

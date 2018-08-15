@@ -3,7 +3,6 @@ package com.datatrees.crawler.core.processor.login;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CookieFormater;
@@ -17,13 +16,14 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.net.HttpHeaders;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.util.ServiceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -81,21 +81,12 @@ public class LoginUtil {
         return StringUtils.EMPTY;
     }
 
-    private ProtocolOutput getProtocolOutput(LinkNode linkNode, SearchProcessorContext context) {
-        try {
-            SpiderRequest request = SpiderRequestFactory.make();
-            RequestUtil.setProcessorContext(request, context);
-            RequestUtil.setConf(request, PropertiesConfiguration.getInstance());
-            SpiderResponse response = SpiderResponseFactory.make();
-            RequestUtil.setCurrentUrl(request, linkNode);
-            AbstractService service = context.getDefaultService();
-            ServiceBase serviceProcessor = ProcessorFactory.getService(service);
-            serviceProcessor.invoke(request, response);
-            return ResponseUtil.getProtocolResponse(response);
-        } catch (Exception e) {
-            logger.error("execute request error! " + e.getMessage(), e);
-        }
-        return null;
+    private ProtocolOutput getProtocolOutput(LinkNode linkNode, SearchProcessorContext context) throws InvokeException, ResultEmptyException {
+        AbstractService service = context.getDefaultService();
+
+        SpiderResponse response = ServiceUtils.invoke(service, linkNode, context, null, null);
+
+        return ResponseUtil.getProtocolResponse(response);
     }
 
     /**

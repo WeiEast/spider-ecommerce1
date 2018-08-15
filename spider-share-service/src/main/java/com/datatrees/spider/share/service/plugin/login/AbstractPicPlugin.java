@@ -9,13 +9,9 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -25,10 +21,6 @@ import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin.ContentType;
 import com.google.gson.reflect.TypeToken;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
-import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -163,34 +155,9 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
         return PropertiesConfiguration.getInstance().getInt(websiteName + ".picCode.max.waittime", 2 * 60 * 1000);
     }
 
-    protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retyrcount) {
-        boolean flag = false;
-        Object result = null;
-        SpiderRequest newRequest = SpiderRequestFactory.make();
-        RequestUtil.setProcessorContext(newRequest, PluginFactory.getProcessorContext());
-        RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
-        RequestUtil.setContext(newRequest, PluginFactory.getProcessorContext().getContext());
-        RequestUtil.setRetryCount(newRequest, retyrcount);
-        SpiderResponse newResponse = SpiderResponseFactory.make();
-        try {
-            RequestUtil.setCurrentUrl(newRequest, linkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
-            serviceProcessor.invoke(newRequest, newResponse);
-        } catch (Exception e) {
-            logger.error("execute request error! " + e.getMessage(), e);
-            flag = true;
-        }
-        switch (contentType) {
-            case ValidCode:
-                result = flag ? new byte[0] : ResponseUtil.getProtocolResponse(newResponse).getContent().getContent();
-                break;
-            case Content:
-                result = flag ? StringUtils.EMPTY : StringUtils.defaultString(RequestUtil.getContent(newRequest));
-                break;
-            default:
-                break;
-        }
-        return result;
+    @Deprecated
+    protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retries) {
+        return sendRequest(linkNode, contentType == AbstractLoginPlugin.ContentType.ValidCode ? ResultType.ValidCode : ResultType.Content, retries);
     }
 
 }
