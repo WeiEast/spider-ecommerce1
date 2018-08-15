@@ -30,13 +30,10 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
-import com.treefinance.crawler.framework.decode.DecodeUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
-import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.google.common.base.Preconditions;
@@ -44,7 +41,11 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
+import com.treefinance.crawler.framework.decode.DecodeUtils;
 import com.treefinance.crawler.framework.parser.HTMLParser;
+import com.treefinance.crawler.framework.process.search.RegexUrlFilterHandler;
+import com.treefinance.crawler.framework.process.search.URLHandler;
+import com.treefinance.crawler.framework.process.search.UrlFilterHandler;
 import com.treefinance.crawler.framework.util.URLSplitter;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
@@ -136,7 +137,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                 }
 
                 // filter url set url depth
-                urlLinkNodes = filterUrls(request, urlLists, current);
+                urlLinkNodes = filterUrls(urlLists, current, request);
             } else {
                 logger.warn("after page replace content is empty! LinkNode: {}", current);
             }
@@ -250,24 +251,23 @@ public class PageImpl extends ProcessorInvokerAdapter {
     /**
      * using white and black list to filter web url adjust depth
      */
-    private List<LinkNode> filterUrls(SpiderRequest req, Map<String, LinkNode> urlLists, LinkNode current) {
-        SearchProcessorContext wrapper = (SearchProcessorContext) req.getProcessorContext();
-        SearchConfig config = wrapper.getSearchConfig();
-        String template = RequestUtil.getCurrentTemplateId(req);
-
-        URLHandler urlHandler = RequestUtil.getURLHandler(req);
-
-        SearchTemplateConfig searchTemplateConfig = wrapper.getSearchTemplateConfig(RequestUtil.getCurrentTemplateId(req));
-        String revisitPattern = null;
-        if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null &&
-                StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
-            revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();
-        }
-        List<LinkNode> nodes = new ArrayList<LinkNode>();
-        List<UrlFilter> filters = addDefaultFilter(config.getUrlFilterList(), req);
-        URLRegexFilter fl = new URLRegexFilter(filters);
-
+    private List<LinkNode> filterUrls(Map<String, LinkNode> urlLists, LinkNode current, SpiderRequest request) {
+        List<LinkNode> nodes = new ArrayList<>();
         if (MapUtils.isNotEmpty(urlLists)) {
+            SearchProcessorContext processorContext = (SearchProcessorContext) request.getProcessorContext();
+
+            String templateId = RequestUtil.getCurrentTemplateId(request);
+
+            SearchTemplateConfig searchTemplateConfig = processorContext.getSearchTemplateConfig(templateId);
+            String revisitPattern = null;
+            if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
+                revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();
+            }
+
+            URLHandler urlHandler = RequestUtil.getURLHandler(request);
+
+            UrlFilterHandler urlFilterHandler = createUrlFilterHandler(processorContext, request.getConfiguration());
+
             for (Entry<String, LinkNode> entry : urlLists.entrySet()) {
                 String originalURL = entry.getKey();
                 LinkNode node = entry.getValue();
@@ -280,12 +280,11 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     } else {
                         tmp = node;
                     }
-
                     tmp.setUrl(url);
-                    // filll page title
                     tmp.setPageTitle(current.getPageTitle());
+
                     logger.debug("filter url : {}", url);
-                    String dest = fl.filter(url);
+
                     // run url handler
                     if (urlHandler != null) {
                         try {
@@ -298,7 +297,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     }
 
                     if (!removed) {
-                        if (tmp.isHosting() || StringUtils.isNotEmpty(dest)) {
+                        if (tmp.isHosting() || !urlFilterHandler.filter(url)) {
                             String referer = StringUtils.isNotEmpty(current.getRedirectUrl()) ? current.getRedirectUrl() : current.getUrl();
                             if (StringUtils.isEmpty(tmp.getReferer())) {
                                 tmp.setReferer(referer);
@@ -313,7 +312,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                             }
 
                             // adjust depth
-                            wrapper.adjustUrlDepth(tmp, template, depth);
+                            processorContext.adjustUrlDepth(tmp, templateId, depth);
                             nodes.add(tmp);
                             logger.debug("{} @@accept url: {}", current.getUrl(), url);
                         } else {
@@ -341,14 +340,16 @@ public class PageImpl extends ProcessorInvokerAdapter {
         return nodes;
     }
 
-    private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, SpiderRequest req) {
-        Configuration conf = req.getConfiguration();
-        SearchProcessorContext wrapper = (SearchProcessorContext) req.getProcessorContext();
+    private UrlFilterHandler createUrlFilterHandler(@Nonnull SearchProcessorContext processorContext, Configuration conf) {
+        SearchConfig config = processorContext.getSearchConfig();
+        List<UrlFilter> urlFilterList = config.getUrlFilterList();
+
+        List<UrlFilter> urlFilters = new ArrayList<>(urlFilterList);
+
         String blackList = Constants.URL_BLACK_LIST;
         if (conf != null) {
             blackList = conf.get("url.blacklist", blackList);
         }
-        List<UrlFilter> urlFilters = new ArrayList<>(filters);
 
         UrlFilter filter = new UrlFilter();
         filter.setFilter(blackList);
@@ -356,7 +357,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         urlFilters.add(filter);
 
         // add default domain white filter
-        String domain = wrapper.getWebsite().getWebsiteDomain();
+        String domain = processorContext.getWebsite().getWebsiteDomain();
         if (StringUtils.isNotEmpty(domain)) {
             filter = new UrlFilter();
             filter.setFilter(domain.toLowerCase());
@@ -364,7 +365,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
             urlFilters.add(filter);
         }
 
-        return urlFilters;
+        return new RegexUrlFilterHandler(urlFilters);
     }
 
     private Map<String, LinkNode> extractUrlsWithOutSegments(String content, SpiderRequest request) {

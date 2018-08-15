@@ -13,14 +13,11 @@ import javax.annotation.Nonnull;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ParserOperation;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
-import com.datatrees.crawler.core.processor.filter.FieldRequestFilter;
-import com.datatrees.crawler.core.processor.filter.ParserUrlListFilter;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.parser.ParserImpl;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -29,8 +26,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class ParserOperationImpl extends Operation<ParserOperation> {
 
-    private static final FieldRequestFilter  fieldFilter         = new FieldRequestFilter();
-    private static final ParserUrlListFilter parserUrlListFilter = new ParserUrlListFilter();
+    private static final String URL_FIELD = "url";
 
     public ParserOperationImpl(@Nonnull ParserOperation operation, @Nonnull FieldExtractor extractor) {
         super(operation, extractor);
@@ -52,17 +48,9 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
         FieldExtractor field = getExtractor();
         logger.debug("field name: {}", field);
 
-        boolean needRequest = false;
-        String fieldResult = fieldFilter.filter(field.getField());
-        if (StringUtils.isNotEmpty(fieldResult)) {
-            needRequest = true;
-        }
-
-        boolean needReturnUrlList = false;
-        String urlList = parserUrlListFilter.filter(field.getField());
-        if (StringUtils.isNotEmpty(urlList)) {
-            needReturnUrlList = true;
-        }
+        String fieldName = field.getField();
+        boolean needRequest = !fieldName.toLowerCase().endsWith(URL_FIELD);
+        boolean needReturnUrlList = !needRequest && fieldName.length() == URL_FIELD.length();
 
         logger.debug("invoke parser process: {}", field);
         try {
