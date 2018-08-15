@@ -8,8 +8,9 @@
 
 package com.datatrees.crawler.core.domain.config.extractor;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Arrays;
+
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -17,17 +18,20 @@ import java.util.Map;
  * @since 2015年7月21日 下午1:23:40
  */
 public enum FieldVisibleType {
+    /**
+     * request scope
+     */
     REQUEST("request"),
+    /**
+     * context scope, like that some fields only was stored in search context or extract context.
+     * <p>notice: the context scope contains request scope</p>
+     */
     CONTEXT("context"),
+    /**
+     * only stored in <code>processor_result</code> of task context.
+     * @see com.datatrees.crawler.core.processor.SearchProcessorContext#processorResult
+     */
     PROCESSOR_RESULT("processor_result");
-
-    private static Map<String, FieldVisibleType> fieldVisibleTypeMap = new HashMap<String, FieldVisibleType>();
-
-    static {
-        for (FieldVisibleType obj : values()) {
-            fieldVisibleTypeMap.put(obj.getValue(), obj);
-        }
-    }
 
     private final String value;
 
@@ -36,7 +40,11 @@ public enum FieldVisibleType {
     }
 
     public static FieldVisibleType getFieldVisibleType(String value) {
-        return fieldVisibleTypeMap.get(value);
+        if (StringUtils.isEmpty(value)) {
+            return null;
+        }
+
+        return Arrays.stream(values()).filter(e -> e.getValue().equalsIgnoreCase(value)).findFirst().orElse(null);
     }
 
     public String getValue() {

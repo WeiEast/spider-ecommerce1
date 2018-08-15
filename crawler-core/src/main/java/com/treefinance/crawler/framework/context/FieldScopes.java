@@ -27,7 +27,7 @@ public final class FieldScopes {
     }
 
     public static Map<String, Object> getSharedFields(SpiderRequest request) {
-        return RequestUtil.getSourceMap(request);
+        return request.getGlobalScopeAsMap();
     }
 
     public static Map<String, Object> getExtractFields(SpiderResponse response) {
@@ -44,7 +44,7 @@ public final class FieldScopes {
             }
         }
         if (result == null) {
-            result = RequestUtil.getSourceMap(request).get(name);
+            result = request.getGlobalFieldValue(name);
         }
         LOGGER.debug("Search field in extracted fields or global fields. - name: {}, value: {}", name, result);
 

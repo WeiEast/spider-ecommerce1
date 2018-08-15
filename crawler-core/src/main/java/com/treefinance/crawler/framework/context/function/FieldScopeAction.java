@@ -24,11 +24,75 @@ import java.util.Map;
  */
 public interface FieldScopeAction {
 
-    Map<String, Object> getRequestContext();
+    /**
+     * the shared fields map with the global request scope.
+     * <p>
+     *     Notice: it's a temp scope. only used in nested segment processing.
+     * </p>
+     */
+    void addLocalScope(Map<String, Object> localScope);
 
-    void addRequestContext(String name, Object value);
+    /**
+     * the shared fields map with the global request scope.
+     * @return the unmodifiable map.
+     */
+    Map<String, Object> getVisibleScope();
 
-    void addRequestContext(Map<String, Object> context);
+    void addVisibleScope(String name, Object value);
 
-    void setRequestContext(Map<String, Object> context);
+    void addVisibleScope(Map<String, Object> visibleScope);
+
+    void setVisibleScope(Map<String, Object> visibleScope);
+
+    /**
+     * the shared fields map with the global context scope.
+     * @return the unmodifiable map.
+     */
+    Map<String, Object> getContextScope();
+
+    /**
+     * put the field into context scope, and also put into request scope as well
+     */
+    void addContextScope(String name, Object value);
+
+    /**
+     * put the fields into context scope, and also put into request scope as well
+     */
+    void addContextScope(Map<String, Object> contextScope);
+
+    /**
+     * reset context scope with the given fields, and also put into request scope as well
+     */
+    void setContextScope(Map<String, Object> contextScope);
+
+    /**
+     * the shared fields map with the global processor-result scope.
+     * @return the unmodifiable map.
+     */
+    Map<String, Object> getResultScope();
+
+    /**
+     * put the field into result scope, and also put into request scope and context scope as well
+     */
+    void addResultScope(String name, Object value);
+
+    /**
+     * put the fields into result scope, and also put into request scope and context scope as well
+     */
+    void addResultScope(Map<String, Object> resultScope);
+
+    /**
+     * reset result scope with the given fields, and also put into request scope and context scope as well
+     */
+    void setResultScope(Map<String, Object> resultScope);
+
+    GlobalScope getGlobalScope();
+
+    /**
+     * the shared fields map with the visible scope that contains request scope, context scope and processor_result scope.
+     * @return the unmodifiable map.
+     */
+    Map<String, Object> getGlobalScopeAsMap();
+
+    Object getGlobalFieldValue(String name);
 }

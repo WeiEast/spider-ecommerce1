@@ -59,7 +59,7 @@ public class FormatConfig implements Serializable {
 
     @Nonnull
     public DateTimeFormats getDateTimeFormats() {
-        return (DateTimeFormats) request.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
+        return (DateTimeFormats) request.computeExtraIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
     }
 
     public DateTimeFormatter getDateTimeFormatter(String pattern) {
@@ -69,7 +69,7 @@ public class FormatConfig implements Serializable {
     @SuppressWarnings("unchecked")
     @Nonnull
     public Map<String, NumberUnit> getNumberFormatMap(Configuration conf) {
-        return (Map<String, NumberUnit>) request.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(conf));
+        return (Map<String, NumberUnit>) request.computeExtraIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(conf));
     }
 
     public AbstractProcessorContext getProcessorContext() {

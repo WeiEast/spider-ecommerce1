@@ -23,7 +23,6 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.reflect.TypeToken;
@@ -108,11 +107,11 @@ public class ParserImpl {
         if (parser.findExp()) {
             List<Map<String, Object>> fieldScopes = findByRegex(content);
 
-            Map<String, Object> context = RequestUtil.getSourceMap(request);
+            Map<String, Object> globalScope = request.getGlobalScopeAsMap();
             if (CollectionUtils.isNotEmpty(fieldScopes)) {
                 List<String> list = fieldScopes.stream().map(fieldScope -> {
                     try {
-                        return parser.evalExp(ImmutableList.of(fieldScope, context), true, false);
+                        return parser.evalExp(ImmutableList.of(fieldScope, globalScope), true, false);
                     } catch (Exception e) {
                         logger.warn("Error eval expression with url: {}, fieldScope: {}", expUrl, JSON.toJSONString(fieldScope));
                     }
@@ -125,7 +124,7 @@ public class ParserImpl {
             }
 
             // if not find field result using default input context
-            return Collections.singletonList(parser.evalExp(context, true, false));
+            return Collections.singletonList(parser.evalExp(globalScope, true, false));
         }
 
         return Collections.singletonList(expUrl);
@@ -200,7 +199,7 @@ public class ParserImpl {
         AbstractProcessorContext processorContext = request.getProcessorContext();
         AbstractService service = processorContext.getDefaultService();
 
-        return ServiceUtils.invokeAsString(service, currentLinkNode, processorContext, request.getConfiguration(), request.getRequestContext());
+        return ServiceUtils.invokeAsString(service, currentLinkNode, processorContext, request.getConfiguration(), request.getVisibleScope());
     }
 
     public boolean isNeedRequest() {

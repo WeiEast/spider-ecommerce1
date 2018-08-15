@@ -8,6 +8,8 @@
 
 package com.datatrees.crawler.core.processor.common;
 
+import java.util.Map;
+
 import com.datatrees.crawler.core.util.SynchronizedMap;
 
 /**
@@ -15,4 +17,12 @@ import com.datatrees.crawler.core.util.SynchronizedMap;
  * @version 1.0
  * @since 2015年8月3日 下午1:52:39
  */
-public class ProcessorResult<K, V> extends SynchronizedMap<K, V> {}
+public class ProcessorResult<K, V> extends SynchronizedMap<K, V> {
+
+    public ProcessorResult() {
+    }
+
+    public ProcessorResult(Map<K, V> m) {
+        super(m);
+    }
+}

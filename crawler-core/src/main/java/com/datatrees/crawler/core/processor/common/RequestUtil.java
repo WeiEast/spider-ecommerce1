@@ -8,15 +8,13 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.process.search.URLHandler;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -47,16 +45,6 @@ public class RequestUtil {
 
     public static void setURLHandler(SpiderRequest req, URLHandler handler) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER, handler);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> getRequestVisibleFields(SpiderRequest req) {
-        return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.RREQUEST_VISIBLE_FIELS, k -> new HashMap<>());
-    }
-
-    @SuppressWarnings("unchecked")
-    public static void setRequestVisibleFields(SpiderRequest req, Map<String, Object> fields) {
-        req.setAttribute(Constants.RREQUEST_VISIBLE_FIELS, fields);
     }
 
     public static String getCurrentTemplateId(SpiderRequest req) {
@@ -114,17 +102,6 @@ public class RequestUtil {
 
     public static void setAttribute(SpiderRequest req, String key, Object obj) {
         req.setAttribute(Constants.REQUEST_PREFIX + key, obj);
-    }
-
-    public static Map<String, Object> getSourceMap(SpiderRequest request) {
-        Map<String, Object> sourceMap = new HashMap<String, Object>();
-        AbstractProcessorContext processorContext = request.getProcessorContext();
-        if (processorContext != null) {
-            sourceMap.putAll(processorContext.getContext());
-        }
-        sourceMap.putAll(request.getRequestContext());
-        sourceMap.putAll(RequestUtil.getRequestVisibleFields(request));
-        return sourceMap;
     }
 
     /**

@@ -129,7 +129,7 @@ public abstract class AbstractRawdataPlugin extends AbstractClientPlugin {
         try {
             AbstractProcessorContext processorContext = PluginFactory.getProcessorContext();
 
-            SpiderResponse newResponse = ServiceUtils.invoke(null, linkNode, processorContext, null, processorContext.getContext(), retries);
+            SpiderResponse newResponse = ServiceUtils.invoke(null, linkNode, processorContext, null, processorContext.getVisibleScope(), retries);
             if (resultType == ResultType.ValidCode) {
                 return ResponseUtil.getProtocolResponse(newResponse).getContent().getContent();
             } else {

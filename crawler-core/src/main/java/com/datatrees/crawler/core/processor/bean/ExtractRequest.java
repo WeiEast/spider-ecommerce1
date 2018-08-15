@@ -56,9 +56,8 @@ public class ExtractRequest extends Request {
             extractRequest.setInput(input);
 
             if (input instanceof Map) {
-                extractRequest.addRequestContext((Map<String, Object>) input);
+                extractRequest.addVisibleScope((Map<String, Object>) input);
             }
-            extractRequest.addRequestContext(extractContext.getContext());
 
             return extractRequest;
         }

@@ -142,15 +142,16 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         // set field result visible
         FieldVisibleType fieldVisibleType = fieldExtractor.getFieldVisibleType();
         if (fieldVisibleType != null) {
-            if (FieldVisibleType.REQUEST.equals(fieldVisibleType)) {
-                RequestUtil.getRequestVisibleFields(request).put(id, fieldResult);
-            } else if (FieldVisibleType.CONTEXT.equals(fieldVisibleType)) {
-                request.addRequestContext(id, fieldResult);
-                request.getProcessorContext().addAttribute(id, fieldResult);
-            } else if (FieldVisibleType.PROCESSOR_RESULT.equals(fieldVisibleType)) {
-                request.addRequestContext(id, fieldResult);
-                request.getProcessorContext().addAttribute(id, fieldResult);
-                request.getProcessorContext().addProcessorResult(id, fieldResult);
+            switch (fieldVisibleType) {
+                case PROCESSOR_RESULT:
+                    request.addResultScope(id, fieldResult);
+                    break;
+                case CONTEXT:
+                    request.addContextScope(id, fieldResult);
+                    break;
+                default:
+                    request.addVisibleScope(id, fieldResult);
+                    break;
             }
         }
 
@@ -161,8 +162,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         }
     }
 
-    private Object extractWithOperation(String content, SpiderRequest request,
-            FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
+    private Object extractWithOperation(String content, SpiderRequest request, FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
         OperationPipeline pipeline = new OperationPipeline(fieldExtractor);
         return pipeline.start(content, request, fieldExtractResultSet);
     }
@@ -209,14 +209,12 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return fieldResult;
     }
 
-    private Object fieldDefaultValue(SpiderRequest request, SpiderResponse response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult,
-            ResultType type) {
+    private Object fieldDefaultValue(SpiderRequest request, SpiderResponse response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult, ResultType type) {
         String defaultValue = fieldExtractor.getDefaultValue();
         if (defaultValue != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
             Object result;
             if (ResultType.String.equals(type)) {
-                result = StandardExpression
-                        .eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
+                result = StandardExpression.eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
             } else {
                 String val;
                 if (type != null) {
@@ -224,8 +222,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
                 } else {
                     val = defaultValue;
                 }
-                result = StandardExpression
-                        .evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), RequestUtil.getSourceMap(request)));
+                result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
             }
             try {
                 return this.format(request, response, result, type);

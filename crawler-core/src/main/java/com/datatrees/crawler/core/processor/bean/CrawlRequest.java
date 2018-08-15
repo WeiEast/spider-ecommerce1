@@ -121,8 +121,7 @@ public class CrawlRequest extends Request {
             crawlRequest.setSearchTemplate(seedUrl);
             crawlRequest.setUrlHandler(urlHandler);
 
-            crawlRequest.addRequestContext(linkNodeToMap(url));
-            crawlRequest.addRequestContext(searchContext.getContext());
+            crawlRequest.addVisibleScope(linkNodeToMap(url));
 
             return crawlRequest;
         }

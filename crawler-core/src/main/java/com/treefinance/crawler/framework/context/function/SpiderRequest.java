@@ -16,6 +16,8 @@
 
 package com.treefinance.crawler.framework.context.function;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.exception.UnexpectedException;
@@ -26,11 +28,11 @@ import com.treefinance.crawler.lang.Copyable;
  * @author Jerry
  * @since 15:07 2018/8/15
  */
-public interface SpiderRequest extends Attributes, FieldScopeAction, Copyable<SpiderRequest> {
+public interface SpiderRequest extends Attributes, RequestMetadata, FieldScopeAction, Copyable<SpiderRequest> {
 
     Object getInput();
 
-    void setInput(Object content);
+    void setInput(Object input);
 
     AbstractProcessorContext getProcessorContext();
 
@@ -40,15 +42,27 @@ public interface SpiderRequest extends Attributes, FieldScopeAction, Copyable<Sp
 
     void setConfiguration(Configuration configuration);
 
-    @Override
-    default SpiderRequest copy() {
+    @SuppressWarnings("unchecked")
+    default SpiderRequest withInput(@Nonnull Object input) {
         try {
             SpiderRequest req = getClass().newInstance();
             req.addAttributes(this.getAttributes());
+            req.setProcessorContext(this.getProcessorContext());
+            req.setConfiguration(this.getConfiguration());
+            req.setExtra(this.getExtra());
+            req.setVisibleScope(this.getVisibleScope());
+            req.setInput(input);
             return req;
         } catch (InstantiationException | IllegalAccessException e) {
             throw new UnexpectedException("Error doing request copy. class: " + getClass());
         }
     }
+
+    @Override
+    default SpiderRequest copy() {
+        return withInput(this.getInput());
+    }
+
+    void clear();
 
 }

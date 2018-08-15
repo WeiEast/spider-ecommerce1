@@ -185,13 +185,8 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     if (StringUtils.isEmpty(content)) {
                         logger.warn("stop due to upper field value is empty! segment: {}", segment);
                     } else {
-                        SpiderRequest newRequest = SpiderRequestFactory.make();
-                        newRequest.setInput(content);
-                        newRequest.setProcessorContext(request.getProcessorContext());
-                        newRequest.setConfiguration(request.getConfiguration());
-                        newRequest.setRequestContext(request.getRequestContext());
-                        RequestUtil.setRequestVisibleFields(newRequest, RequestUtil.getRequestVisibleFields(request));
-                        RequestUtil.setCurrentUrl(newRequest, RequestUtil.getCurrentUrl(request));
+                        SpiderRequest newRequest = request.withInput(content);
+
                         SpiderResponse segResponse = SpiderResponseFactory.make();
                         SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
                         segmentBase.invoke(newRequest, segResponse);

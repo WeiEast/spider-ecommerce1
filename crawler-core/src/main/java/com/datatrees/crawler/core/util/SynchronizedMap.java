@@ -26,12 +26,14 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
 
     private final ReadWriteLock readWriteLock;
 
-    /**
-     *
-     */
     public SynchronizedMap() {
         super();
         map = new HashMap<K, V>();
+        readWriteLock = new ReentrantReadWriteLock();
+    }
+
+    public SynchronizedMap(Map<K, V> m) {
+        map = new HashMap<>(m);
         readWriteLock = new ReentrantReadWriteLock();
     }
 

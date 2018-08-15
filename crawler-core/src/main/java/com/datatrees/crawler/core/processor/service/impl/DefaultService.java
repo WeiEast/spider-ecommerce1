@@ -348,7 +348,7 @@ public class DefaultService extends ServiceBase {
         String url = output.getContent().getUrl();
         if (!url.equalsIgnoreCase(baseUrl)) {
             current.setRedirectUrl(url);
-            request.addRequestContext(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, url);
+            request.addVisibleScope(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, url);
         }
 
         // get redirect Url from headers
@@ -356,7 +356,7 @@ public class DefaultService extends ServiceBase {
             String redirectUrl = output.getContent().getMetadata().get(Constant.REDIRECT_URL);
             if (StringUtils.isNotBlank(redirectUrl)) {
                 current.setRedirectUrl(redirectUrl);
-                request.addRequestContext(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, redirectUrl);
+                request.addVisibleScope(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, redirectUrl);
             }
         }
     }

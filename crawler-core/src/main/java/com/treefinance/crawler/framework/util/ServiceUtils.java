@@ -62,7 +62,7 @@ public final class ServiceUtils {
         request.setProcessorContext(processorContext);
         request.setConfiguration(configuration == null ? PropertiesConfiguration.getInstance() : configuration);
         if (extra != null) {
-            request.setRequestContext(extra);
+            request.setVisibleScope(extra);
         }
         if (retry != null) {
             RequestUtil.setRetryCount(request, retry);

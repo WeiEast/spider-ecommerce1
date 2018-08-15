@@ -36,7 +36,7 @@ public class PluginUtils {
         AbstractProcessorContext processorContext = PluginContext.getProcessorContext();
 
         try {
-            return ServiceUtils.invokeAsString(null, linkNode, processorContext, null, processorContext.getContext());
+            return ServiceUtils.invokeAsString(null, linkNode, processorContext, null, processorContext.getVisibleScope());
         } catch (Exception e) {
             logger.error("getResponseByWebRequest error! url={}", linkNode.getUrl(), e);
         }

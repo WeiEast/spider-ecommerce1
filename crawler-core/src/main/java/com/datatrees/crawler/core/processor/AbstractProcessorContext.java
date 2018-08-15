@@ -10,6 +10,7 @@
 package com.datatrees.crawler.core.processor;
 
 import javax.annotation.Nonnull;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,13 +35,13 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     protected final Long                taskId;
 
-    protected final Map<String, Object> context;
+    protected Map<String, Object> context;
 
     private final   Map<String, Object> statusContext;
 
     private final   Map<Thread, Object> threadContext;
 
-    private final ProcessorResult<String, Object> processorResult;
+    private ProcessorResult<String, Object> processorResult;
 
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
@@ -67,6 +68,24 @@ public abstract class AbstractProcessorContext extends ProcessContext {
      */
     public Map<String, Object> getContext() {
         return context;
+    }
+
+
+    public void setContext(Map<String, Object> context) {
+        if (context == null) {
+            getContext().clear();
+        } else {
+            this.context = new SynchronizedMap<>(context);
+        }
+    }
+
+    /**
+     * the shared fields map with the global context scope.
+     * @return the unmodifiable map.
+     * @see #getContext()
+     */
+    public Map<String, Object> getVisibleScope() {
+        return Collections.unmodifiableMap(context);
     }
 
     public void addAttribute(String name, Object value) {
@@ -128,8 +147,34 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         return processorResult;
     }
 
+    public void setProcessorResult(Map<String, Object> processorResult) {
+        if (processorResult == null) {
+            getProcessorResult().clear();
+        } else {
+            this.processorResult = new ProcessorResult<>(processorResult);
+        }
+    }
+
+    /**
+     * the shared fields map with the global processor-result scope.
+     * @return the unmodifiable map.
+     */
+    public Map<String, Object> getResultScope() {
+        return Collections.unmodifiableMap(processorResult);
+    }
+
     public void addProcessorResult(String name, Object value) {
-        getProcessorResult().put(name, value);
+        if (value == null) {
+            getProcessorResult().remove(name);
+        } else {
+            getProcessorResult().put(name, value);
+        }
+    }
+
+    public void addProcessorResult(Map<String, Object> processorResult) {
+        if (processorResult != null) {
+            getProcessorResult().putAll(processorResult);
+        }
     }
 
     /**

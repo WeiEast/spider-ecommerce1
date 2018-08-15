@@ -70,7 +70,7 @@ public final class PluginHelper {
         Objects.requireNonNull(linkNode);
         Objects.requireNonNull(processorContext);
 
-        return ServiceUtils.invoke(null, linkNode, processorContext, configuration, processorContext.getContext(), retry);
+        return ServiceUtils.invoke(null, linkNode, processorContext, configuration, processorContext.getVisibleScope(), retry);
     }
 
     public static String getProxy(String url) throws Exception {
