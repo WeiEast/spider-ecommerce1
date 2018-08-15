@@ -17,7 +17,7 @@ public class BDBEnvironmentManager implements EnvironmentManager {
 
     private static final Logger                                      log                    = LoggerFactory.getLogger(BDBEnvironmentManager.class);
 
-    private static       BDBEnvironmentManager                       manager                = new BDBEnvironmentManager();
+    private static final BDBEnvironmentManager manager = new BDBEnvironmentManager();
 
     // Save the object needs to be destoryed
     // private ConcurrentLinkedQueue<BDBEnvironmentWapper> toBeDestroyedContainer = new
@@ -29,8 +29,6 @@ public class BDBEnvironmentManager implements EnvironmentManager {
     private              ConcurrentLinkedQueue<BDBEnvironmentWapper> newGenerationContainer = new ConcurrentLinkedQueue<BDBEnvironmentWapper>();
 
     private BDBEnvironmentManager() {}
-
-    ;
 
     public static BDBEnvironmentManager getInstance() {
         return manager;

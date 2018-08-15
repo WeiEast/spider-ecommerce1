@@ -27,40 +27,36 @@ import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorResult;
-import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
-import com.datatrees.spider.share.service.MessageService;
-import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.service.util.operator.OperatorUtils;
-import com.datatrees.spider.share.service.collector.worker.CollectorWorker;
-import com.datatrees.spider.share.service.collector.worker.CollectorWorkerFactory;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.IpUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.WebsiteUtils;
-import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
-import com.datatrees.spider.share.service.constants.SubmitConstant;
-import com.datatrees.spider.share.service.util.UnifiedSysTime;
-import com.datatrees.spider.share.service.dao.RedisDao;
-import com.datatrees.spider.share.service.message.MessageFactory;
-import com.datatrees.spider.share.service.domain.SubTaskAble;
-import com.datatrees.spider.share.service.domain.TaskRelated;
-import com.datatrees.spider.share.service.domain.TemplteAble;
-import com.datatrees.spider.share.domain.CollectorMessage;
-import com.datatrees.spider.share.domain.ResultMessage;
-import com.datatrees.spider.share.service.oss.OssServiceProvider;
-import com.datatrees.spider.share.service.oss.OssUtils;
-import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.website.WebsiteType;
+import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
+import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.domain.website.WebsiteType;
+import com.datatrees.spider.share.service.MessageService;
+import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.TaskService;
 import com.datatrees.spider.share.service.WebsiteConfigService;
-import com.datatrees.spider.share.service.util.RedisKeyUtils;
+import com.datatrees.spider.share.service.collector.worker.CollectorWorker;
+import com.datatrees.spider.share.service.collector.worker.CollectorWorkerFactory;
+import com.datatrees.spider.share.service.constants.SubmitConstant;
+import com.datatrees.spider.share.service.dao.RedisDao;
+import com.datatrees.spider.share.service.domain.SubTaskAble;
 import com.datatrees.spider.share.service.domain.SubmitFile;
+import com.datatrees.spider.share.service.domain.TaskRelated;
+import com.datatrees.spider.share.service.domain.TemplteAble;
+import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
+import com.datatrees.spider.share.service.message.MessageFactory;
+import com.datatrees.spider.share.service.oss.OssServiceProvider;
+import com.datatrees.spider.share.service.oss.OssUtils;
+import com.datatrees.spider.share.service.util.RedisKeyUtils;
+import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.service.util.ZipCompressUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.service.util.operator.OperatorUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -76,11 +72,14 @@ import org.springframework.stereotype.Service;
 @Service
 public class Collector {
 
-    private static final Logger logger                     = LoggerFactory.getLogger(Collector.class);
-    private static final int START_MSG_LENGTH_LIMIT = PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000);
-    private static       String duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
-    private static       String mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
-    private static       String mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
+    private static final Logger                 logger                     = LoggerFactory.getLogger(Collector.class);
+    private static final int                    START_MSG_LENGTH_LIMIT     = PropertiesConfiguration.getInstance().getInt("default.startMsgJson.length.threshold", 20000);
+
+    private static final String                 duplicateRemovedResultKeys = PropertiesConfiguration.getInstance().get("duplicate.removed.result.keys", "bankbill");
+
+    private static final String                 mqStatusTags               = PropertiesConfiguration.getInstance().get("core.mq.status.tags", "bankbill,ecommerce,operator");
+
+    private static final String                 mqMessageSendTagPattern    = PropertiesConfiguration.getInstance().get("core.mq.message.sendTag.pattern", "opinionDetect|webDetect|businessLicense");
     @Resource
     private              WebsiteConfigService   websiteConfigService;
     @Resource

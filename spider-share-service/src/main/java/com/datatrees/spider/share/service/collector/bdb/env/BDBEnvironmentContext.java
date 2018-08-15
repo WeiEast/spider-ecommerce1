@@ -24,6 +24,10 @@ public class BDBEnvironmentContext {
 
     private static final int    LOG_FILE_SIZE = 128 * 1024 * 1024;
 
+    private static final int MAX_ENTRIES = PropertiesConfiguration.getInstance().getInt("bdb.node.max.entries", 1024);
+
+    private static final int MAX_DUP_TREE_ENTRIES = PropertiesConfiguration.getInstance().getInt("bdb.node.max.duptree.entries", 2048);
+
     static {
         log.info("Init Home Path : start..." + homePath);
         initHomePath(homePath);
@@ -130,8 +134,8 @@ public class BDBEnvironmentContext {
         log.info("BDB init database config");
         dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
-        dbConfig.setNodeMaxEntries(PropertiesConfiguration.getInstance().getInt("bdb.node.max.entries", 1024));
-        dbConfig.setNodeMaxDupTreeEntries(PropertiesConfiguration.getInstance().getInt("bdb.node.max.duptree.entries", 2048));
+        dbConfig.setNodeMaxEntries(MAX_ENTRIES);
+        dbConfig.setNodeMaxDupTreeEntries(MAX_DUP_TREE_ENTRIES);
         dbConfig.setBtreeComparator(LinkNodeComparator.class);
     }
 

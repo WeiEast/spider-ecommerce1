@@ -2,10 +2,10 @@ package com.datatrees.spider.share.service.collector.chain.urlHandler;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.datatrees.spider.share.domain.AbstractData;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.worker.deduplicate.DuplicateChecker;
-import com.datatrees.spider.share.domain.AbstractData;
 
 /**
  * @author <A HREF="mailto:deng_kui@vobile.cn">Deng Kui</A>
@@ -14,7 +14,7 @@ import com.datatrees.spider.share.domain.AbstractData;
  */
 public class DuplicateRemoveFilter extends RemovedFetchLinkNodeFilter {
 
-    private static boolean deduplicateRemoveSwitch = PropertiesConfiguration.getInstance().getBoolean("uniqueKey.deduplicate.remove.switch", true);
+    private static final boolean deduplicateRemoveSwitch = PropertiesConfiguration.getInstance().getBoolean("uniqueKey.deduplicate.remove.switch", true);
 
     @Override
     protected void doProcess(LinkNode fetchLinkNode, SearchProcessor searchProcessor, Context context) {

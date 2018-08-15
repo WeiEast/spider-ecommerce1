@@ -8,8 +8,6 @@
 
 package com.datatrees.crawler.core.processor.search;
 
-import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
@@ -62,26 +60,30 @@ public class Crawler {
             Preconditions.checkNotNull(url, "url should not be null!");
             Preconditions.checkArgument(StringUtils.isNotEmpty(templateId), "template id should not be null!");
 
-            checkConf(request);
-
             Page page = context.getPageDefinition(url, templateId);
-
             if (page != null) {
-                AbstractService service = page.getService();
                 RequestUtil.setCurrentPage(request, page);
+
+                AbstractService service = page.getService();
+                if (null == service) {
+                    service = context.getDefaultService();
+                }
+
+                ServiceBase serviceProcessor = ProcessorFactory.getService(service);
                 try {
-                    if (null == service) {
-                        service = context.getDefaultService();
-                    }
                     // fetch page content
-                    ServiceBase serviceProcessor = ProcessorFactory.getService(service);
                     serviceProcessor.invoke(request, response);
+
                     // check the page response failed
-                    doResponseCheck(page, RequestUtil.getContent(request), url.getUrl());
+                    String content = RequestUtil.getContent(request);
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern()))) {
+                        throw new ResponseCheckException("page:" + page.getId() + ",url:" + url.getUrl() + " response check failed contains " + page.getPageFailedPattern());
+                    }
+                } catch (ResponseCheckException e) {
+                    throw e;
                 } catch (Exception e) {
                     // response code failed
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) &&
-                            RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
@@ -103,42 +105,19 @@ public class Crawler {
                 LOGGER.info("no available page found for linkNode: {}, template: {},set filtered.", url, templateId);
             }
 
+        } catch (ResultEmptyException e) {
+            throw e;
         } catch (Exception e) {
             LOGGER.error("Error crawling url : {}", request.getUrl(), e);
             response.setErrorMsg(e.toString()).setStatus(Status.PROCESS_EXCEPTION);
             response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
-            if (e instanceof ResultEmptyException) {
-                throw (ResultEmptyException) e;
-            }
         }
 
         return response;
     }
 
     private static String getFailurePattern(Page page) {
-        return StringUtils
-                .defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$");
-    }
-
-    private static void doResponseCheck(Page page, String content, String url) throws ResponseCheckException {
-        // check if response failed
-        if (page != null && BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) ||
-                (StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern())))) {
-            throw new ResponseCheckException(
-                    "page:" + page.getId() + ",url:" + url + " response check failed contains " + page.getPageFailedPattern());
-        }
-    }
-
-    /**
-     * add default conf if not exists
-     * @param request
-     */
-    private static void checkConf(CrawlRequest request) {
-        Configuration conf = request.getConf();
-        if (conf == null) {
-            conf = PropertiesConfiguration.getInstance();
-            RequestUtil.setConf(request, conf);
-        }
+        return StringUtils.defaultString(page.getFailedCodePattern(), "^(" + ProtocolStatusCodes.EXCEPTION + "|" + ProtocolStatusCodes.SERVER_EXCEPTION + ")$");
     }
 
 }
