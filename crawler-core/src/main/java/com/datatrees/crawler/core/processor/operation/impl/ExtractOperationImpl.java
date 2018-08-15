@@ -18,7 +18,7 @@ import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.html.HTMLParser;
+import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import org.apache.commons.collections.CollectionUtils;

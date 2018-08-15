@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年11月11日 下午1:47:04
  */
+@Deprecated
 public class RSAUtil {
 
     private static Logger logger = LoggerFactory.getLogger(RSAUtil.class);

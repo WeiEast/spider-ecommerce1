@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc. The
- * copying and reproduction of this document and/or its content (whether wholly or partly) or any
- * incorporation of the same into any other material in any media or format of any kind is strictly
- * prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.crawler.core.processor.common.html.urlspliter;
@@ -12,13 +20,15 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.treefinance.crawler.framework.context.UrlProtocolRegistry;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
+ * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
  * @since 2014-12-18 下午7:31:52
  */
+@Deprecated
 public class URLSplitter {
 
     public static Collection<String> split(String originalURL) {
@@ -32,11 +42,11 @@ public class URLSplitter {
         loop:
         for (; ; ) {
             outer:
-            if ((index = StringUtils.ordinalIndexOf(tmpOriginalURL.toString(), DefaultProtocol.protocolSeparator, round)) != -1) {
+            if ((index = StringUtils.ordinalIndexOf(tmpOriginalURL.toString(), UrlProtocolRegistry.PROTOCOL_SEPARATOR, round)) != -1) {
 
                 String tempUrl = tmpOriginalURL.substring(0, index);
                 String firstUrl = "";
-                for (String protocol : DefaultProtocol.INSTANCE.getSupportProtocolList()) {
+                for (String protocol : UrlProtocolRegistry.getProtocols()) {
                     if (tempUrl.endsWith(protocol)) {
                         int end = (index - protocol.length()) < 0 ? 0 : (index - protocol.length());
                         firstUrl = tmpOriginalURL.substring(0, end);
