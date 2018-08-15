@@ -392,7 +392,7 @@ public class Collector {
 
         boolean needSendToMQ = false;
         // build result message
-        ProcessorResult result = taskMessage.getContext().getProcessorResult();
+        ProcessorResult<String, Object> result = taskMessage.getContext().getProcessorResult();
         // the same rule as redis key ,init all the possible key
         for (String tag : resultTagSet) {
             if (submitkeyResult != null || PatternUtils.match(mqMessageSendTagPattern, tag)) {

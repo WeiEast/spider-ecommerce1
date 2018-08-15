@@ -15,7 +15,7 @@ import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.google.common.base.Preconditions;
 import org.apache.commons.lang.StringUtils;
 

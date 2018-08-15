@@ -74,7 +74,7 @@ public class Crawler {
                     serviceProcessor.invoke(request, response);
 
                     // check the page response failed
-                    String content = RequestUtil.getContent(request);
+                    String content = (String) response.getOutPut();
                     if (BooleanUtils.isTrue(page.getResponseCheck()) && (StringUtils.isBlank(content) || StringUtils.isNotBlank(page.getPageFailedPattern()) && RegExp.find(content, page.getPageFailedPattern()))) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + url.getUrl() + " response check failed contains " + page.getPageFailedPattern());
                     }

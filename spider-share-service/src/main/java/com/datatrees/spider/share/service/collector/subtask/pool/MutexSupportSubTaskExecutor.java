@@ -50,28 +50,25 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
     @SuppressWarnings("rawtypes")
     @Override
     public Future<Map> submit(Container container) {
-        return pool.submit(new Callable<Map>() {
-            @Override
-            public Map call() throws Exception {
-                if (container instanceof Mutex) {
-                    SubTask subTask = container.popSubTask();
-                    while (((Mutex) container).waiting() || subTask != null) {
-                        if (subTask != null) {
-                            Map resultMap = execute(subTask);
-                            if (MapUtils.isNotEmpty(resultMap)) {
-                                return resultMap;
-                            }
-                        } else {
-                            Thread.sleep(500);
-                            logger.warn("no sub task income sleep 500ms, try next round..");
+        return pool.submit(() -> {
+            if (container instanceof Mutex) {
+                SubTask subTask = container.popSubTask();
+                while (((Mutex) container).waiting() || subTask != null) {
+                    if (subTask != null) {
+                        Map resultMap = execute(subTask);
+                        if (MapUtils.isNotEmpty(resultMap)) {
+                            return resultMap;
                         }
-                        subTask = container.popSubTask();
+                    } else {
+                        Thread.sleep(500);
+                        logger.warn("no sub task income sleep 500ms, try next round..");
                     }
-                } else {
-                    return execute(container.popSubTask());
+                    subTask = container.popSubTask();
                 }
-                return null;
+            } else {
+                return execute(container.popSubTask());
             }
+            return null;
         });
     }
 
@@ -103,8 +100,8 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         try {
             logger.info("start to execute sub task taskId={}", task.getTaskId());
             Map resultObject = collector.processMessage(initSubTaskCollectorMessage(task));
-            if (resultObject != null && MapUtils.isNotEmpty(resultObject)) {
-                return (Map) resultObject;
+            if (MapUtils.isNotEmpty(resultObject)) {
+                return  resultObject;
             }
         } catch (Exception e) {
             logger.error("execute task error:" + e.getMessage(), e);

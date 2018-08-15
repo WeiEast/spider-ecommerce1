@@ -26,7 +26,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.saas.merchant.center.facade.result.console.AppBizLicenseSimpleResult;
 import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
-import com.treefinance.saas.merchant.center.facade.service.MerchantBaseInfoFacade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +47,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     private              AppCrawlerConfigDAO                 appCrawlerConfigDAO;
     @Resource
     private              RedisService                        redisService;
-    @Resource
-    private              MerchantBaseInfoFacade              merchantBaseInfoFacade;
     @Autowired
     private              DistributedLocks                    distributedLocks;
 

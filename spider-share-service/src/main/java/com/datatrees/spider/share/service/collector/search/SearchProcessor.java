@@ -121,10 +121,10 @@ public class SearchProcessor {
 
     public List<LinkNode> crawlOneURL(LinkNode url) throws ResultEmptyException {
         List<LinkNode> linkNodeList = null;
-        CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request = CrawlRequest.newBuilder().setUrl(url).setSearchContext(getProcessorContext()).setTemplateId(searchTemplateConfig.getId()).setSeedUrl(searchTemplate).setUrlHandler(handler).build();
+            CrawlRequest request = CrawlRequest.newBuilder().setUrl(url).setSearchContext(getProcessorContext()).setTemplateId(searchTemplateConfig.getId()).setSeedUrl(searchTemplate).setUrlHandler
+                    (handler).build();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);
@@ -152,10 +152,6 @@ public class SearchProcessor {
         } catch (Exception e) {
             log.error("Caught Exception in crawlOneURL ,url [{}]", url.getUrl(), e);
         } finally {
-            if (null != request) {
-                // reset page content
-                RequestUtil.setContent(request, null);
-            }
             // clear Embedded context
             ProcessorContextUtil.clearThreadLocalLinkNode(getProcessorContext());
             ProcessorContextUtil.clearThreadLocalResponseList(getProcessorContext());

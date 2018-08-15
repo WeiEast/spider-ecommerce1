@@ -36,7 +36,7 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
-import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.google.common.base.Preconditions;

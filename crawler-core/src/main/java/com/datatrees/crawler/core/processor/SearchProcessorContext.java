@@ -31,7 +31,6 @@ import com.datatrees.crawler.core.processor.common.exception.NoProxyException;
 import com.datatrees.crawler.core.processor.common.resource.LoginResource;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.datatrees.crawler.core.processor.login.Login;
-import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.decode.Decoder;
@@ -87,7 +86,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         if (proxyManager != null && proxyConf != null && proxyConf.getScope().equals(Scope.SESSION)) {
             try {
                 // mark sessionproxy
-                getProcessorResult().put("sessionProxy", "" + getProxy());
+                addProcessorResult("sessionProxy", "" + getProxy());
                 proxyManager.release();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
@@ -216,7 +215,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             }
         }
         if (page == null) {
-            page = new DummyPage();
+            page = Page.NULL;
         }
         return this.pageVisitCountCheck(page);
     }

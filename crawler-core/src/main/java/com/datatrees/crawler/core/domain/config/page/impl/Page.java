@@ -27,6 +27,7 @@ import com.treefinance.crawler.framework.config.annotation.Tag;
  */
 @Tag("page")
 public class Page extends AbstractPage {
+    public static final Page NULL = new Page();
 
     private String            path;
 

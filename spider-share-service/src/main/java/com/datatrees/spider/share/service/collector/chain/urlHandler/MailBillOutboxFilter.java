@@ -37,15 +37,14 @@ public class MailBillOutboxFilter extends RemovedFetchLinkNodeFilter {
         Object sender = fetchLinkNode.getProperty(MailBillData.SENDER);
         Object folder = fetchLinkNode.getProperty(MailBillData.FOLDER);
         // use sender to detect mail in outbox
-        if (websiteType != null && WebsiteType.MAIL.getValue().equals(websiteType) &&
-                SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
+        if (WebsiteType.MAIL.getValue().equals(websiteType) && SearchType.KEYWORD_SEARCH.equals(searchProcessor.getSearchTemplateConfig().getType())) {
             boolean inOutbox = false;
             if (folder != null && PatternUtils.match(outBoxFolderName, folder.toString())) {
                 inOutbox = true;
             }
 
             if (!inOutbox && sender != null) {
-                ProcessorResult result = searchProcessor.getProcessorContext().getProcessorResult();
+                ProcessorResult<String, Object> result = searchProcessor.getProcessorContext().getProcessorResult();
                 for (String key : recipientPatternKeys) {
                     Object value = result.get(key);
                     // mail is send by self

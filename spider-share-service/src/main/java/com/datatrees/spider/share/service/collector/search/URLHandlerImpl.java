@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filters;
 import com.datatrees.spider.share.service.collector.worker.deduplicate.DuplicateChecker;

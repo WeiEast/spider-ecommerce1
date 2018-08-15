@@ -40,9 +40,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     private final   Map<Thread, Object> threadContext;
 
-    private final   ProcessorResult     processorResult;
-
-    private final   ProcessorResult     processorLog;
+    private final ProcessorResult<String, Object> processorResult;
 
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
@@ -50,8 +48,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         this.context = new SynchronizedMap<>();
         this.statusContext = new SynchronizedMap<>();
         this.threadContext = new SynchronizedMap<>();
-        this.processorResult = new ProcessorResult();
-        this.processorLog = new ProcessorResult();
+        this.processorResult = new ProcessorResult<>();
     }
 
     public abstract void init();
@@ -127,19 +124,12 @@ public abstract class AbstractProcessorContext extends ProcessContext {
     /**
      * @return the processorResult
      */
-    public ProcessorResult getProcessorResult() {
+    public ProcessorResult<String, Object> getProcessorResult() {
         return processorResult;
     }
 
     public void addProcessorResult(String name, Object value) {
         getProcessorResult().put(name, value);
-    }
-
-    /**
-     * @return the processorLog
-     */
-    public ProcessorResult getProcessorLog() {
-        return processorLog;
     }
 
     /**

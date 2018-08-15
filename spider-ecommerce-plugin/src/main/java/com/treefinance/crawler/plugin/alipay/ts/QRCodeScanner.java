@@ -189,7 +189,7 @@ public class QRCodeScanner extends SeleniumOperation {
         } while (System.currentTimeMillis() < deadLine);
 
         if (!flag) {
-            context.getProcessorResult().put("QRCodeStatus", "WAIT");
+            context.addProcessorResult("QRCodeStatus", "WAIT");
 
             long end = System.currentTimeMillis();
             long spend = end - start;

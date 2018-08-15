@@ -102,7 +102,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
                 continue;
             }
             inputSmsCount++;
-            PluginFactory.getProcessorContext().getProcessorResult().put("smsCodeCount", inputSmsCount);
+            PluginFactory.getProcessorContext().addProcessorResult("smsCodeCount", inputSmsCount);
             //返回不为空就"认为是正确",实际大概就是短信验证码不为空,就返回短信验证码,诡异的代码,踩坑了......
             String inputCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
             if (vaildSMSCode(paramsMap, inputCode)) {

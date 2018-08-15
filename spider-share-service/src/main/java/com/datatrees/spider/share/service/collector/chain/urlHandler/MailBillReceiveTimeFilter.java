@@ -47,7 +47,7 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
                 if (currentLinkNode != null && currentLinkNode.getpNum() > 0) {
                     logger.info("receive time come to threshold, mark as the LastPageLink ...");
                     searchProcessor.setLastLink(true);
-                    searchProcessor.getProcessorContext().getProcessorResult().put("LastPageLink", true);
+                    searchProcessor.getProcessorContext().addProcessorResult("LastPageLink", true);
                 }
             }
         }
