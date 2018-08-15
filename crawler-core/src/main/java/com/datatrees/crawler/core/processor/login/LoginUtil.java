@@ -154,7 +154,7 @@ public class LoginUtil {
     private void callSegments(List<AbstractSegment> segments, SearchProcessorContext context, String responseBody) throws ResultEmptyException {
         if (CollectionUtils.isNotEmpty(segments)) {
             SpiderRequest request = SpiderRequestFactory.make();
-            RequestUtil.setProcessorContext(request, context);
+            request.setProcessorContext(context);
 
             // decode
             request.setInput(DecodeUtil.decodeContent(responseBody, request));

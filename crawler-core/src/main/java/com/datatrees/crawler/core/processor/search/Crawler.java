@@ -24,7 +24,6 @@ import com.datatrees.crawler.core.processor.common.exception.ResponseCheckExcept
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.google.common.base.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -54,11 +53,6 @@ public class Crawler {
             SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
             String templateId = request.getSearchTemplateId();
             LinkNode url = request.getUrl();
-
-            // check
-            Preconditions.checkNotNull(context, "crawler's context should not be null!");
-            Preconditions.checkNotNull(url, "url should not be null!");
-            Preconditions.checkArgument(StringUtils.isNotEmpty(templateId), "template id should not be null!");
 
             Page page = context.getPageDefinition(url, templateId);
             if (page != null) {

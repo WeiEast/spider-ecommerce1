@@ -145,12 +145,12 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
             if (FieldVisibleType.REQUEST.equals(fieldVisibleType)) {
                 RequestUtil.getRequestVisibleFields(request).put(id, fieldResult);
             } else if (FieldVisibleType.CONTEXT.equals(fieldVisibleType)) {
-                RequestUtil.getContext(request).put(id, fieldResult);
-                RequestUtil.getProcessorContext(request).addAttribute(id, fieldResult);
+                request.addRequestContext(id, fieldResult);
+                request.getProcessorContext().addAttribute(id, fieldResult);
             } else if (FieldVisibleType.PROCESSOR_RESULT.equals(fieldVisibleType)) {
-                RequestUtil.getContext(request).put(id, fieldResult);
-                RequestUtil.getProcessorContext(request).addAttribute(id, fieldResult);
-                RequestUtil.getProcessorContext(request).addProcessorResult(id, fieldResult);
+                request.addRequestContext(id, fieldResult);
+                request.getProcessorContext().addAttribute(id, fieldResult);
+                request.getProcessorContext().addProcessorResult(id, fieldResult);
             }
         }
 
@@ -167,8 +167,8 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return pipeline.start(content, request, fieldExtractResultSet);
     }
 
-    private Object extractWithPlugin(String content, SpiderRequest request, AbstractPlugin pluginDesc) throws Exception {
-        AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+    private Object extractWithPlugin(String content, SpiderRequest request, AbstractPlugin pluginDesc) {
+        AbstractProcessorContext context = request.getProcessorContext();
 
         Object fieldResult = PluginCaller.call(pluginDesc, context, () -> {
             Map<String, String> params = new LinkedHashMap<>();
@@ -192,7 +192,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
 
     private Object format(SpiderRequest request, SpiderResponse response, Object fieldResult, ResultType type) throws ExtractorException {
         if (type != null && fieldResult instanceof String) {
-            Configuration conf = RequestUtil.getConf(request);
+            Configuration conf = request.getConfiguration();
             String input = "";
             try {
                 input = (String) fieldResult;

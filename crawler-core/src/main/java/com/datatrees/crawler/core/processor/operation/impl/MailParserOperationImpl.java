@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MailParserOperation;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.mail.MailParserImpl;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
@@ -34,7 +33,7 @@ public class MailParserOperationImpl extends Operation<MailParserOperation> {
     protected Object doOperation(@Nonnull MailParserOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String result = (String) operatingData;
 
-        return MailParserImpl.parseMessage(RequestUtil.getProcessorContext(request).getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser()));
+        return MailParserImpl.parseMessage(request.getProcessorContext().getWebsiteName(), result, BooleanUtils.isTrue(operation.getBodyParser()));
     }
 
 }

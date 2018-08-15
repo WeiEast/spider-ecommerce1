@@ -68,7 +68,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             logger.debug("Actual source content: {}", result);
 
             // set source field to context
-            RequestUtil.getProcessorContext(request).addAttribute(source.getField(), result);
+            request.getProcessorContext().addAttribute(source.getField(), result);
 
             builder.append(result);
         }
@@ -108,7 +108,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
     private String getSourceContent(Object value, AbstractPlugin pluginDesc, SpiderRequest request) {
         String content;
         if (value instanceof WrappedFile) {
-            AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+            AbstractProcessorContext context = request.getProcessorContext();
             content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
                 WrappedFile file = (WrappedFile) value;
@@ -121,7 +121,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
                 return params;
             });
         } else if (value instanceof String) {
-            AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
+            AbstractProcessorContext context = request.getProcessorContext();
             content = (String) PluginCaller.call(pluginDesc, context, () -> {
                 Map<String, String> params = new HashMap<>();
                 params.put(PluginConstants.FILE_CONTENT, (String) value);

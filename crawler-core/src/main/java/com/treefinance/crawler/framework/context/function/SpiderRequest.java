@@ -16,6 +16,8 @@
 
 package com.treefinance.crawler.framework.context.function;
 
+import com.datatrees.common.conf.Configuration;
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.lang.Attributes;
 import com.treefinance.crawler.lang.Copyable;
@@ -24,11 +26,19 @@ import com.treefinance.crawler.lang.Copyable;
  * @author Jerry
  * @since 15:07 2018/8/15
  */
-public interface SpiderRequest extends Attributes, Copyable<SpiderRequest> {
+public interface SpiderRequest extends Attributes, FieldScopeAction, Copyable<SpiderRequest> {
 
     Object getInput();
 
     void setInput(Object content);
+
+    AbstractProcessorContext getProcessorContext();
+
+    void setProcessorContext(AbstractProcessorContext context);
+
+    Configuration getConfiguration();
+
+    void setConfiguration(Configuration configuration);
 
     @Override
     default SpiderRequest copy() {

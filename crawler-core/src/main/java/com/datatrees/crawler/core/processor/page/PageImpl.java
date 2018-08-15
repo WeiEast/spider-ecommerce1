@@ -162,7 +162,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                         int pNum = Integer.parseInt(pNumber);
                         logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
                         String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,
-                                RequestUtil.getProcessorContext(request).getContext());
+                                request.getProcessorContext().getContext());
                         if (StringUtils.isNotEmpty(pageUrl)) {
                             logger.info("add page url: {}", pageUrl);
                             LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
@@ -206,7 +206,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
     private void checkBlock(SpiderRequest request, SpiderResponse response) {
         String content = RequestUtil.getContent(request);
 
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
 
         String templateId = RequestUtil.getCurrentTemplateId(request);
 
@@ -251,7 +251,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
      * using white and black list to filter web url adjust depth
      */
     private List<LinkNode> filterUrls(SpiderRequest req, Map<String, LinkNode> urlLists, LinkNode current) {
-        SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
+        SearchProcessorContext wrapper = (SearchProcessorContext) req.getProcessorContext();
         SearchConfig config = wrapper.getSearchConfig();
         String template = RequestUtil.getCurrentTemplateId(req);
 
@@ -342,8 +342,8 @@ public class PageImpl extends ProcessorInvokerAdapter {
     }
 
     private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, SpiderRequest req) {
-        Configuration conf = RequestUtil.getConf(req);
-        SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
+        Configuration conf = req.getConfiguration();
+        SearchProcessorContext wrapper = (SearchProcessorContext) req.getProcessorContext();
         String blackList = Constants.URL_BLACK_LIST;
         if (conf != null) {
             blackList = conf.get("url.blacklist", blackList);

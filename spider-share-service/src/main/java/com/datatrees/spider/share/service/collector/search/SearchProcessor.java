@@ -22,12 +22,12 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.search.Crawler;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filters;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.collector.worker.ResultDataHandler;
-import com.datatrees.spider.share.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -124,8 +124,7 @@ public class SearchProcessor {
         CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request = CrawlRequest.build().setProcessorContext(getProcessorContext()).setUrl(url).setSearchTemplateId(searchTemplateConfig.getId())
-                    .setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
+            request = CrawlRequest.newBuilder().setUrl(url).setSearchContext(getProcessorContext()).setTemplateId(searchTemplateConfig.getId()).setSeedUrl(searchTemplate).setUrlHandler(handler).build();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);

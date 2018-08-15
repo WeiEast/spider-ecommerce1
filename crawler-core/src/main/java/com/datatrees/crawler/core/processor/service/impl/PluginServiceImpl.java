@@ -36,7 +36,7 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
         PluginService service = getService();
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String url = current.getUrl();
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
         logger.info("handling request using plugin : {}", url);
         AbstractPlugin plugin = service.getPlugin();
         if (plugin != null) {

@@ -59,10 +59,10 @@ public final class ServiceUtils {
 
         SpiderRequest request = SpiderRequestFactory.make();
         RequestUtil.setCurrentUrl(request, linkNode);
-        RequestUtil.setProcessorContext(request, processorContext);
-        RequestUtil.setConf(request, configuration == null ? PropertiesConfiguration.getInstance() : configuration);
+        request.setProcessorContext(processorContext);
+        request.setConfiguration(configuration == null ? PropertiesConfiguration.getInstance() : configuration);
         if (extra != null) {
-            RequestUtil.setContext(request, extra);
+            request.setRequestContext(extra);
         }
         if (retry != null) {
             RequestUtil.setRetryCount(request, retry);

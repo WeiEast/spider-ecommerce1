@@ -65,7 +65,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
             return true;
         }
 
-        context = RequestUtil.getProcessorContext(request);
+        context = request.getProcessorContext();
         String businessType = segment.getBusinessType();
         if (!BusinessTypeDecider.support(businessType, context)) {
             logger.warn("Business forbidden in segment processing and skip. segment: {}, businessType: {}, taskId: {}", segment.getName(), businessType, context.getTaskId());
@@ -187,9 +187,9 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     } else {
                         SpiderRequest newRequest = SpiderRequestFactory.make();
                         newRequest.setInput(content);
-                        RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
-                        RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
-                        RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
+                        newRequest.setProcessorContext(request.getProcessorContext());
+                        newRequest.setConfiguration(request.getConfiguration());
+                        newRequest.setRequestContext(request.getRequestContext());
                         RequestUtil.setRequestVisibleFields(newRequest, RequestUtil.getRequestVisibleFields(request));
                         RequestUtil.setCurrentUrl(newRequest, RequestUtil.getCurrentUrl(request));
                         SpiderResponse segResponse = SpiderResponseFactory.make();
@@ -224,7 +224,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
             if (CollectionUtils.isEmpty(segment.getSegmentList()) && ResultType.getResultType(segment.getResultClass()) != null) {
                 // convert to basic result type
                 ResultType type = ResultType.getResultType(segment.getResultClass());
-                Configuration conf = RequestUtil.getConf(request);
+                Configuration conf = request.getConfiguration();
                 Formatter formatter = ProcessorFactory.getFormatter(type, conf);
                 Collection values = resultMap.values();
                 if (CollectionUtils.isNotEmpty(values) && formatter.supportResultType(values.toArray()[0])) {

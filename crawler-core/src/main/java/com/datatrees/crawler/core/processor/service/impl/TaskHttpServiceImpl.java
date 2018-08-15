@@ -28,7 +28,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
 
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         String websiteName = context.getWebsiteName();
         Properties properties = context.getSearchConfig().getProperties();

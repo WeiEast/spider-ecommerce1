@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
+import com.datatrees.crawler.core.processor.bean.ExtractRequest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.Extractor;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
@@ -88,9 +88,8 @@ public class ExtractWorker {
     private Map doExtract(ExtractMessage extractMessage, ExtractorProcessorContext context, AbstractExtractResult result) {
         // set StoragePath to context
         context.addAttribute("StoragePath", result.getStoragePath());
-        ExtractorRepuest request = ExtractorRepuest.build().setProcessorContext(context);
-        request.setInput(extractMessage.getMessageObject());
-        SpiderResponse response = Extractor.extract(request.contextInit());
+        ExtractRequest request = ExtractRequest.newBuilder().setInput(extractMessage.getMessageObject()).setExtractContext(context).build();
+        SpiderResponse response = Extractor.extract(request);
         Map extractResultMap = ResponseUtil.getResponsePageExtractResultMap(response);
         Object exception = response.getAttribute(Constants.CRAWLER_EXCEPTION);
         if (exception != null) {

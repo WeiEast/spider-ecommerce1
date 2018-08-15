@@ -197,10 +197,10 @@ public class ParserImpl {
             currentLinkNode.addHeader(Constants.HTTP_HEADER_REFERER, referer);
         }
 
-        AbstractProcessorContext processorContext = RequestUtil.getProcessorContext(request);
+        AbstractProcessorContext processorContext = request.getProcessorContext();
         AbstractService service = processorContext.getDefaultService();
 
-        return ServiceUtils.invokeAsString(service, currentLinkNode, processorContext, RequestUtil.getConf(request), RequestUtil.getContext(request));
+        return ServiceUtils.invokeAsString(service, currentLinkNode, processorContext, request.getConfiguration(), request.getRequestContext());
     }
 
     public boolean isNeedRequest() {

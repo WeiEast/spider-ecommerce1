@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.protocol.*;
 import com.datatrees.common.protocol.ProtocolInput.CookieScope;
 import com.datatrees.common.protocol.http.HttpResponse;
@@ -60,7 +59,7 @@ public class DefaultService extends ServiceBase {
 
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
 
         Assert.notNull(context, "Search context for default service must not be null!");
 
@@ -349,7 +348,7 @@ public class DefaultService extends ServiceBase {
         String url = output.getContent().getUrl();
         if (!url.equalsIgnoreCase(baseUrl)) {
             current.setRedirectUrl(url);
-            RequestUtil.getContext(request).put(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, url);
+            request.addRequestContext(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, url);
         }
 
         // get redirect Url from headers
@@ -357,7 +356,7 @@ public class DefaultService extends ServiceBase {
             String redirectUrl = output.getContent().getMetadata().get(Constant.REDIRECT_URL);
             if (StringUtils.isNotBlank(redirectUrl)) {
                 current.setRedirectUrl(redirectUrl);
-                RequestUtil.getContext(request).put(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, redirectUrl);
+                request.addRequestContext(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, redirectUrl);
             }
         }
     }

@@ -70,7 +70,7 @@ public class FormatConfig implements Serializable {
     }
 
     public AbstractProcessorContext getProcessorContext() {
-        return RequestUtil.getProcessorContext(request);
+        return request.getProcessorContext();
     }
 
     public Object getSourceFieldValue(String fieldName) {

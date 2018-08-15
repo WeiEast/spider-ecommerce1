@@ -24,10 +24,10 @@ public class DecodeUtil {
     public static String decodeContent(String content, SpiderRequest request) {
         String result = content;
 
-        SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
+        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
         UnicodeMode unicodeMode = context.getUnicodeMode();
         if (unicodeMode != null) {
-            AbstractDecoder decoder = DecodeFactory.instance().getDecoder(unicodeMode, RequestUtil.getConf(request));
+            AbstractDecoder decoder = DecodeFactory.instance().getDecoder(unicodeMode, request.getConfiguration());
             if (decoder != null) {
                 String charset = RequestUtil.getContentCharset(request);
                 result = decoder.decode(content, charset);

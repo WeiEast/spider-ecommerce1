@@ -13,8 +13,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
@@ -54,23 +52,6 @@ public class RequestUtil {
 
     public static void setURLHandler(SpiderRequest req, URLHandler handler) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER, handler);
-    }
-
-    public static void setContext(SpiderRequest req, Map<String, Object> context) {
-        req.setAttribute(Constants.CRAWLER_RREQUEST_CONTEXT, context);
-    }
-
-    public static void setConf(SpiderRequest req, Configuration conf) {
-        req.setAttribute(Constants.CRAWLER_RREQUEST_CONF, conf);
-    }
-
-    public static Configuration getConf(SpiderRequest req) {
-        return (Configuration) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONF, k -> PropertiesConfiguration.getInstance());
-    }
-
-    @SuppressWarnings("unchecked")
-    public static Map<String, Object> getContext(SpiderRequest req) {
-        return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONTEXT, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
@@ -124,22 +105,6 @@ public class RequestUtil {
         req.setAttribute(Constants.CRAWLER_PAGECONTENT_CHARSET, charset);
     }
 
-    public static AbstractProcessorContext getProcessorContext(SpiderRequest req) {
-        return (AbstractProcessorContext) req.getAttribute(Constants.PROCESSER_CONTEXT);
-    }
-
-    public static void setProcessorContext(SpiderRequest req, AbstractProcessorContext context) {
-        req.setAttribute(Constants.PROCESSER_CONTEXT, context);
-    }
-
-    public static Website getWebsite(SpiderRequest req) {
-        return (Website) req.getAttribute(Constants.PARSER_WEBSITE_CONFIG);
-    }
-
-    public static void setWebsite(SpiderRequest req, Website website) {
-        req.setAttribute(Constants.PARSER_WEBSITE_CONFIG, website);
-    }
-
     @SuppressWarnings("unchecked")
     public static DateTimeFormats getDateFormat(SpiderRequest req) {
         return (DateTimeFormats) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
@@ -169,10 +134,11 @@ public class RequestUtil {
 
     public static Map<String, Object> getSourceMap(SpiderRequest request) {
         Map<String, Object> sourceMap = new HashMap<String, Object>();
-        if (RequestUtil.getProcessorContext(request) != null) {
-            sourceMap.putAll(RequestUtil.getProcessorContext(request).getContext());
+        AbstractProcessorContext processorContext = request.getProcessorContext();
+        if (processorContext != null) {
+            sourceMap.putAll(processorContext.getContext());
         }
-        sourceMap.putAll(RequestUtil.getContext(request));
+        sourceMap.putAll(request.getRequestContext());
         sourceMap.putAll(RequestUtil.getRequestVisibleFields(request));
         return sourceMap;
     }
