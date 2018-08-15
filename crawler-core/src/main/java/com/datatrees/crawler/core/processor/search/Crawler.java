@@ -105,7 +105,7 @@ public class Crawler {
 
         } catch (Exception e) {
             LOGGER.error("Error crawling url : {}", request.getUrl(), e);
-            response.setErrorMsg(e.toString()).setStatus(-2005);
+            response.setErrorMsg(e.toString()).setStatus(Status.PROCESS_EXCEPTION);
             response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
             if (e instanceof ResultEmptyException) {
                 throw (ResultEmptyException) e;

@@ -33,7 +33,6 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.bean.StatusUtil;
 import com.datatrees.crawler.core.processor.common.DecodeUtil;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
@@ -229,7 +228,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
     private void setResponseStatus(Response response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
             if (RegExp.find(content, pattern)) {
-                logger.info("set status: {}", StatusUtil.format(status));
+                logger.info("set status: {}", Status.format(status));
                 ResponseUtil.setResponseStatus(response, status);
             }
         }
