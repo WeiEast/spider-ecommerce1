@@ -21,6 +21,7 @@ import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.domain.data.MailBillData;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.exception.UncheckedInterruptedException;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -125,7 +126,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
         String pageContent;
         try {
             pageContent = FieldUtils.getFieldValueAsString(data, MailBillData.PAGECONTENT);
-        } catch (InterruptedException e) {
+        } catch (UncheckedInterruptedException e) {
             logger.warn(e.getMessage(), e);
             pageContent = StringUtils.EMPTY;
         }

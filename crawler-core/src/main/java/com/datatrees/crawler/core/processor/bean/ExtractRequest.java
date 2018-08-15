@@ -49,6 +49,7 @@ public class ExtractRequest extends Request {
         @SuppressWarnings("unchecked")
         public ExtractRequest build() {
             Preconditions.notNull("extractContext", extractContext);
+            Preconditions.notNull("input", input);
 
             ExtractRequest extractRequest = new ExtractRequest();
             extractRequest.setProcessorContext(extractContext);

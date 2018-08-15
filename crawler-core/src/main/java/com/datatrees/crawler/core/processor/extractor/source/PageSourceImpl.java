@@ -9,7 +9,10 @@
 package com.datatrees.crawler.core.processor.extractor.source;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -21,14 +24,14 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.util.FieldUtils;
-import org.apache.commons.collections.CollectionUtils;
+import com.treefinance.toolkit.util.Preconditions;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -41,17 +44,20 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
     private final List<PageSource> pageSources;
 
     public PageSourceImpl(@Nonnull List<PageSource> pageSources) {
-        this.pageSources = Objects.requireNonNull(pageSources);
+        if (CollectionUtils.isEmpty(pageSources)) {
+            throw new IllegalArgumentException("page-source must not be empty!");
+        }
+        this.pageSources = pageSources;
     }
 
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Object input = request.getInput();
-        Preconditions.checkNotNull(input, "input should not be null!");
+        Preconditions.notNull("input", input);
 
         StringBuilder builder = new StringBuilder();
         for (PageSource source : pageSources) {
-            logger.debug("Search source : {}", source);
+            logger.debug("Search page source : {}", source);
 
             String result = getPageContent(source, input, request);
 
@@ -65,7 +71,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
                 result = PageHelper.getTextByRegexp(result, regexp);
             }
 
-            logger.debug("Actual source content: {}", result);
+            logger.debug("Actual page source content: {}", result);
 
             // set source field to context
             request.getProcessorContext().addAttribute(source.getField(), result);
@@ -79,7 +85,8 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         RequestUtil.setContent(request, content);
     }
 
-    private String getPageContent(PageSource source, Object input, SpiderRequest request) throws Exception {
+    @SuppressWarnings("unchecked")
+    private String getPageContent(PageSource source, Object input, SpiderRequest request) {
         String separator = StringUtils.defaultString(source.getSeparator());
         AbstractPlugin plugin = source.getPlugin();
 
@@ -97,43 +104,35 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
             return this.getSourceContent(value, plugin, request);
         }
 
-        String value = RequestUtil.getAttribute(request, source.getField());
-        if (StringUtils.isNotBlank(separator) || value == null) {
-            value = FieldUtils.getFieldValueAsString(input, source.getField(), separator);
-        }
-
-        return value;
+        return FieldUtils.getFieldValueAsString(input, source.getField(), separator);
     }
 
     private String getSourceContent(Object value, AbstractPlugin pluginDesc, SpiderRequest request) {
-        String content;
-        if (value instanceof WrappedFile) {
-            AbstractProcessorContext context = request.getProcessorContext();
-            content = (String) PluginCaller.call(pluginDesc, context, () -> {
-                Map<String, String> params = new HashMap<>();
+        if (value == null) {
+            return StringUtils.EMPTY;
+        }
+
+        AbstractProcessorContext context = request.getProcessorContext();
+        String content = (String) PluginCaller.call(pluginDesc, context, () -> {
+            Map<String, String> params = new HashMap<>();
+            if (value instanceof WrappedFile) {
                 WrappedFile file = (WrappedFile) value;
                 file.download();//download attachment to local
                 params.put(PluginConstants.FILE_WAPPER_PATH, file.getAbsolutePath());
                 params.put(PluginConstants.FILE_MIME_TYPE, file.getMimeType());
                 params.put(PluginConstants.FILE_NAME, file.getName());
                 params.put(PluginConstants.FILE_SOURCE_URL, file.getSourceURL());
-
-                return params;
-            });
-        } else if (value instanceof String) {
-            AbstractProcessorContext context = request.getProcessorContext();
-            content = (String) PluginCaller.call(pluginDesc, context, () -> {
-                Map<String, String> params = new HashMap<>();
+            } else if (value instanceof String) {
                 params.put(PluginConstants.FILE_CONTENT, (String) value);
+            } else {
+                params.put(PluginConstants.FILE_CONTENT, value.toString());
+                logger.warn("Process page source by plugin with unexpected input type. input: {}, type: {}", value, value.getClass());
+            }
 
-                return params;
-            });
-        } else {
-            content = StringUtils.EMPTY;
-            logger.warn("incorrect input content to call plugin to get source content. <<< {}", value);
-        }
+            return params;
+        });
 
-        logger.debug("Source content : {}", content);
+        logger.debug("Page-source content : {}", content);
 
         return content;
     }

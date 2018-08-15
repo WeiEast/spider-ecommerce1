@@ -15,6 +15,7 @@ import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
+import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
@@ -49,6 +50,10 @@ public class ExtractorProcessorContext extends AbstractProcessorContext {
 
     public ExtractorConfig getExtractorConfig() {
         return getWebsite().getExtractorConfig();
+    }
+
+    public List<ExtractorSelector> getExtractorSelectors() {
+        return getExtractorConfig().getExtractorSelectors();
     }
 
     /**

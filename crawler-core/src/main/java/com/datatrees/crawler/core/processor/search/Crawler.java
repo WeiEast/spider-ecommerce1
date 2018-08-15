@@ -8,6 +8,8 @@
 
 package com.datatrees.crawler.core.processor.search;
 
+import javax.annotation.Nonnull;
+
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
@@ -24,6 +26,7 @@ import com.datatrees.crawler.core.processor.common.exception.ResponseCheckExcept
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.page.PageImpl;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -45,10 +48,12 @@ public class Crawler {
      * @return
      * @exception ResultEmptyException
      */
-    public static CrawlResponse crawl(CrawlRequest request) throws ResultEmptyException {
+    public static CrawlResponse crawl(@Nonnull CrawlRequest request) throws ResultEmptyException {
+        Preconditions.notNull("request", request);
+        LOGGER.info("request handling ... {}", request);
+
         CrawlResponse response = CrawlResponse.build();
         try {
-            LOGGER.info("request handling ... {}", request);
 
             SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
             String templateId = request.getSearchTemplateId();

@@ -8,8 +8,8 @@
 
 package com.datatrees.crawler.core.processor.extractor;
 
-import java.util.*;
-import java.util.Map.Entry;
+import javax.annotation.Nonnull;
+import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.Constants;
@@ -17,14 +17,12 @@ import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractRequest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.extractor.selector.ExtractorSelectorImpl;
-import com.google.common.base.Preconditions;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
+import com.treefinance.toolkit.util.Preconditions;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,85 +33,55 @@ import org.slf4j.LoggerFactory;
  */
 public class Extractor {
 
-    private static final Logger log = LoggerFactory.getLogger(Extractor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Extractor.class);
 
     /**
      * crawler request main route step 1: request via httpclient step 2: parse page content
      * @param request
      * @return
      */
-    public static SpiderResponse extract(ExtractRequest request) {
+    public static SpiderResponse extract(@Nonnull ExtractRequest request) {
+        Preconditions.notNull("request", request);
+        Preconditions.notNull("input", request.getInput());
+
         SpiderResponse response = SpiderResponseFactory.make();
-        Object input = request.getInput();
 
         try {
-            Preconditions.checkNotNull(input, "input should not be null!");
             ExtractorProcessorContext context = (ExtractorProcessorContext) request.getProcessorContext();
-            ExtractorSelectorImpl processor = new ExtractorSelectorImpl(context.getWebsite().getExtractorConfig().getExtractorSelectors());
-            processor.invoke(request, response);
-            Collection<PageExtractor> list = ResponseUtil.getMatchedPageExtractorList(response);
-            Set<String> blackSet = ResponseUtil.getBlackPageExtractorIdSet(response);
+            ExtractorSelectorHandler selectorHandler = new ExtractorSelectorHandler(context.getExtractorSelectors(), context.getPageExtractorMap());
+            List<PageExtractor> pageExtractors = selectorHandler.select(request);
 
-            Map<String, PageExtractor> totalPageExtractors = new HashMap<String, PageExtractor>();
-            for (PageExtractor matchPageExtractor : list) {
-                totalPageExtractors.put(matchPageExtractor.getId(), matchPageExtractor);
+            if (CollectionUtils.isEmpty(pageExtractors)) {
+                throw new UnexpectedException("Empty page extractors!");
             }
-            Iterator<Entry<String, PageExtractor>> it = context.getPageExtractorMap().entrySet().iterator();
-            while (it.hasNext()) {
-                Entry<String, PageExtractor> entry = it.next();
-                if (BooleanUtils.isTrue(entry.getValue().getDisAlternative()) && !totalPageExtractors.containsKey(entry.getKey())) {
-                    log.debug("remove dis alternative PageExtractor:" + entry.getValue());
-                } else if (blackSet != null && blackSet.contains(entry.getKey())) {
-                    log.debug("remove balck PageExtractor:" + entry.getValue());
-                } else {
-                    totalPageExtractors.put(entry.getKey(), entry.getValue());
+
+            for (int i = 0, length = pageExtractors.size(); i < length; i++) {
+                PageExtractor pageExtractor = pageExtractors.get(i);
+                try {
+                    PageExtractorImpl pageExtractorImpl = new PageExtractorImpl(pageExtractor);
+                    pageExtractorImpl.invoke(request.copy(), response);
+                } catch (Exception e) {
+                    if (i >= length - 1) {
+                        throw e;
+                    }
+                    LOGGER.warn("Error invoking page extractor[{}], error: {}", pageExtractor.getId(), e.getMessage());
+                    continue;
                 }
-            }
 
-            if (CollectionUtils.isEmpty(list)) {
-                log.warn("empty pageExtractor list after selector,try test with all pageExtractors...");
-                list = new ArrayList<PageExtractor>(totalPageExtractors.values());
-            }
-            while (!doPageExtractor(request, response, list, totalPageExtractors)) {
-                if (CollectionUtils.isEmpty(totalPageExtractors.values())) {
+                if (MapUtils.isNotEmpty(ResponseUtil.getResponsePageExtractResultMap(response))) {
+                    ResponseUtil.setPageExtractor(response, pageExtractor);
                     break;
                 }
-                list = new ArrayList<PageExtractor>(totalPageExtractors.values());
             }
-
         } catch (Exception e) {
             if (e instanceof ResultEmptyException) {
-                log.warn("extract request error." + e.getMessage());
+                LOGGER.warn("extract request error." + e.getMessage());
             } else {
-                log.error("extract request error.", e);
+                LOGGER.error("extract request error.", e);
             }
             response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
         }
         return response;
-    }
-
-    private static boolean doPageExtractor(SpiderRequest request, SpiderResponse response, Collection<PageExtractor> list,
-            Map<String, PageExtractor> totalPageExtractors) throws Exception {
-        for (PageExtractor pageExtractor : list) {
-            log.info("use " + pageExtractor + " to extract page...");
-            totalPageExtractors.remove(pageExtractor.getId());
-            try {
-                PageExtractorImpl pageExtractorImpl = new PageExtractorImpl(pageExtractor);
-                pageExtractorImpl.invoke(request.copy(), response);
-            } catch (Exception e) {
-                log.warn("extract request error " + e.getMessage());
-                if (MapUtils.isEmpty(totalPageExtractors)) {
-                    throw e;
-                } else {
-                    continue;
-                }
-            }
-            if (MapUtils.isNotEmpty(ResponseUtil.getResponsePageExtractResultMap(response))) {
-                ResponseUtil.setPageExtractor(response, pageExtractor);
-                return true;
-            }
-        }
-        return false;
     }
 
 }

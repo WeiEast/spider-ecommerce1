@@ -11,7 +11,6 @@ package com.datatrees.crawler.core.processor.extractor;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
@@ -23,6 +22,7 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
+import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -40,14 +40,18 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
 
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
+        Preconditions.notNull("input", request.getInput());
+        List<AbstractSegment> segments = pageExtractor.getSegmentList();
+        logger.info("segments size[{}] in page-extractor: {}", segments.size(), pageExtractor.getId());
+        if (CollectionUtils.isEmpty(segments)) {
+            logger.warn("Empty segment processor and skip page extractor. page-extractor: {}", pageExtractor.getId());
+            return;
+        }
+
         PageSourceImpl pageSourceImpl = new PageSourceImpl(pageExtractor.getPageSourceList());
         pageSourceImpl.invoke(request, response);
 
-        List<AbstractSegment> segments = pageExtractor.getSegmentList();
-        if (CollectionUtils.isNotEmpty(segments)) {
-            // extract objs with segment
-            this.extractObjectsWithSegments(segments, request, response);
-        }
+        this.extractObjectsWithSegments(segments, request, response);
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})

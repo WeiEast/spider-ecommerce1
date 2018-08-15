@@ -11,7 +11,9 @@ package com.treefinance.crawler.framework.util;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.treefinance.crawler.exception.UncheckedInterruptedException;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,15 +24,32 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年7月14日 下午4:03:20
  */
-public class FieldUtils {
+public final class FieldUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FieldUtils.class);
 
-    public static String getFieldValueAsString(Object target, String field) throws InterruptedException {
-        return getFieldValueAsString(target, field, StringUtils.EMPTY);
+    private static final String DEFAULT_SEPARATOR = "  \r\n";
+
+    private FieldUtils() {
     }
 
-    public static String getFieldValueAsString(Object target, String field, String separator) throws InterruptedException {
+    public static boolean isNullOrEmptyString(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty());
+    }
+
+    public static boolean isNullOrEmptyCollection(Object object) {
+        return object == null || (object instanceof Collection && ((Collection) object).isEmpty());
+    }
+
+    public static String getFieldValueAsString(Object target, String field) {
+        return getFormattedFieldValue(target, field, DEFAULT_SEPARATOR);
+    }
+
+    public static String getFieldValueAsString(Object target, String field, String separator) {
+        return getFormattedFieldValue(target, field, separator == null ? DEFAULT_SEPARATOR : separator);
+    }
+
+    public static String getFormattedFieldValue(Object target, String field, String separator) {
         Object value = getFieldValue(target, field);
 
         return formatValue(value, separator);
@@ -50,7 +69,8 @@ public class FieldUtils {
         return null;
     }
 
-    private static String formatValue(Object value, String separator) throws InterruptedException {
+    @SuppressWarnings("unchecked")
+    private static String formatValue(Object value, String separator) {
         if (value == null) {
             return StringUtils.EMPTY;
         } else if (value instanceof String) {
@@ -58,6 +78,8 @@ public class FieldUtils {
         } else if (value instanceof WrappedFile) {
             try {
                 return ((WrappedFile) value).readToString();
+            } catch (InterruptedException e) {
+                throw new UncheckedInterruptedException("unexpected interrupted exception!", e);
             } catch (IOException e) {
                 LOGGER.error("Error reading file content. - " + value, e);
             }
@@ -66,11 +88,7 @@ public class FieldUtils {
         } else if (value instanceof Collection) {
             String delimiter = StringUtils.defaultString(separator);
 
-            StringBuilder builder = new StringBuilder();
-            for (Object sub : (Collection) value) {
-                builder.append(formatValue(sub, delimiter)).append(delimiter);
-            }
-            return builder.toString();
+            return ((Collection<Object>) value).stream().map(sub -> formatValue(sub, delimiter)).collect(Collectors.joining(delimiter));
         } else {
             return value.toString();
         }
