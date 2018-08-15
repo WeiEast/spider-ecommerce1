@@ -10,7 +10,7 @@ import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.ChildTag;
 import com.treefinance.crawler.framework.config.annotation.Tag;
 import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.ConfigBuilder;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.CDATA;
@@ -52,7 +52,7 @@ public class XmlConfigBuilder implements ConfigBuilder {
     }*/
 
     @Override
-    public <C extends CrawlerConfig> String build(C obj) {
+    public <C extends SpiderConfig> String build(C obj) {
         Document document = new Document();
         if (obj != null) {
             this.processObjectWithTag(document, obj);

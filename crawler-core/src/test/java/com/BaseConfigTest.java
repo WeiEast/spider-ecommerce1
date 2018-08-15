@@ -27,8 +27,8 @@ import com.datatrees.crawler.core.domain.config.ExtractorConfig;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
-import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.config.SpiderConfig;
+import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -40,7 +40,7 @@ public abstract class BaseConfigTest {
     protected static SearchConfig getSearchConfig(String fileName) {
         String content = ResourceUtil.getContent(fileName, null);
 
-        return CrawlerConfigFactory.build(content, SearchConfig.class);
+        return SpiderConfigFactory.build(content, SearchConfig.class);
     }
 
     protected static SearchProcessorContext getProcessorContext(String fileName, String website) {
@@ -73,10 +73,10 @@ public abstract class BaseConfigTest {
         return context;
     }
 
-    private static <T extends CrawlerConfig> T getConfig(String filename, Class<T> configClass) {
+    private static <T extends SpiderConfig> T getConfig(String filename, Class<T> configClass) {
         String content = ResourceUtil.getContent(filename, null);
 
-        return CrawlerConfigFactory.build(content, configClass);
+        return SpiderConfigFactory.build(content, configClass);
     }
 
     protected static String getContent(String fileName) {

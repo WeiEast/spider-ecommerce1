@@ -16,7 +16,7 @@ import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.share.service.extra.SimpleProxyManager;
-import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
@@ -112,7 +112,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         Website website = new Website();
         if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
             try {
-                SearchConfig searchConfig = CrawlerConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
+                SearchConfig searchConfig = SpiderConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
                 website.setSearchConfig(searchConfig);
                 website.setSearchConfigSource(websiteConfig.getSearchConfig());
             } catch (Exception e) {
@@ -122,7 +122,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = CrawlerConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = SpiderConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {

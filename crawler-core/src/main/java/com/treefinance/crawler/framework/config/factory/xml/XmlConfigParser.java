@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.datatrees.common.util.ReflectionUtils;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Path;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.ConfigParser;
 import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
 import com.treefinance.crawler.framework.exception.ConfigParseException;
@@ -39,7 +39,7 @@ public class XmlConfigParser implements ConfigParser {
     }
 
     @Override
-    public <T extends CrawlerConfig> T parse(String config, Class<T> type, ParentConfigHandler<T> handler) throws ConfigParseException {
+    public <T extends SpiderConfig> T parse(String config, Class<T> type, ParentConfigHandler<T> handler) throws ConfigParseException {
         T result = parse(config, type);
         if (handler != null) {
             try {
@@ -52,7 +52,7 @@ public class XmlConfigParser implements ConfigParser {
     }
 
     @Override
-    public <T extends CrawlerConfig> T parse(String config, Class<T> type) throws ConfigParseException {
+    public <T extends SpiderConfig> T parse(String config, Class<T> type) throws ConfigParseException {
         try {
             Document document = XmlDocumentHelper.createDocument(config);
             return processNodes(document.getRootElement(), type);

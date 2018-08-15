@@ -1,7 +1,6 @@
 package com.treefinance.crawler.framework.config.factory;
 
-import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.exception.ConfigParseException;
 
 /**
@@ -11,8 +10,8 @@ import com.treefinance.crawler.framework.exception.ConfigParseException;
  */
 public interface ConfigParser {
 
-    <T extends CrawlerConfig> T parse(String config, Class<T> type) throws ConfigParseException;
+    <T extends SpiderConfig> T parse(String config, Class<T> type) throws ConfigParseException;
 
-    <T extends CrawlerConfig> T parse(String config, Class<T> type, ParentConfigHandler<T> handler) throws ConfigParseException;
+    <T extends SpiderConfig> T parse(String config, Class<T> type, ParentConfigHandler<T> handler) throws ConfigParseException;
 
 }

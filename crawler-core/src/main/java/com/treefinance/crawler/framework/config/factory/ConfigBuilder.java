@@ -1,6 +1,6 @@
 package com.treefinance.crawler.framework.config.factory;
 
-import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -9,6 +9,6 @@ import com.treefinance.crawler.framework.config.CrawlerConfig;
  */
 public interface ConfigBuilder {
 
-    <C extends CrawlerConfig> String build(C config);
+    <C extends SpiderConfig> String build(C config);
 
 }

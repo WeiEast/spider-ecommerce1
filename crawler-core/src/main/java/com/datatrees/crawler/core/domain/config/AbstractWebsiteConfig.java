@@ -19,7 +19,7 @@ import com.datatrees.crawler.core.domain.config.plugin.impl.ShellPlugin;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.commons.collections.CollectionUtils;
  * @version 1.0
  * @since 2015年7月7日 下午7:05:31
  */
-public abstract class AbstractWebsiteConfig implements CrawlerConfig {
+public abstract class AbstractWebsiteConfig implements SpiderConfig {
 
     /**
      *

@@ -26,8 +26,8 @@ import java.util.Objects;
 
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.exception.UnexpectedException;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
-import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.config.SpiderConfig;
+import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 import org.springframework.util.StreamUtils;
 
 /**
@@ -39,10 +39,10 @@ public final class TestHelper {
     private TestHelper() {
     }
 
-    public static <T extends CrawlerConfig> T getConfig(String filepath, Class<T> configClass) {
+    public static <T extends SpiderConfig> T getConfig(String filepath, Class<T> configClass) {
         String content = getFileContent(filepath);
 
-        return CrawlerConfigFactory.build(content, configClass);
+        return SpiderConfigFactory.build(content, configClass);
     }
 
     public static String getFileContent(String filePath) {

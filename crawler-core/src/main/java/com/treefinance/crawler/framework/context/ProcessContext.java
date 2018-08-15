@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public abstract class ProcessContext implements CrawlerContext {
+public abstract class ProcessContext implements SpiderContext {
 
     protected final Logger                      logger = LoggerFactory.getLogger(getClass());
 
