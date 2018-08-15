@@ -34,6 +34,8 @@ import com.datatrees.crawler.core.processor.login.Login;
 import com.datatrees.crawler.core.processor.page.DummyPage;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.google.common.collect.ImmutableList;
+import com.treefinance.crawler.framework.decode.Decoder;
+import com.treefinance.crawler.framework.decode.DecoderFactory;
 import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -465,5 +467,13 @@ public class SearchProcessorContext extends AbstractProcessorContext {
 
     public void storeCookies() {
         loginResource.putCookie(getLoginAccountKey(), ProcessorContextUtil.getCookieString(this));
+    }
+
+    public Decoder getUnicodeDecoder() {
+        UnicodeMode unicodeMode = this.getUnicodeMode();
+        if (unicodeMode != null) {
+            return DecoderFactory.getDecoder(unicodeMode);
+        }
+        return null;
     }
 }

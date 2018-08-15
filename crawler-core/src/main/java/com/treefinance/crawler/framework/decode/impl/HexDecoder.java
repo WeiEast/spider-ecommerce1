@@ -6,12 +6,12 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.decode.impl;
+package com.treefinance.crawler.framework.decode.impl;
 
 import java.nio.charset.Charset;
 import java.util.regex.Matcher;
 
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.crawler.framework.decode.Decoder;
 import com.treefinance.toolkit.util.RegExp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +21,13 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Mar 14, 2014 11:30:55 AM
  */
-public class HexDecoder extends AbstractDecoder {
+public class HexDecoder implements Decoder {
+
+    public  static final HexDecoder DEFAULT = new HexDecoder();
+
+    protected static final   Logger log     = LoggerFactory.getLogger(HexDecoder.class);
 
     protected static final String pattern = "((\\\\x([\\w\\d]{2}))+)";
-
-    private static final   Logger log     = LoggerFactory.getLogger(HexDecoder.class);
 
     @Override
     public String decode(String content, Charset charset) {
@@ -34,20 +36,7 @@ public class HexDecoder extends AbstractDecoder {
             log.warn("using default charset! " + charset);
         }
 
-        String result = replaceByRegex(content, charset, pattern);
-
-        // DecodeModeContainer container = DecodeModeContainer.get(conf);
-        // if (container != null) {
-        // log.debug("decode content using hex format");
-        // String regex = container.getModeMapper().get(getMode());
-        // if (StringUtils.isEmpty(regex)) {
-        // log.warn("cant't find regex for hex mode");
-        // return regex;
-        // }
-        //
-        // result = replaceByRegex(content, charset, regex);
-        // }
-        return result;
+        return replaceByRegex(content, charset, pattern);
     }
 
     /**

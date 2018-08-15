@@ -6,11 +6,11 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.decode.impl;
+package com.treefinance.crawler.framework.decode.impl;
 
 import java.nio.charset.Charset;
 
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.crawler.framework.decode.Decoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,8 +19,9 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Mar 15, 2014 11:30:55 AM
  */
-public class SpecialDecoder extends AbstractDecoder {
+public class SpecialDecoder implements Decoder {
 
+    public static final  SpecialDecoder DEFAULT = new SpecialDecoder();
     private static final Logger log = LoggerFactory.getLogger(SpecialDecoder.class);
 
     @Override
@@ -38,7 +39,7 @@ public class SpecialDecoder extends AbstractDecoder {
         int pos = 0;
 
         while ((i = content.indexOf("\\u", pos)) != -1) {
-            sb.append(content.substring(pos, i));
+            sb.append(content, pos, i);
             if (i + 5 < content.length()) {
                 pos = i + 6;
                 sb.append((char) Integer.parseInt(content.substring(i + 2, i + 6), 16));

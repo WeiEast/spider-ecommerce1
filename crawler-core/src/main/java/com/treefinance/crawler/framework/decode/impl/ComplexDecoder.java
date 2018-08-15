@@ -6,32 +6,29 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.decode.impl;
+package com.treefinance.crawler.framework.decode.impl;
 
 import java.nio.charset.Charset;
 
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
 import com.treefinance.toolkit.util.RegExp;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 12, 2014 8:27:03 PM
  */
-public class RegexDecoder extends AbstractDecoder {
+public class ComplexDecoder extends HexDecoder {
 
-    private static final Logger log = LoggerFactory.getLogger(RegexDecoder.class);
+    public static ComplexDecoder DEFAULT = new ComplexDecoder();
 
     @Override
     public String decode(String content, Charset charset) {
-        if (RegExp.find(content, HexDecoder.pattern)) {
-            log.debug("RegexDecoder using hex decoder");
-            return new HexDecoder().decode(content, charset);
+        if (RegExp.find(content, pattern)) {
+            log.debug("ComplexDecoder using hex decoder");
+            return super.decode(content, charset);
         } else {
-            log.debug("RegexDecoder using basic decoder");
-            return new BasicDecode().decode(content, charset);
+            log.debug("ComplexDecoder using basic decoder");
+            return BasicDecoder.DEFAULT.decode(content, charset);
         }
     }
 

@@ -21,7 +21,8 @@ public enum UnicodeMode {
     HEX("hex"),
     DECIMAL("decimal"),
     SPECIAL("special"),
-    COMPLEX("complex");
+    COMPLEX("complex"),
+    DEFAULT("default");
 
     private static Map<String, UnicodeMode> UnicodeModeMap = new HashMap<String, UnicodeMode>();
 

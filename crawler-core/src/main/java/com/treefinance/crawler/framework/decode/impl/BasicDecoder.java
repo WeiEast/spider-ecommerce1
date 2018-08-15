@@ -6,11 +6,11 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.decode.impl;
+package com.treefinance.crawler.framework.decode.impl;
 
 import java.nio.charset.Charset;
 
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.crawler.framework.decode.Decoder;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -18,7 +18,9 @@ import org.apache.commons.lang.StringEscapeUtils;
  * @version 1.0
  * @since Mar 12, 2014 8:22:14 PM
  */
-public class BasicDecode extends AbstractDecoder {
+public class BasicDecoder implements Decoder {
+
+    public static final BasicDecoder DEFAULT = new BasicDecoder();
 
     @Override
     public String decode(String content, Charset charset) {

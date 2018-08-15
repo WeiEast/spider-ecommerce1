@@ -8,20 +8,15 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import javax.annotation.Nonnull;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.common.conf.Configuration;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
-import com.treefinance.crawler.framework.format.number.NumberUnit;
-import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -103,17 +98,6 @@ public class RequestUtil {
 
     public static void setContentCharset(SpiderRequest req, String charset) {
         req.setAttribute(Constants.CRAWLER_PAGECONTENT_CHARSET, charset);
-    }
-
-    @SuppressWarnings("unchecked")
-    public static DateTimeFormats getDateFormat(SpiderRequest req) {
-        return (DateTimeFormats) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
-    }
-
-    @SuppressWarnings("unchecked")
-    @Nonnull
-    public static Map<String, NumberUnit> getNumberFormat(SpiderRequest req, Configuration configuration) {
-        return (Map<String, NumberUnit>) req.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(configuration));
     }
 
     public static String getSearchTemplate(SpiderRequest req) {

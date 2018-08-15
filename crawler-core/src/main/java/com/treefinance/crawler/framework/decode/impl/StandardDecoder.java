@@ -6,12 +6,12 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.decode.impl;
+package com.treefinance.crawler.framework.decode.impl;
 
 import java.nio.charset.Charset;
 
 import com.datatrees.common.util.StringUtils;
-import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
+import com.treefinance.crawler.framework.decode.Decoder;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,9 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年10月21日 下午5:48:19
  */
-public class StandardDecode extends AbstractDecoder {
+public class StandardDecoder implements Decoder {
 
+    public static final  StandardDecoder DEFAULT = new StandardDecoder();
     private static final Logger log = LoggerFactory.getLogger(HexDecoder.class);
 
     @Override

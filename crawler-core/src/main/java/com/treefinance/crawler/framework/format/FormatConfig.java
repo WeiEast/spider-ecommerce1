@@ -7,12 +7,14 @@ import java.util.Map;
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
+import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -57,16 +59,17 @@ public class FormatConfig implements Serializable {
 
     @Nonnull
     public DateTimeFormats getDateTimeFormats() {
-        return RequestUtil.getDateFormat(request);
+        return (DateTimeFormats) request.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
     }
 
     public DateTimeFormatter getDateTimeFormatter(String pattern) {
         return getDateTimeFormats().getFormatter(pattern);
     }
 
+    @SuppressWarnings("unchecked")
     @Nonnull
     public Map<String, NumberUnit> getNumberFormatMap(Configuration conf) {
-        return RequestUtil.getNumberFormat(request, conf);
+        return (Map<String, NumberUnit>) request.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(conf));
     }
 
     public AbstractProcessorContext getProcessorContext() {

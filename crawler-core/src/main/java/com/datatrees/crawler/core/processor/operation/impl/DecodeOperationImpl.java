@@ -15,9 +15,9 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.decode.DecodeType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
-import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
-import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
+import com.treefinance.crawler.framework.decode.impl.BasicDecoder;
+import com.treefinance.crawler.framework.decode.impl.HexDecoder;
+import com.treefinance.crawler.framework.decode.impl.StandardDecoder;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
@@ -61,13 +61,13 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
         String result;
         switch (decodeType) {
             case BASIC:
-                result = new BasicDecode().decode(input, charset);
+                result = new BasicDecoder().decode(input, charset);
                 break;
             case HEX:
                 result = new HexDecoder().decode(input, charset);
                 break;
             default:
-                result = new StandardDecode().decode(input, charset);
+                result = new StandardDecoder().decode(input, charset);
                 break;
         }
 

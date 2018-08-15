@@ -22,6 +22,7 @@ import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;
+import com.treefinance.crawler.framework.decode.DecodeUtils;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.util.ServiceUtils;
 import com.treefinance.toolkit.util.RegExp;
@@ -157,7 +158,7 @@ public class LoginUtil {
             request.setProcessorContext(context);
 
             // decode
-            request.setInput(DecodeUtil.decodeContent(responseBody, request));
+            request.setInput(DecodeUtils.decodeContent(responseBody, request));
             for (AbstractSegment abstractSegment : segments) {
                 try {
                     SpiderResponse segResponse = SpiderResponseFactory.make();

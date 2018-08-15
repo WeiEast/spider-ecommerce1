@@ -30,7 +30,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.DecodeUtil;
+import com.treefinance.crawler.framework.decode.DecodeUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
@@ -81,7 +81,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         Map<String, LinkNode> pageUrlMap = findPageUrls(content, current, searchTemplate, request);// detect
         // page
         // linknode
-        content = DecodeUtil.decodeContent(content, request);
+        content = DecodeUtils.decodeContent(content, request);
 
         // check block pattern
         checkBlock(request, response);
