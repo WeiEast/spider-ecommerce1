@@ -1,0 +1,93 @@
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package com.treefinance.crawler.framework.process.extract;
+
+import javax.annotation.Nonnull;
+import java.util.*;
+
+import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
+import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.util.FieldUtils;
+import com.treefinance.toolkit.util.RegExp;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * @author <A HREF="">Cheng Wang</A>
+ * @version 1.0
+ * @since 2015年7月14日 下午3:59:14
+ */
+public class ExtractorSelectorHandler {
+
+    private final Logger                     logger = LoggerFactory.getLogger(getClass());
+    private final List<ExtractorSelector>    extractorSelectors;
+    private final Map<String, PageExtractor> pageExtractors;
+
+    public ExtractorSelectorHandler(@Nonnull List<ExtractorSelector> extractorSelectors, @Nonnull Map<String, PageExtractor> pageExtractors) {
+        this.extractorSelectors = Objects.requireNonNull(extractorSelectors);
+        this.pageExtractors = Objects.requireNonNull(pageExtractors);
+    }
+
+    public List<PageExtractor> select(SpiderRequest request) {
+        Object input = request.getInput();
+        com.treefinance.toolkit.util.Preconditions.notNull("input", input);
+
+        List<PageExtractor> selected = new ArrayList<>();
+
+        Map<String, PageExtractor> total = new HashMap<>(pageExtractors);
+        if (!extractorSelectors.isEmpty()) {
+            Map<String, String> fields = new HashMap<>();
+            List<PageExtractor> alternative = new ArrayList<>();
+            for (ExtractorSelector selector : extractorSelectors) {
+                String value = fields.computeIfAbsent(selector.getField(), fieldName -> FieldUtils.getFieldValueAsString(input, fieldName));
+
+                logger.debug("extractor selector >>> field: {}, value: {}", selector.getField(), value);
+
+                if (value == null) continue;
+
+                PageExtractor pageExtractor = selector.getPageExtractor();
+                if (match(value, selector.getDisContainRegex())) {
+                    logger.debug("matched dis-contain pattern: {}", selector.getDisContainRegex());
+                    selected.remove(pageExtractor);
+                } else if (match(value, selector.getContainRegex())) {
+                    logger.debug("matched contain pattern: {}", selector.getContainRegex());
+                    selected.add(pageExtractor);
+                } else if (!Boolean.TRUE.equals(pageExtractor.getDisAlternative())) {
+                    alternative.add(pageExtractor);
+                }
+                total.remove(pageExtractor.getId());
+            }
+            selected.addAll(alternative);
+        }
+
+        if (!total.isEmpty()) {
+            for (PageExtractor pageExtractor : total.values()) {
+                if (!Boolean.TRUE.equals(pageExtractor.getDisAlternative())) {
+                    selected.add(pageExtractor);
+                }
+            }
+        }
+
+        return selected;
+    }
+
+    private boolean match(String value, String regex) {
+        return StringUtils.isNotBlank(regex) && RegExp.find(value, regex);
+    }
+}

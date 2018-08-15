@@ -8,7 +8,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractRequest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.Extractor;
+import com.treefinance.crawler.framework.boot.Extractor;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.service.ResultStorage;

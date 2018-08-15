@@ -8,7 +8,7 @@ import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;

@@ -4,10 +4,9 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResult;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.collections.CollectionUtils;

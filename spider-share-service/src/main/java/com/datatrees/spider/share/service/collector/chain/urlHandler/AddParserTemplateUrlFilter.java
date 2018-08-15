@@ -5,7 +5,7 @@ import java.util.List;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.search.URLHandlerImpl;

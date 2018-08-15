@@ -13,7 +13,7 @@ import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.domain.model.Keyword;

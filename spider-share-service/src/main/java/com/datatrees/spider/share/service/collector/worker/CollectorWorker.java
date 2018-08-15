@@ -23,7 +23,7 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.login.Login;
+import com.treefinance.crawler.framework.login.Login;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.collector.search.CrawlExecutor;

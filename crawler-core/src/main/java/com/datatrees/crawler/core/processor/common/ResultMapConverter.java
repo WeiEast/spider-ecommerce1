@@ -16,7 +16,7 @@ import com.datatrees.common.protocol.util.UrlUtils;
 import com.datatrees.common.util.ReflectionUtils;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.parser.ParserURLCombiner;
+import com.treefinance.crawler.framework.process.operation.impl.ParserURLCombiner;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

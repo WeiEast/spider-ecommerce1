@@ -15,7 +15,7 @@ import com.datatrees.crawler.core.domain.config.page.AbstractPage;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
