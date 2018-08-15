@@ -4,10 +4,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author Jerry
@@ -61,15 +61,15 @@ public final class ExpressionParser {
         return matcher.evalExpWithObject(new ExpEvalContext(placeholder));
     }
 
-    public String eval(Request request, Response response) {
+    public String eval(SpiderRequest request, SpiderResponse response) {
         return matcher.evalExp(() -> new ExpEvalContext(FieldScopes.getVisibleFields(request, response)));
     }
 
-    public Object evalWithObject(Request request, Response response) {
+    public Object evalWithObject(SpiderRequest request, SpiderResponse response) {
         return matcher.evalExpWithObject(() -> new ExpEvalContext(FieldScopes.getVisibleFields(request, response)));
     }
 
-    public String evalUrl(Request request, Response response, boolean failOnUnknown, boolean allowNull) {
+    public String evalUrl(SpiderRequest request, SpiderResponse response, boolean failOnUnknown, boolean allowNull) {
         return matcher.evalExp(() -> {
             String charset = RequestUtil.getContentCharset(request);
             Map<String, Object> visibleFields = FieldScopes.getVisibleFields(request, response);
@@ -77,7 +77,7 @@ public final class ExpressionParser {
         });
     }
 
-    public String evalUrl(Request request, Response response, String charset) {
+    public String evalUrl(SpiderRequest request, SpiderResponse response, String charset) {
         return matcher.evalExp(() -> {
             Map<String, Object> visibleFields = FieldScopes.getVisibleFields(request, response);
             return new UrlExpEvalContext(visibleFields, StandardExpression.URL_ENCODED_KEYS, charset);

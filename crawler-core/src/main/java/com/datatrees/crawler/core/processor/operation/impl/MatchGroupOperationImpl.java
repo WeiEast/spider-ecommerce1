@@ -11,11 +11,11 @@ package com.datatrees.crawler.core.processor.operation.impl;
 import javax.annotation.Nonnull;
 import java.util.regex.Matcher;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MatchGroupOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +32,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    protected void validate(MatchGroupOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull MatchGroupOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (StringUtils.isEmpty(operation.getSourceId())) {
@@ -41,7 +41,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Matcher matcher = (Matcher) SourceUtils.getSourceFieldValue(operation.getSourceId(), request, response);
 
         String result = null;

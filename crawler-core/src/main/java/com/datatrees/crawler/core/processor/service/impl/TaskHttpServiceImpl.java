@@ -2,8 +2,6 @@ package com.datatrees.crawler.core.processor.service.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.properties.Properties;
 import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
@@ -14,10 +12,12 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RequestType;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.lang3.StringUtils;
 
 public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
@@ -27,7 +27,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
         Long taskId = context.getLong(AttributeKey.TASK_ID);
         String websiteName = context.getWebsiteName();

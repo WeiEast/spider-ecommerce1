@@ -2,7 +2,7 @@ package com.datatrees.crawler.core.processor.extractor;
 
 import java.util.List;
 
-import com.datatrees.common.pipeline.ProcessPipeline;
+import com.treefinance.crawler.framework.context.pipeline.ProcessPipeline;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;

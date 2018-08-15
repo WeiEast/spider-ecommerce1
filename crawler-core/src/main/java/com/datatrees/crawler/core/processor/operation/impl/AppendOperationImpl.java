@@ -2,11 +2,11 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.AppendOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang.StringUtils;
 
@@ -17,7 +17,7 @@ public class AppendOperationImpl extends Operation<AppendOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull AppendOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String value = operation.getValue();
 
         value = StandardExpression.eval(value, request, response);

@@ -10,11 +10,11 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ProxySetOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -28,14 +28,14 @@ public class ProxySetOperationImpl extends Operation<ProxySetOperation> {
     }
 
     @Override
-    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+    protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         logger.warn("Unsupported proxy-setting operation and skip!");
         return true;
     }
 
     @Override
-    protected Object doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ProxySetOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request,
+            @Nonnull SpiderResponse response) throws Exception {
         throw new UnsupportedOperationException("Unsupported proxy-set operation!");
     }
 

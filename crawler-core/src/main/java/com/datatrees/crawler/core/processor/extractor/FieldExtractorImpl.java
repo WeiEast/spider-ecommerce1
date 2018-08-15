@@ -15,9 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.pipeline.FailureSkipProcessorValve;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.UrlUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
@@ -36,6 +33,9 @@ import com.datatrees.crawler.core.processor.operation.OperationPipeline;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.google.common.collect.ImmutableList;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.FailureSkipProcessorValve;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.format.Formatter;
@@ -58,7 +58,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
     }
 
     @Override
-    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+    protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         boolean skipped = super.isSkipped(request, response);
 
         if (!skipped) {
@@ -79,7 +79,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         logger.debug("start field extractor >>  {}, ", fieldExtractor);
 
         Object fieldResult = null;
@@ -161,13 +161,13 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         }
     }
 
-    private Object extractWithOperation(String content, Request request,
+    private Object extractWithOperation(String content, SpiderRequest request,
             FieldExtractResultSet fieldExtractResultSet) throws ResultEmptyException, OperationException {
         OperationPipeline pipeline = new OperationPipeline(fieldExtractor);
         return pipeline.start(content, request, fieldExtractResultSet);
     }
 
-    private Object extractWithPlugin(String content, Request request, AbstractPlugin pluginDesc) throws Exception {
+    private Object extractWithPlugin(String content, SpiderRequest request, AbstractPlugin pluginDesc) throws Exception {
         AbstractProcessorContext context = RequestUtil.getProcessorContext(request);
 
         Object fieldResult = PluginCaller.call(pluginDesc, context, () -> {
@@ -190,7 +190,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return pluginResultMap.get(PluginConstants.FIELD);
     }
 
-    private Object format(Request request, Response response, Object fieldResult, ResultType type) throws ExtractorException {
+    private Object format(SpiderRequest request, SpiderResponse response, Object fieldResult, ResultType type) throws ExtractorException {
         if (type != null && fieldResult instanceof String) {
             Configuration conf = RequestUtil.getConf(request);
             String input = "";
@@ -209,7 +209,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return fieldResult;
     }
 
-    private Object fieldDefaultValue(Request request, Response response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult,
+    private Object fieldDefaultValue(SpiderRequest request, SpiderResponse response, FieldExtractResultSet fieldExtractResultSet, Object fieldResult,
             ResultType type) {
         String defaultValue = fieldExtractor.getDefaultValue();
         if (defaultValue != null && (fieldResult == null || (fieldResult instanceof String && StringUtils.isEmpty((String) fieldResult)))) {
@@ -242,7 +242,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
      * @param request
      * @return
      */
-    private String resolveUrl(String url, Request request) {
+    private String resolveUrl(String url, SpiderRequest request) {
         String res = url;
         LinkNode current = RequestUtil.getCurrentUrl(request);
         if (current != null) {
@@ -274,7 +274,7 @@ public class FieldExtractorImpl extends FailureSkipProcessorValve {
         return content;
     }
 
-    private FieldExtractResultSet initMap(Response response) {
+    private FieldExtractResultSet initMap(SpiderResponse response) {
         FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
         if (fieldExtractResultSet == null) {
             fieldExtractResultSet = new FieldExtractResultSet();

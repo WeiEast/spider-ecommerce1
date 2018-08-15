@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.common.protocol.metadata.Metadata;
 import com.datatrees.common.protocol.util.CookieFormater;
@@ -21,6 +19,10 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.net.HttpHeaders;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -81,10 +83,10 @@ public class LoginUtil {
 
     private ProtocolOutput getProtocolOutput(LinkNode linkNode, SearchProcessorContext context) {
         try {
-            Request request = new Request();
+            SpiderRequest request = SpiderRequestFactory.make();
             RequestUtil.setProcessorContext(request, context);
             RequestUtil.setConf(request, PropertiesConfiguration.getInstance());
-            Response response = new Response();
+            SpiderResponse response = SpiderResponseFactory.make();
             RequestUtil.setCurrentUrl(request, linkNode);
             AbstractService service = context.getDefaultService();
             ServiceBase serviceProcessor = ProcessorFactory.getService(service);
@@ -160,14 +162,14 @@ public class LoginUtil {
 
     private void callSegments(List<AbstractSegment> segments, SearchProcessorContext context, String responseBody) throws ResultEmptyException {
         if (CollectionUtils.isNotEmpty(segments)) {
-            Request request = new Request();
+            SpiderRequest request = SpiderRequestFactory.make();
             RequestUtil.setProcessorContext(request, context);
 
             // decode
             request.setInput(DecodeUtil.decodeContent(responseBody, request));
             for (AbstractSegment abstractSegment : segments) {
                 try {
-                    Response segResponse = Response.build();
+                    SpiderResponse segResponse = SpiderResponseFactory.make();
                     SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
                     segmentBase.invoke(request, segResponse);
                 } catch (ResultEmptyException e) {

@@ -15,7 +15,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.*;
 import com.datatrees.common.protocol.ProtocolInput.CookieScope;
 import com.datatrees.common.protocol.http.HttpResponse;
@@ -39,6 +38,8 @@ import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.net.HttpHeaders;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.toolkit.util.Assert;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang3.ArrayUtils;
@@ -58,7 +59,7 @@ public class DefaultService extends ServiceBase {
     private static final int DEFAULT_WAIT_INTERVAL = PropertiesConfiguration.getInstance().getInt("default.wait.interval", 500);
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
 
         Assert.notNull(context, "Search context for default service must not be null!");
@@ -282,7 +283,7 @@ public class DefaultService extends ServiceBase {
         return proxy;
     }
 
-    private int getMaxRetries(@Nonnull final Request request, @Nonnull final SearchProcessorContext context) {
+    private int getMaxRetries(@Nonnull final SpiderRequest request, @Nonnull final SearchProcessorContext context) {
         Integer retry = RequestUtil.getRetryCount(request);
         if (retry == null) {
             Properties searchProperties = context.getSearchProperties();
@@ -343,7 +344,7 @@ public class DefaultService extends ServiceBase {
      * @param output
      * @param current
      */
-    private void handleRedirect(ProtocolOutput output, LinkNode current, Request request) {
+    private void handleRedirect(ProtocolOutput output, LinkNode current, SpiderRequest request) {
         String baseUrl = output.getContent().getBaseUrl();
         String url = output.getContent().getUrl();
         if (!url.equalsIgnoreCase(baseUrl)) {

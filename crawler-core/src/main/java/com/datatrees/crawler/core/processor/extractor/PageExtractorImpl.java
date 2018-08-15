@@ -11,8 +11,6 @@ package com.datatrees.crawler.core.processor.extractor;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
@@ -21,6 +19,10 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.source.PageSourceImpl;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -37,7 +39,7 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         PageSourceImpl pageSourceImpl = new PageSourceImpl(pageExtractor.getPageSourceList());
         pageSourceImpl.invoke(request, response);
 
@@ -76,12 +78,12 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
     }
 
     @SuppressWarnings("rawtypes")
-    private void extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
+    private void extractObjectsWithSegments(List<AbstractSegment> segments, SpiderRequest req, SpiderResponse resp) throws ResultEmptyException {
         logger.info("extractObjectsWithSegments: segment size.." + segments.size());
         Map segmentResultMap = new HashMap();
         for (AbstractSegment abstractSegment : segments) {
             try {
-                Response segResponse = Response.build();
+                SpiderResponse segResponse = SpiderResponseFactory.make();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 
                 segmentBase.invoke(req, segResponse);

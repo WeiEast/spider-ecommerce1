@@ -11,14 +11,14 @@ package com.datatrees.crawler.core.processor.extractor.selector;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
@@ -37,7 +37,7 @@ public class ExtractorSelectorImpl extends ProcessorInvokerAdapter {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Object input = request.getInput();
         Preconditions.checkNotNull(input, "input should not be null!");
 

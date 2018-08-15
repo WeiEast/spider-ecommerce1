@@ -12,11 +12,11 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.XpathSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,7 +32,7 @@ public class XpathSegmentImpl extends SegmentBase<XpathSegment> {
     }
 
     @Override
-    public List<String> splitInputContent(String content, XpathSegment segment, Request request, Response response) {
+    public List<String> splitInputContent(String content, XpathSegment segment, SpiderRequest request, SpiderResponse response) {
         if (StringUtils.isEmpty(content)) {
             return Collections.emptyList();
         }

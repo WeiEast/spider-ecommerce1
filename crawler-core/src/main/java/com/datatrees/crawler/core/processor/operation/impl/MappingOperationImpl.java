@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
@@ -15,6 +13,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.lang3.StringUtils;
 
@@ -40,7 +40,7 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
     }
 
     @Override
-    protected void validate(MappingOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull MappingOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (StringUtils.isEmpty(operation.getGroupName())) {
@@ -49,7 +49,7 @@ public class MappingOperationImpl extends Operation<MappingOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull MappingOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String group = operation.getGroupName();
         Map<String, String> mapping = CACHE.getUnchecked(group);
         if (mapping != null) {

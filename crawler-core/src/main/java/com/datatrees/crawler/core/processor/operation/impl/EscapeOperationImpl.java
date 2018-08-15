@@ -10,13 +10,13 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.EscapeType;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -31,7 +31,7 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     }
 
     @Override
-    protected boolean isSkipped(EscapeOperation operation, Request request, Response response) {
+    protected boolean isSkipped(@Nonnull EscapeOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         // invalid escape operation and skip
         boolean flag = operation.getEscapeType() == null || operation.getHandlingType() == null;
         if (flag) {
@@ -41,7 +41,7 @@ public class EscapeOperationImpl extends Operation<EscapeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull EscapeOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String input = (String) operatingData;
 
         EscapeType escapeType = operation.getEscapeType();

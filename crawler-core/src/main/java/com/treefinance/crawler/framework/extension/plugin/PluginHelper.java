@@ -20,8 +20,6 @@ import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
@@ -31,6 +29,10 @@ import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +49,7 @@ public final class PluginHelper {
     }
 
     public static String requestAsString(LinkNode linkNode, Integer retry) throws Exception {
-        Response response = invokeDefaultService(linkNode, retry);
+        SpiderResponse response = invokeDefaultService(linkNode, retry);
         return StringUtils.defaultString((String) response.getOutPut());
     }
 
@@ -56,24 +58,24 @@ public final class PluginHelper {
     }
 
     public static ProtocolOutput sendRequest(LinkNode linkNode, AbstractProcessorContext processorContext, Integer retry) throws Exception {
-        Response response = invokeDefaultService(linkNode, processorContext, retry);
+        SpiderResponse response = invokeDefaultService(linkNode, processorContext, retry);
 
         return ResponseUtil.getProtocolResponse(response);
     }
 
-    public static Response invokeDefaultService(LinkNode linkNode, Integer retry) throws Exception {
+    public static SpiderResponse invokeDefaultService(LinkNode linkNode, Integer retry) throws Exception {
         return invokeDefaultService(linkNode, ProcessContextHolder.getProcessorContext(), retry);
     }
 
-    public static Response invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Integer retry) throws Exception {
+    public static SpiderResponse invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Integer retry) throws Exception {
         return invokeDefaultService(linkNode, processorContext, null, retry);
     }
 
-    public static Response invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration,
+    public static SpiderResponse invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration,
             Integer retry) throws Exception {
         Objects.requireNonNull(linkNode);
         Objects.requireNonNull(processorContext);
-        Request request = new Request();
+        SpiderRequest request = SpiderRequestFactory.make();
         RequestUtil.setCurrentUrl(request, linkNode);
         RequestUtil.setProcessorContext(request, processorContext);
         RequestUtil.setContext(request, processorContext.getContext());
@@ -86,7 +88,7 @@ public final class PluginHelper {
             RequestUtil.setRetryCount(request, retry);
         }
 
-        Response response = new Response();
+        SpiderResponse response = SpiderResponseFactory.make();
         ServiceBase serviceProcessor = ProcessorFactory.getService(null);
         serviceProcessor.invoke(request, response);
 

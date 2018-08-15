@@ -13,14 +13,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import org.apache.commons.collections.MapUtils;
 
 /**
@@ -40,7 +40,7 @@ public abstract class Plugin<T extends AbstractPlugin> extends ProcessorInvokerA
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         try {
             String args = getPhaseInput(request);
 
@@ -56,13 +56,13 @@ public abstract class Plugin<T extends AbstractPlugin> extends ProcessorInvokerA
         }
     }
 
-    protected abstract Object invokePlugin(T metadata, String args, Request request) throws Exception;
+    protected abstract Object invokePlugin(T metadata, String args, SpiderRequest request) throws Exception;
 
     /**
      * get Plugin inputs rules : first argument is config other arguments are
      * dynamic by runtime business logic should impl each state
      */
-    private String getPhaseInput(Request req) {
+    private String getPhaseInput(SpiderRequest req) {
         Map<String, String> params = RequestUtil.getPluginRuntimeConf(req);
         if (MapUtils.isEmpty(params)) {
             params = new HashMap<>();

@@ -5,12 +5,12 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.util.SourceUtils;
@@ -25,25 +25,25 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class FormatConfig implements Serializable {
 
-    private final       Request  request;
-    private final       Response response;
+    private final       SpiderRequest  request;
+    private final       SpiderResponse response;
     private final       String   pattern;
 
-    public FormatConfig(@Nonnull Request request, @Nonnull Response response, @Nonnull FieldExtractor fieldExtractor) {
+    public FormatConfig(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response, @Nonnull FieldExtractor fieldExtractor) {
         this(request, response, fieldExtractor.getFormat());
     }
 
-    public FormatConfig(@Nonnull Request request, @Nonnull Response response, String pattern) {
+    public FormatConfig(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response, String pattern) {
         this.request = request;
         this.response = response;
         this.pattern = pattern;
     }
 
-    public Request getRequest() {
+    public SpiderRequest getRequest() {
         return request;
     }
 
-    public Response getResponse() {
+    public SpiderResponse getResponse() {
         return response;
     }
 

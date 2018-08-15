@@ -2,12 +2,12 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +19,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     @Override
-    protected boolean isSkipped(TripleOperation operation, Request request, Response response) {
+    protected boolean isSkipped(@Nonnull TripleOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         // invalid xpath operation and skip
         boolean flag = StringUtils.isBlank(operation.getValue());
         if (flag) {
@@ -29,7 +29,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull TripleOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String expression = operation.getValue();
 
         // ${this}=${a}?${b}:${c}
@@ -72,7 +72,7 @@ public class TripleOperationImpl extends Operation<TripleOperation> {
         return type.calculate(param1, param2, result1, result2);
     }
 
-    private String evalExp(String value, String operatingData, Request request, Response response) {
+    private String evalExp(String value, String operatingData, SpiderRequest request, SpiderResponse response) {
         String val = StringUtils.replace(value, "${this}", operatingData);
 
         return StandardExpression.eval(val, request, response);

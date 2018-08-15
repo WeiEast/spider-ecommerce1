@@ -1,18 +1,28 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc. The
- * copying and reproduction of this document and/or its content (whether wholly or partly) or any
- * incorporation of the same into any other material in any media or format of any kind is strictly
- * prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-package com.datatrees.common.pipeline;
+package com.treefinance.crawler.framework.context.pipeline;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +51,7 @@ public abstract class ProcessPipeline {
         if (valve != null) this.pipeline.addValve(valve);
     }
 
-    public void invoke(@Nonnull Request request, @Nonnull Response response) throws InvokeException, ResultEmptyException {
+    public void invoke(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws InvokeException, ResultEmptyException {
         Valve valve = pipeline.getFirst();
 
         if (valve != null) {
@@ -49,7 +59,7 @@ public abstract class ProcessPipeline {
         }
     }
 
-    public void invokeQuietly(@Nonnull Request request, @Nonnull Response response) throws ResultEmptyException {
+    public void invokeQuietly(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws ResultEmptyException {
         try {
             invoke(request, response);
         } catch (ResultEmptyException e) {

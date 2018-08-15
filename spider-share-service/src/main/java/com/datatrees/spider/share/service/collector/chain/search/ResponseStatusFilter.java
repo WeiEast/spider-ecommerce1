@@ -3,13 +3,13 @@ package com.datatrees.spider.share.service.collector.chain.search;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
-import com.datatrees.spider.share.domain.model.Task;
-import com.datatrees.spider.share.domain.ErrorCode;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -20,9 +20,9 @@ import org.apache.commons.lang.StringUtils;
 public class ResponseStatusFilter extends ResponsesFilter {
 
     @Override
-    protected void doInternalFilter(@Nonnull List<Response> responses, SearchProcessor searchProcessor, Context context) {
+    protected void doInternalFilter(@Nonnull List<SpiderResponse> responses, SearchProcessor searchProcessor, Context context) {
         Task task = searchProcessor.getTask();
-        for (Response response : responses) {
+        for (SpiderResponse response : responses) {
 
             int codeStatus = ResponseUtil.getResponseStatus(response);
 

@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
@@ -16,8 +14,6 @@ import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
-import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -27,7 +23,13 @@ import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.exception.LoginFailException;
 import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
 import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
+import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -230,12 +232,12 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
     protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retyrcount) {
         boolean flag = false;
         Object result = null;
-        Request newRequest = new Request();
+        SpiderRequest newRequest = SpiderRequestFactory.make();
         RequestUtil.setProcessorContext(newRequest, PluginFactory.getProcessorContext());
         RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
         RequestUtil.setContext(newRequest, PluginFactory.getProcessorContext().getContext());
         RequestUtil.setRetryCount(newRequest, retyrcount);
-        Response newResponse = new Response();
+        SpiderResponse newResponse = SpiderResponseFactory.make();
         try {
             RequestUtil.setCurrentUrl(newRequest, linkNode);
             ServiceBase serviceProcessor = ProcessorFactory.getService(null);

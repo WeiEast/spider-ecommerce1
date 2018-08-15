@@ -8,8 +8,8 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +28,7 @@ public final class SourceUtil {
     private SourceUtil() {
     }
 
-    public static Object getSourceMap(String sourceId, Request request, Response response) {
+    public static Object getSourceMap(String sourceId, SpiderRequest request, SpiderResponse response) {
         return SourceUtils.getSourceFieldValue(sourceId, request, response);
     }
 

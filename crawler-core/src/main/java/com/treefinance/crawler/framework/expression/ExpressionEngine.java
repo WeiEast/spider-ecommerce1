@@ -2,9 +2,9 @@ package com.treefinance.crawler.framework.expression;
 
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author Jerry
@@ -12,13 +12,13 @@ import com.treefinance.crawler.framework.context.FieldScopes;
  */
 public class ExpressionEngine {
 
-    private final Request             request;
+    private final SpiderRequest request;
 
-    private final Response            response;
+    private final SpiderResponse            response;
 
     private       Map<String, Object> visibleFields;
 
-    public ExpressionEngine(Request request, Response response) {
+    public ExpressionEngine(SpiderRequest request, SpiderResponse response) {
         this.request = request;
         this.response = response;
     }

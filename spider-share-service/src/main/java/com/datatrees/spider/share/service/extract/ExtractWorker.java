@@ -4,18 +4,19 @@ import javax.annotation.Resource;
 import java.util.Collection;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Response;
+import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractorRepuest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.extractor.Extractor;
-import com.datatrees.spider.share.service.domain.SubmitMessage;
-import com.datatrees.spider.share.service.extract.impl.DefaultProcessorContextBuilder;
-import com.datatrees.spider.share.service.ResultStorage;
-import com.datatrees.spider.share.service.submitter.SubmitProcessor;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ExtractCode;
+import com.datatrees.spider.share.service.ResultStorage;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.domain.SubmitMessage;
+import com.datatrees.spider.share.service.extract.impl.DefaultProcessorContextBuilder;
+import com.datatrees.spider.share.service.submitter.SubmitProcessor;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -45,9 +46,9 @@ public class ExtractWorker {
 
     private void doSubExtractProcess(ExtractMessage extractMessage, Object obj, int messageIndex) {
         try {
-            if (obj != null && obj instanceof Map && MapUtils.isNotEmpty((Map) obj)) {
+            if (obj instanceof Map && MapUtils.isNotEmpty((Map) obj)) {
                 Object messageObject = extractMessage.getMessageObject();
-                if (messageObject != null && messageObject instanceof Map) {
+                if (messageObject instanceof Map) {
                     ExtractMessage subExtractMessage = new ExtractMessage();
                     Map map = (Map) BeanUtils.instantiate(messageObject.getClass());
                     map.putAll((Map) messageObject);
@@ -89,10 +90,11 @@ public class ExtractWorker {
         context.addAttribute("StoragePath", result.getStoragePath());
         ExtractorRepuest request = ExtractorRepuest.build().setProcessorContext(context);
         request.setInput(extractMessage.getMessageObject());
-        Response response = Extractor.extract(request.contextInit());
+        SpiderResponse response = Extractor.extract(request.contextInit());
         Map extractResultMap = ResponseUtil.getResponsePageExtractResultMap(response);
-        if (response.getAttribute("CRAWLER_EXCEPTION") != null) {
-            result.setExtractCode(ExtractCode.EXTRACT_FAIL, ((Exception) response.getAttribute("CRAWLER_EXCEPTION")).getMessage());
+        Object exception = response.getAttribute(Constants.CRAWLER_EXCEPTION);
+        if (exception != null) {
+            result.setExtractCode(ExtractCode.EXTRACT_FAIL, ((Exception) exception).getMessage());
         } else {
             if (MapUtils.isNotEmpty(extractResultMap)) {
                 try {

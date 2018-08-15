@@ -15,9 +15,6 @@ import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.common.pipeline.InvokeException;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.parser.IndexMapping;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
@@ -32,6 +29,11 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionParser;
 import com.treefinance.crawler.framework.util.UrlExtractor;
@@ -64,7 +66,7 @@ public class ParserImpl {
         this.needReturnUrlList = needReturnUrlList;
     }
 
-    public Object parse(@Nonnull String content, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    public Object parse(@Nonnull String content, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String template = parser.getUrlTemplate();
         if (StringUtils.isEmpty(template)) {
             throw new InvalidOperationException("Invalid parser operation! - 'parser/url-template' must not be empty!");
@@ -86,11 +88,11 @@ public class ParserImpl {
                 logger.info("sleep {}s before parser request.", parser.getSleepSecond());
                 TimeUnit.SECONDS.sleep(parser.getSleepSecond());
             }
-            Request newRequest = new Request();
+            SpiderRequest newRequest = SpiderRequestFactory.make();
             RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
             RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
             RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
-            Response newResponse = new Response();
+            SpiderResponse newResponse = SpiderResponseFactory.make();
 
             return getResponseByWebRequest(newRequest, newResponse, results.get(0));
         } else if (isNeedReturnUrlList()) {
@@ -106,7 +108,7 @@ public class ParserImpl {
      * Second: replaced by the matched string in input content by regexp
      * Third: replaced by global visible field context;
      */
-    private List<String> evalExp(String url, Request request, Response response, String content) {
+    private List<String> evalExp(String url, SpiderRequest request, SpiderResponse response, String content) {
         ExpressionParser parser = ExpressionParser.parse(url);
         String expUrl = parser.evalUrl(request, response, false, true);
         parser.reset(expUrl);
@@ -180,7 +182,7 @@ public class ParserImpl {
         return fieldScopes;
     }
 
-    private String getResponseByWebRequest(Request newRequest, Response newResponse, String complexUrl) throws InvokeException, ResultEmptyException {
+    private String getResponseByWebRequest(SpiderRequest newRequest, SpiderResponse newResponse, String complexUrl) throws InvokeException, ResultEmptyException {
         String datas[] = ParserURLCombiner.decodeParserUrl(complexUrl);
         String url = datas[0];
         String referer = datas[1];

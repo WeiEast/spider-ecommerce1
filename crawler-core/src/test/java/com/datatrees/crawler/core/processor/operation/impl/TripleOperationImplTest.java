@@ -1,6 +1,6 @@
 package com.datatrees.crawler.core.processor.operation.impl;
 
-import com.datatrees.common.pipeline.InvokeException;
+import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;

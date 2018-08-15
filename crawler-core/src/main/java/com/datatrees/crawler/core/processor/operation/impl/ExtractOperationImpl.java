@@ -13,13 +13,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
@@ -51,8 +51,8 @@ public class ExtractOperationImpl extends Operation<ExtractOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ExtractOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request,
+            @Nonnull SpiderResponse response) throws Exception {
         // get input
         String content = (String) operatingData;
         String baseURL = RequestUtil.getCurrentUrl(request).getUrl();

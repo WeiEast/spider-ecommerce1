@@ -8,11 +8,11 @@
 
 package com.datatrees.crawler.core.processor.common;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.properties.UnicodeMode;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.decode.AbstractDecoder;
 import com.datatrees.crawler.core.processor.decode.DecodeFactory;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -21,7 +21,7 @@ import com.datatrees.crawler.core.processor.decode.DecodeFactory;
  */
 public class DecodeUtil {
 
-    public static String decodeContent(String content, Request request) {
+    public static String decodeContent(String content, SpiderRequest request) {
         String result = content;
 
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);

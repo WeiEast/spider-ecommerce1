@@ -14,13 +14,13 @@ import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
@@ -32,142 +32,142 @@ import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
  */
 public class RequestUtil {
 
-    public static LinkNode getCurrentUrl(Request req) {
+    public static LinkNode getCurrentUrl(SpiderRequest req) {
         return (LinkNode) req.getAttribute(Constants.CURRENT_LINK_NODE);
     }
 
-    public static void setCurrentUrl(Request req, LinkNode node) {
+    public static void setCurrentUrl(SpiderRequest req, LinkNode node) {
         req.setAttribute(Constants.CURRENT_LINK_NODE, node);
     }
 
-    public static Integer getRetryCount(Request req) {
+    public static Integer getRetryCount(SpiderRequest req) {
         return (Integer) req.getAttribute(Constants.CRAWLER_REQUEST_RETRY_COUNT);
     }
 
-    public static void setRetryCount(Request req, Integer count) {
+    public static void setRetryCount(SpiderRequest req, Integer count) {
         req.setAttribute(Constants.CRAWLER_REQUEST_RETRY_COUNT, count);
     }
 
-    public static URLHandler getURLHandler(Request req) {
+    public static URLHandler getURLHandler(SpiderRequest req) {
         return (URLHandler) req.getAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER);
     }
 
-    public static void setURLHandler(Request req, URLHandler handler) {
+    public static void setURLHandler(SpiderRequest req, URLHandler handler) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER, handler);
     }
 
-    public static void setContext(Request req, Map<String, Object> context) {
+    public static void setContext(SpiderRequest req, Map<String, Object> context) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_CONTEXT, context);
     }
 
-    public static void setConf(Request req, Configuration conf) {
+    public static void setConf(SpiderRequest req, Configuration conf) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_CONF, conf);
     }
 
-    public static Configuration getConf(Request req) {
+    public static Configuration getConf(SpiderRequest req) {
         return (Configuration) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONF, k -> PropertiesConfiguration.getInstance());
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getContext(Request req) {
+    public static Map<String, Object> getContext(SpiderRequest req) {
         return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.CRAWLER_RREQUEST_CONTEXT, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, Object> getRequestVisibleFields(Request req) {
+    public static Map<String, Object> getRequestVisibleFields(SpiderRequest req) {
         return (Map<String, Object>) req.computeAttributeIfAbsent(Constants.RREQUEST_VISIBLE_FIELS, k -> new HashMap<>());
     }
 
     @SuppressWarnings("unchecked")
-    public static void setRequestVisibleFields(Request req, Map<String, Object> fields) {
+    public static void setRequestVisibleFields(SpiderRequest req, Map<String, Object> fields) {
         req.setAttribute(Constants.RREQUEST_VISIBLE_FIELS, fields);
     }
 
-    public static String getCurrentTemplateId(Request req) {
+    public static String getCurrentTemplateId(SpiderRequest req) {
         return (String) req.getAttribute(Constants.CURRENT_SEARCH_TEMPLATE);
     }
 
-    public static void setCurrentTemplateId(Request req, String content) {
+    public static void setCurrentTemplateId(SpiderRequest req, String content) {
         req.setAttribute(Constants.CURRENT_SEARCH_TEMPLATE, content);
     }
 
     @SuppressWarnings("unchecked")
-    public static Map<String, String> getPluginRuntimeConf(Request req) {
+    public static Map<String, String> getPluginRuntimeConf(SpiderRequest req) {
         return (Map<String, String>) req.getAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF);
     }
 
-    public static void setPluginRuntimeConf(Request req, Map<String, String> confList) {
+    public static void setPluginRuntimeConf(SpiderRequest req, Map<String, String> confList) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF, confList);
     }
 
-    public static String getContent(Request req) {
+    public static String getContent(SpiderRequest req) {
         return (String) req.getInput();
     }
 
-    public static void setContent(Request req, String content) {
+    public static void setContent(SpiderRequest req, String content) {
         req.setInput(content);
     }
 
-    public static String getKeyWord(Request req) {
+    public static String getKeyWord(SpiderRequest req) {
         return (String) req.getAttribute(Constants.CRAWLER_REQUEST_KEYWORD);
     }
 
-    public static void setKeyWord(Request req, String keyword) {
+    public static void setKeyWord(SpiderRequest req, String keyword) {
         req.setAttribute(Constants.CRAWLER_REQUEST_KEYWORD, keyword);
     }
 
-    public static String getContentCharset(Request req) {
+    public static String getContentCharset(SpiderRequest req) {
         return (String) req.getAttribute(Constants.CRAWLER_PAGECONTENT_CHARSET);
     }
 
-    public static void setContentCharset(Request req, String charset) {
+    public static void setContentCharset(SpiderRequest req, String charset) {
         req.setAttribute(Constants.CRAWLER_PAGECONTENT_CHARSET, charset);
     }
 
-    public static AbstractProcessorContext getProcessorContext(Request req) {
+    public static AbstractProcessorContext getProcessorContext(SpiderRequest req) {
         return (AbstractProcessorContext) req.getAttribute(Constants.PROCESSER_CONTEXT);
     }
 
-    public static void setProcessorContext(Request req, AbstractProcessorContext context) {
+    public static void setProcessorContext(SpiderRequest req, AbstractProcessorContext context) {
         req.setAttribute(Constants.PROCESSER_CONTEXT, context);
     }
 
-    public static Website getWebsite(Request req) {
+    public static Website getWebsite(SpiderRequest req) {
         return (Website) req.getAttribute(Constants.PARSER_WEBSITE_CONFIG);
     }
 
-    public static void setWebsite(Request req, Website website) {
+    public static void setWebsite(SpiderRequest req, Website website) {
         req.setAttribute(Constants.PARSER_WEBSITE_CONFIG, website);
     }
 
     @SuppressWarnings("unchecked")
-    public static DateTimeFormats getDateFormat(Request req) {
+    public static DateTimeFormats getDateFormat(SpiderRequest req) {
         return (DateTimeFormats) req.computeAttributeIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
     }
 
     @SuppressWarnings("unchecked")
     @Nonnull
-    public static Map<String, NumberUnit> getNumberFormat(Request req, Configuration configuration) {
+    public static Map<String, NumberUnit> getNumberFormat(SpiderRequest req, Configuration configuration) {
         return (Map<String, NumberUnit>) req.computeAttributeIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(configuration));
     }
 
-    public static String getSearchTemplate(Request req) {
+    public static String getSearchTemplate(SpiderRequest req) {
         return (String) req.getAttribute(Constants.CRAWLER_REQUEST_TEMPLATE);
     }
 
-    public static void setSearchTemplate(Request req, String template) {
+    public static void setSearchTemplate(SpiderRequest req, String template) {
         req.setAttribute(Constants.CRAWLER_REQUEST_TEMPLATE, template);
     }
 
-    public static String getAttribute(Request req, String key) {
+    public static String getAttribute(SpiderRequest req, String key) {
         return (String) req.getAttribute(Constants.REQUEST_PREFIX + key);
     }
 
-    public static void setAttribute(Request req, String key, Object obj) {
+    public static void setAttribute(SpiderRequest req, String key, Object obj) {
         req.setAttribute(Constants.REQUEST_PREFIX + key, obj);
     }
 
-    public static Map<String, Object> getSourceMap(Request request) {
+    public static Map<String, Object> getSourceMap(SpiderRequest request) {
         Map<String, Object> sourceMap = new HashMap<String, Object>();
         if (RequestUtil.getProcessorContext(request) != null) {
             sourceMap.putAll(RequestUtil.getProcessorContext(request).getContext());
@@ -178,18 +178,18 @@ public class RequestUtil {
     }
 
     /**
-     * @see #getCurrentPage(Request)
+     * @see #getCurrentPage(SpiderRequest)
      */
     @Deprecated
-    public static Page getCurrenPage(Request req) {
+    public static Page getCurrenPage(SpiderRequest req) {
         return getCurrentPage(req);
     }
 
-    public static Page getCurrentPage(Request req) {
+    public static Page getCurrentPage(SpiderRequest req) {
         return (Page) req.getAttribute(Constants.CURRENT_PAGE);
     }
 
-    public static void setCurrentPage(Request req, Page page) {
+    public static void setCurrentPage(SpiderRequest req, Page page) {
         req.setAttribute(Constants.CURRENT_PAGE, page);
     }
 

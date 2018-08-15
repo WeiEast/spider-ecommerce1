@@ -11,12 +11,12 @@ package com.datatrees.crawler.core.processor.operation;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import com.datatrees.common.pipeline.ProcessingException;
-import com.datatrees.common.pipeline.ProcessorValve;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.ProcessingException;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorValve;
 import com.treefinance.toolkit.util.json.GsonUtils;
 import com.treefinance.toolkit.util.json.Jackson;
 
@@ -37,7 +37,7 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
         this(operation, extractor, true);
     }
 
-    public Operation(T operation, FieldExtractor extractor, boolean needReturn) {
+    public Operation(@Nonnull T operation, @Nonnull FieldExtractor extractor, boolean needReturn) {
         this.operation = Objects.requireNonNull(operation);
         this.extractor = Objects.requireNonNull(extractor);
         this.needReturn = needReturn;
@@ -52,19 +52,19 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
     }
 
     @Override
-    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+    protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         boolean skipped = getOperatingEntity(request, response).isEmpty();
 
         // invalid operation and skip
         return skipped || isSkipped(operation, request, response);
     }
 
-    protected boolean isSkipped(T operation, Request request, Response response) {
+    protected boolean isSkipped(@Nonnull T operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         return false;
     }
 
     @Override
-    protected void triggerAfterSkipped(@Nonnull Request request, @Nonnull Response response) {
+    protected void triggerAfterSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         logger.warn("Skipped operation processor : {}", GsonUtils.toJson(operation));
 
         OperationEntity entity = getOperatingEntity(request, response);
@@ -72,7 +72,7 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
     }
 
     @Override
-    protected final void preProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected final void preProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("Starting operation processing >> {}", Jackson.toJSONString(operation));
         }
@@ -80,12 +80,12 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
         validate(operation, request, response);
     }
 
-    protected void validate(T operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull T operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
 
     }
 
     @Override
-    public final void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public final void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         OperationEntity entity = getOperatingEntity(request, response);
 
         Object data = entity.getData();
@@ -108,22 +108,21 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
         }
     }
 
-    protected abstract Object doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull Request request,
-            @Nonnull Response response) throws Exception;
+    protected abstract Object doOperation(@Nonnull T operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception;
 
     @Override
-    protected final void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected final void postProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("Completed operation processing >> {}", Jackson.toJSONString(operation));
         }
     }
 
     @Override
-    protected final boolean isEnd(@Nonnull Request request, @Nonnull Response response) {
+    protected final boolean isEnd(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         return getOperatingEntity(request, response).isEmpty();
     }
 
-    protected final OperationEntity getOperatingEntity(Request request, Response response) {
+    private OperationEntity getOperatingEntity(SpiderRequest request, SpiderResponse response) {
         OperationEntity entity = (OperationEntity) response.getOutPut();
         if (entity == null) {
             String content = (String) request.getInput();

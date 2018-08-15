@@ -10,8 +10,6 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ParserOperation;
 import com.datatrees.crawler.core.domain.config.parser.Parser;
@@ -19,6 +17,8 @@ import com.datatrees.crawler.core.processor.filter.FieldRequestFilter;
 import com.datatrees.crawler.core.processor.filter.ParserUrlListFilter;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.processor.parser.ParserImpl;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.lang.StringUtils;
 
@@ -37,7 +37,7 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     }
 
     @Override
-    protected void validate(ParserOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull ParserOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (operation.getParser() == null) {
@@ -46,7 +46,7 @@ public class ParserOperationImpl extends Operation<ParserOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull ParserOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Parser parser = operation.getParser();
 
         FieldExtractor field = getExtractor();

@@ -17,6 +17,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.util.CommandLineExecutor;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ public class CommandPlugin extends Plugin {
     }
 
     @Override
-    protected Object invokePlugin(AbstractPlugin metadata, String args, Request request) throws Exception {
+    protected Object invokePlugin(AbstractPlugin metadata, String args, SpiderRequest request) throws Exception {
         WrappedExtension<File> extension = getContext().loadExtension(metadata, File.class);
 
         File file = extension.getExtension();

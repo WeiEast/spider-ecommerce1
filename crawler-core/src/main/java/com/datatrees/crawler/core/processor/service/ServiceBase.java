@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -47,7 +47,7 @@ public abstract class ServiceBase<S extends AbstractService> extends ProcessorIn
 
     // resolve base url
     @Override
-    protected void postProcess(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected void postProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
         if (current != null) {
             String content = RequestUtil.getContent(request);

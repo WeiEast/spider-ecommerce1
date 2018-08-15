@@ -6,8 +6,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
@@ -18,15 +16,19 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
-import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin.ContentType;
-import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
-import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
+import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin.ContentType;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -164,12 +166,12 @@ public abstract class AbstractPicPlugin extends AbstractRawdataPlugin {
     protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retyrcount) {
         boolean flag = false;
         Object result = null;
-        Request newRequest = new Request();
+        SpiderRequest newRequest = SpiderRequestFactory.make();
         RequestUtil.setProcessorContext(newRequest, PluginFactory.getProcessorContext());
         RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
         RequestUtil.setContext(newRequest, PluginFactory.getProcessorContext().getContext());
         RequestUtil.setRetryCount(newRequest, retyrcount);
-        Response newResponse = new Response();
+        SpiderResponse newResponse = SpiderResponseFactory.make();
         try {
             RequestUtil.setCurrentUrl(newRequest, linkNode);
             ServiceBase serviceProcessor = ProcessorFactory.getService(null);

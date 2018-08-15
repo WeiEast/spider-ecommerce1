@@ -5,8 +5,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.service.impl.PluginService;
@@ -20,6 +18,8 @@ import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import org.apache.commons.lang.StringUtils;
 
@@ -32,7 +32,7 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         PluginService service = getService();
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String url = current.getUrl();

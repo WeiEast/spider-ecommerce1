@@ -4,12 +4,15 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.exception.PluginException;
 
 /**
@@ -33,7 +36,7 @@ public final class PluginCaller {
         Plugin plugin = PluginFactory.getPlugin(pluginMetadata, context);
 
         try {
-            Request req = new Request();
+            SpiderRequest req = SpiderRequestFactory.make();
 
             if (parametersSupplier != null) {
                 Map<String, String> parameters = parametersSupplier.get();
@@ -42,7 +45,7 @@ public final class PluginCaller {
                 }
             }
 
-            Response resp = new Response();
+            SpiderResponse resp = SpiderResponseFactory.make();
 
             plugin.invoke(req, resp);
 

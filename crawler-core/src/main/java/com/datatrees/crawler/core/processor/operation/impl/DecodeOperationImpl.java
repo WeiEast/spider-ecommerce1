@@ -10,8 +10,6 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
@@ -21,6 +19,8 @@ import com.datatrees.crawler.core.processor.decode.impl.BasicDecode;
 import com.datatrees.crawler.core.processor.decode.impl.HexDecoder;
 import com.datatrees.crawler.core.processor.decode.impl.StandardDecode;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -35,7 +35,7 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
     }
 
     @Override
-    protected boolean isSkipped(DecodeOperation operation, Request request, Response response) {
+    protected boolean isSkipped(@Nonnull DecodeOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         // invalid decode operation and skip
         boolean flag = operation.getDecodeType() == null;
         if (flag) {
@@ -45,7 +45,7 @@ public class DecodeOperationImpl extends Operation<DecodeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull DecodeOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String input = (String) operatingData;
 
         String charset = operation.getCharset();

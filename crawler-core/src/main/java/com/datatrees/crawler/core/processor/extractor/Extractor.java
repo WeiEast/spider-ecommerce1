@@ -11,8 +11,6 @@ package com.datatrees.crawler.core.processor.extractor;
 import java.util.*;
 import java.util.Map.Entry;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
@@ -22,6 +20,9 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.selector.ExtractorSelectorImpl;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.BooleanUtils;
@@ -42,8 +43,8 @@ public class Extractor {
      * @param request
      * @return
      */
-    public static Response extract(ExtractorRepuest request) {
-        Response response = Response.build();
+    public static SpiderResponse extract(ExtractorRepuest request) {
+        SpiderResponse response = SpiderResponseFactory.make();
         Object input = request.getInput();
 
         try {
@@ -92,14 +93,14 @@ public class Extractor {
         return response;
     }
 
-    private static boolean doPageExtractor(Request request, Response response, Collection<PageExtractor> list,
+    private static boolean doPageExtractor(SpiderRequest request, SpiderResponse response, Collection<PageExtractor> list,
             Map<String, PageExtractor> totalPageExtractors) throws Exception {
         for (PageExtractor pageExtractor : list) {
             log.info("use " + pageExtractor + " to extract page...");
             totalPageExtractors.remove(pageExtractor.getId());
             try {
                 PageExtractorImpl pageExtractorImpl = new PageExtractorImpl(pageExtractor);
-                pageExtractorImpl.invoke(Request.clone(request), response);
+                pageExtractorImpl.invoke(request.copy(), response);
             } catch (Exception e) {
                 log.warn("extract request error " + e.getMessage());
                 if (MapUtils.isEmpty(totalPageExtractors)) {

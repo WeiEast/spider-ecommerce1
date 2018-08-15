@@ -1,8 +1,8 @@
 package com.treefinance.crawler.framework.util;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +17,7 @@ public final class SourceUtils {
     private SourceUtils() {
     }
 
-    public static Object getSourceFieldValue(String sourceId, Request request, Response response) {
+    public static Object getSourceFieldValue(String sourceId, SpiderRequest request, SpiderResponse response) {
         Object result = FieldScopes.getVisibleField(sourceId, request, response);
 
         LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);

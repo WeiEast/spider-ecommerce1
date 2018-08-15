@@ -2,9 +2,6 @@ package com.datatrees.crawler.core.processor.operation;
 
 import java.util.List;
 
-import com.datatrees.common.pipeline.ProcessPipeline;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
 import com.datatrees.crawler.core.processor.common.ProcessorFactory;
@@ -13,6 +10,10 @@ import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.OperationException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.ProcessPipeline;
 import com.treefinance.crawler.framework.exception.InvalidDataException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,10 +37,10 @@ public class OperationPipeline extends ProcessPipeline {
         }
     }
 
-    public Object start(String content, Request request,
+    public Object start(String content, SpiderRequest request,
             FieldExtractResultSet fieldExtractResultSet) throws OperationException, ResultEmptyException {
         if (isPrepared()) {
-            Response resp = new Response();
+            SpiderResponse resp = SpiderResponseFactory.make();
             ResponseUtil.setFieldExtractResultSet(resp, fieldExtractResultSet);
             String lastContent = RequestUtil.getContent(request);
             try {

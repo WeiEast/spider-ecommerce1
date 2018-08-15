@@ -12,9 +12,6 @@ import javax.annotation.Nonnull;
 import java.util.*;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.pipeline.FailureSkipProcessorValve;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.ResultType;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
@@ -28,6 +25,11 @@ import com.datatrees.crawler.core.processor.common.exception.ResultEmptyExceptio
 import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
 import com.datatrees.crawler.core.processor.extractor.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.FailureSkipProcessorValve;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.crawler.framework.util.SourceUtils;
@@ -57,7 +59,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
     }
 
     @Override
-    protected boolean isSkipped(@Nonnull Request request, @Nonnull Response response) {
+    protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         if (request.getInput() == null) {
             logger.warn("Empty input content used for segment processing and skip. segment: {}, taskId: {}", segment.getName(), context.getTaskId());
             return true;
@@ -74,7 +76,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
     }
 
     @Override
-    public final void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public final void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         List<String> splits = getSplits(request, response);
 
         if (CollectionUtils.isEmpty(splits)) {
@@ -95,7 +97,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         adaptResult(response);
     }
 
-    private void adaptResult(Response response) {
+    private void adaptResult(SpiderResponse response) {
         List<Object> resultList = ResponseUtil.prepareSegmentsResults(response);
 
         // result merge
@@ -116,7 +118,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         }
     }
 
-    private void doProcess(Request request, Response response) throws Exception {
+    private void doProcess(SpiderRequest request, SpiderResponse response) throws Exception {
         List<Object> resultList = ResponseUtil.prepareSegmentsResults(response);
 
         List<String> splits = getSplits(request, response);
@@ -183,14 +185,14 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                     if (StringUtils.isEmpty(content)) {
                         logger.warn("stop due to upper field value is empty! segment: {}", segment);
                     } else {
-                        Request newRequest = new Request();
+                        SpiderRequest newRequest = SpiderRequestFactory.make();
                         newRequest.setInput(content);
                         RequestUtil.setProcessorContext(newRequest, RequestUtil.getProcessorContext(request));
                         RequestUtil.setConf(newRequest, RequestUtil.getConf(request));
                         RequestUtil.setContext(newRequest, RequestUtil.getContext(request));
                         RequestUtil.setRequestVisibleFields(newRequest, RequestUtil.getRequestVisibleFields(request));
                         RequestUtil.setCurrentUrl(newRequest, RequestUtil.getCurrentUrl(request));
-                        Response segResponse = Response.build();
+                        SpiderResponse segResponse = SpiderResponseFactory.make();
                         SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
                         segmentBase.invoke(newRequest, segResponse);
                         segResultList = ResponseUtil.getSegmentsResults(segResponse);
@@ -262,7 +264,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
     }
 
     @Nonnull
-    private List<String> getSplits(Request request, Response response) {
+    private List<String> getSplits(SpiderRequest request, SpiderResponse response) {
         if (splits == null) {
             splits = splitInputContent((String) request.getInput(), segment, request, response);
             if (splits == null) {
@@ -272,7 +274,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         return splits;
     }
 
-    protected abstract List<String> splitInputContent(String content, T segment, Request request, Response response);
+    protected abstract List<String> splitInputContent(String content, T segment, SpiderRequest request, SpiderResponse response);
 
     private boolean matches(String content, String pattern, Integer patternFlag, boolean reverse) {
         if (StringUtils.isBlank(pattern)) {
@@ -282,7 +284,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         return reverse ^ RegExp.find(content, pattern, patternFlag != null ? patternFlag : 0);
     }
 
-    private void segmentsResultsConvert(Request request, Response response) {
+    private void segmentsResultsConvert(SpiderRequest request, SpiderResponse response) {
         List results = new ArrayList();
         LinkNode current = RequestUtil.getCurrentUrl(request);
         String baseURL = null;

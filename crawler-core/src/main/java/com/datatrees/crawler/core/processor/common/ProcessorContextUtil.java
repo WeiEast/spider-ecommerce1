@@ -13,7 +13,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.util.CookieFormater;
 import com.datatrees.crawler.core.domain.Cookie;
 import com.datatrees.crawler.core.domain.WebsiteAccount;
@@ -21,6 +20,7 @@ import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.httpclient.HttpState;
 import org.apache.commons.lang.StringUtils;
 
@@ -94,14 +94,14 @@ public class ProcessorContextUtil {
         return context.getAttribute(Constants.TASK_UNIQUE_SIGN);
     }
 
-    public static void addThreadLocalResponse(AbstractProcessorContext context, Response response) {
+    public static void addThreadLocalResponse(AbstractProcessorContext context, SpiderResponse response) {
         Object responseList = context
-                .computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE, k -> new ArrayList<Response>());
+                .computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE, k -> new ArrayList<SpiderResponse>());
         ((List) responseList).add(response);
     }
 
-    public static List<Response> getThreadLocalResponseList(AbstractProcessorContext context) {
-        return (List<Response>) context.getThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE);
+    public static List<SpiderResponse> getThreadLocalResponseList(AbstractProcessorContext context) {
+        return (List<SpiderResponse>) context.getThreadAttr(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE);
     }
 
     public static void clearThreadLocalResponseList(AbstractProcessorContext context) {

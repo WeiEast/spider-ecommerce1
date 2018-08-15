@@ -10,11 +10,11 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.SleepOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
@@ -28,7 +28,7 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     }
 
     @Override
-    protected boolean isSkipped(SleepOperation operation, Request request, Response response) {
+    protected boolean isSkipped(@Nonnull SleepOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         // invalid sleep operation and skip
         boolean flag = operation.getValue() == null;
         if (flag) {
@@ -38,7 +38,7 @@ public class SleepOperationImpl extends Operation<SleepOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull SleepOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Integer sleepTime = operation.getValue();
         logger.debug("Start to Sleep: {}", sleepTime);
         Thread.sleep(sleepTime);

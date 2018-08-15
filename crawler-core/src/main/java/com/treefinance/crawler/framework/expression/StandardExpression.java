@@ -9,10 +9,10 @@ import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author Jerry
@@ -40,7 +40,7 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String eval(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static String eval(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
@@ -56,7 +56,7 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static Object evalWithObject(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static Object evalWithObject(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
@@ -68,7 +68,7 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String evalSpecial(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
@@ -80,13 +80,13 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes), URL_ENCODED_KEYS, charset);
     }
 
-    public static String evalUrl(@Nullable String value, @Nonnull Request request, @Nullable Response response) {
+    public static String evalUrl(@Nullable String value, @Nonnull SpiderRequest request, @Nullable SpiderResponse response) {
         String charset = RequestUtil.getContentCharset(request);
 
         return evalUrl(value, request, response, charset);
     }
 
-    public static String evalUrl(@Nullable String value, @Nullable Request request, @Nullable Response response, @Nullable String charset) {
+    public static String evalUrl(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response), URL_ENCODED_KEYS, charset);
     }
 

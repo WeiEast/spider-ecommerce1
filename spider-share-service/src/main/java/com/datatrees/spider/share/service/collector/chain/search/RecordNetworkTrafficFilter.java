@@ -3,12 +3,12 @@ package com.datatrees.spider.share.service.collector.chain.search;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.protocol.ProtocolOutput;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
-import com.datatrees.spider.share.domain.model.Task;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -18,9 +18,9 @@ import com.datatrees.spider.share.domain.model.Task;
 public class RecordNetworkTrafficFilter extends ResponsesFilter {
 
     @Override
-    protected void doInternalFilter(@Nonnull List<Response> responses, SearchProcessor searchProcessor, Context context) {
+    protected void doInternalFilter(@Nonnull List<SpiderResponse> responses, SearchProcessor searchProcessor, Context context) {
         Task task = searchProcessor.getTask();
-        for (Response response : responses) {
+        for (SpiderResponse response : responses) {
             ProtocolOutput outPut = ResponseUtil.getProtocolResponse(response);
             if (outPut != null && outPut.getContent() != null && outPut.getContent().getContent() != null) {
                 log.debug("add new networkTraffic length: {}", outPut.getContent().getContent().length);

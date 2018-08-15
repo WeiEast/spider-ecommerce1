@@ -12,10 +12,10 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.BaseSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -29,7 +29,7 @@ public class BaseSegmentImpl extends SegmentBase<BaseSegment> {
     }
 
     @Override
-    public List<String> splitInputContent(String content, BaseSegment segment, Request request, Response response) {
+    public List<String> splitInputContent(String content, BaseSegment segment, SpiderRequest request, SpiderResponse response) {
         return Collections.singletonList(content);
     }
 

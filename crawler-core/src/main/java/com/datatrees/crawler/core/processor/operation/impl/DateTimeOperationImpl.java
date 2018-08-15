@@ -6,13 +6,14 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
 import com.datatrees.crawler.core.processor.operation.Operation;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
 import org.apache.commons.lang.BooleanUtils;
@@ -34,7 +35,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    protected void validate(DateTimeOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull DateTimeOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (operation.getBaseType() == null) {
@@ -43,7 +44,7 @@ public class DateTimeOperationImpl extends Operation<DateTimeOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull DateTimeOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         BaseType baseType = operation.getBaseType();
 
         ExpressionEngine expressionEngine = new ExpressionEngine(request, response);

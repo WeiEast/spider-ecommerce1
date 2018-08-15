@@ -12,12 +12,12 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.collections.CollectionUtils;
@@ -36,7 +36,7 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
-    protected void validate(XpathOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull XpathOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (StringUtils.isEmpty(operation.getXpath())) {
@@ -45,7 +45,7 @@ public class XpathOperationImpl extends Operation<XpathOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull XpathOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String xpath = operation.getXpath();
 
         xpath = StandardExpression.eval(xpath, request, response);

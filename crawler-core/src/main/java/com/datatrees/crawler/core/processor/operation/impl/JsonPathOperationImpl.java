@@ -2,14 +2,14 @@ package com.datatrees.crawler.core.processor.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
 import com.datatrees.crawler.core.processor.operation.Operation;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidDataException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
@@ -27,7 +27,7 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
     }
 
     @Override
-    protected void validate(JsonPathOperation operation, Request request, Response response) throws Exception {
+    protected void validate(@Nonnull JsonPathOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (StringUtils.isEmpty(operation.getJsonpath())) {
@@ -36,7 +36,7 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull JsonPathOperation operation, @Nonnull Object operatingData, @Nonnull Request request, @Nonnull Response response) throws Exception {
+    protected Object doOperation(@Nonnull JsonPathOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String jsonpath = operation.getJsonpath();
 
         jsonpath = StandardExpression.eval(jsonpath, request, response);

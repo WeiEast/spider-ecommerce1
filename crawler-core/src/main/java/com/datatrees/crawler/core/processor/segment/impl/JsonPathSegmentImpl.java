@@ -4,11 +4,11 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.JsonPathSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import org.apache.commons.lang3.StringUtils;
 
@@ -23,7 +23,7 @@ public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
     }
 
     @Override
-    protected List<String> splitInputContent(String content, JsonPathSegment segment, Request request, Response response) {
+    protected List<String> splitInputContent(String content, JsonPathSegment segment, SpiderRequest request, SpiderResponse response) {
         if (StringUtils.isEmpty(content)) {
             return Collections.emptyList();
         }

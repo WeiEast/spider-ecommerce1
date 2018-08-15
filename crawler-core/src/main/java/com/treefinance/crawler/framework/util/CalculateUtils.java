@@ -8,8 +8,8 @@
 
 package com.treefinance.crawler.framework.util;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.expression.spring.SpelExpParser;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public final class CalculateUtils {
         return SpelExpParser.parse(expression, defaultValue, clazz);
     }
 
-    public static <T> T calculate(String expression, Request request, Response response, T defaultValue, Class<T> clazz) {
+    public static <T> T calculate(String expression, SpiderRequest request, SpiderResponse response, T defaultValue, Class<T> clazz) {
         String exp = StandardExpression.eval(expression, request, response);
 
         LOGGER.debug("Actual calculate expression: {}", exp);
@@ -43,11 +43,11 @@ public final class CalculateUtils {
         return calculate(exp, defaultValue, clazz);
     }
 
-    public static Double calculate(String expression, Request request, Response response, Double defaultValue) {
+    public static Double calculate(String expression, SpiderRequest request, SpiderResponse response, Double defaultValue) {
         return calculate(expression, request, response, defaultValue, Double.class);
     }
 
-    public static double calculate(String expression, Request request, Response response) {
+    public static double calculate(String expression, SpiderRequest request, SpiderResponse response) {
         return calculate(expression, request, response, 0d);
     }
 

@@ -16,9 +16,6 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
 import com.datatrees.crawler.core.domain.config.SearchConfig;
@@ -38,12 +35,16 @@ import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.datatrees.crawler.core.processor.filter.URLRegexFilter;
 import com.datatrees.crawler.core.processor.page.handler.URLHandler;
 import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
+import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.treefinance.crawler.framework.util.URLSplitter;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
@@ -70,7 +71,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
 
         String content = RequestUtil.getContent(request);
@@ -147,7 +148,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         ResponseUtil.setResponseLinkNodes(response, urlLinkNodes);
     }
 
-    private Map<String, LinkNode> findPageUrls(String content, LinkNode current, String searchTemplate, Request request) {
+    private Map<String, LinkNode> findPageUrls(String content, LinkNode current, String searchTemplate, SpiderRequest request) {
         Map<String, LinkNode> urlLists = new LinkedHashMap<>();
         String charset = RequestUtil.getContentCharset(request);
         String keyword = RequestUtil.getKeyWord(request);
@@ -202,7 +203,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         }
     }
 
-    private void checkBlock(Request request, Response response) {
+    private void checkBlock(SpiderRequest request, SpiderResponse response) {
         String content = RequestUtil.getContent(request);
 
         SearchProcessorContext context = (SearchProcessorContext) RequestUtil.getProcessorContext(request);
@@ -225,7 +226,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         }
     }
 
-    private void setResponseStatus(Response response, int status, String pattern, String content) {
+    private void setResponseStatus(SpiderResponse response, int status, String pattern, String content) {
         if (StringUtils.isNotEmpty(pattern)) {
             if (RegExp.find(content, pattern)) {
                 logger.info("set status: {}", Status.format(status));
@@ -249,7 +250,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
     /**
      * using white and black list to filter web url adjust depth
      */
-    private List<LinkNode> filterUrls(Request req, Map<String, LinkNode> urlLists, LinkNode current) {
+    private List<LinkNode> filterUrls(SpiderRequest req, Map<String, LinkNode> urlLists, LinkNode current) {
         SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         SearchConfig config = wrapper.getSearchConfig();
         String template = RequestUtil.getCurrentTemplateId(req);
@@ -340,7 +341,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         return nodes;
     }
 
-    private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, Request req) {
+    private List<UrlFilter> addDefaultFilter(List<UrlFilter> filters, SpiderRequest req) {
         Configuration conf = RequestUtil.getConf(req);
         SearchProcessorContext wrapper = (SearchProcessorContext) RequestUtil.getProcessorContext(req);
         String blackList = Constants.URL_BLACK_LIST;
@@ -366,7 +367,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         return urlFilters;
     }
 
-    private Map<String, LinkNode> extractUrlsWithOutSegments(String content, Request request) {
+    private Map<String, LinkNode> extractUrlsWithOutSegments(String content, SpiderRequest request) {
         Map<String, LinkNode> linkNodeMap = new LinkedHashMap<>();
 
         LinkNode current = RequestUtil.getCurrentUrl(request);
@@ -397,7 +398,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
      * get url list need too steps first extract field urls second extract page by regex finally
      * resolve url by base url
      */
-    private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, Request req, Response resp) throws ResultEmptyException {
+    private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, SpiderRequest req, SpiderResponse resp) throws ResultEmptyException {
         Map<String, LinkNode> linkNodes = new LinkedHashMap<>();
         StringBuilder pageContent = new StringBuilder();
 
@@ -409,7 +410,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
         logger.info("URL: {}, segment-size: {}", baseURL, segments.size());
         for (AbstractSegment abstractSegment : segments) {
             try {
-                Response segResponse = Response.build();
+                SpiderResponse segResponse = SpiderResponseFactory.make();
                 SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 
                 segmentBase.invoke(req, segResponse);

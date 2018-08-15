@@ -12,10 +12,11 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.RegexSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang3.StringUtils;
 
@@ -31,7 +32,7 @@ public class RegexSegmentImpl extends SegmentBase<RegexSegment> {
     }
 
     @Override
-    public List<String> splitInputContent(String content, RegexSegment segment, Request request, Response response) {
+    public List<String> splitInputContent(String content, RegexSegment segment, SpiderRequest request, SpiderResponse response) {
         if (StringUtils.isEmpty(content)) {
             return Collections.emptyList();
         }

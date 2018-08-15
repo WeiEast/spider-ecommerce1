@@ -13,19 +13,19 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.datatrees.common.pipeline.ProcessorInvokerAdapter;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.PageSource;
 import com.datatrees.crawler.core.domain.config.page.Regexp;
 import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.page.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.collections.CollectionUtils;
@@ -45,7 +45,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
     }
 
     @Override
-    public void process(@Nonnull Request request, @Nonnull Response response) throws Exception {
+    public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         Object input = request.getInput();
         Preconditions.checkNotNull(input, "input should not be null!");
 
@@ -79,7 +79,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         RequestUtil.setContent(request, content);
     }
 
-    private String getPageContent(PageSource source, Object input, Request request) throws Exception {
+    private String getPageContent(PageSource source, Object input, SpiderRequest request) throws Exception {
         String separator = StringUtils.defaultString(source.getSeparator());
         AbstractPlugin plugin = source.getPlugin();
 
@@ -105,7 +105,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         return value;
     }
 
-    private String getSourceContent(Object value, AbstractPlugin pluginDesc, Request request) {
+    private String getSourceContent(Object value, AbstractPlugin pluginDesc, SpiderRequest request) {
         String content;
         if (value instanceof WrappedFile) {
             AbstractProcessorContext context = RequestUtil.getProcessorContext(request);

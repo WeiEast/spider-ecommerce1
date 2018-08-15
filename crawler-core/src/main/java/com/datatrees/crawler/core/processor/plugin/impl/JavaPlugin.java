@@ -8,12 +8,12 @@
 
 package com.datatrees.crawler.core.processor.plugin.impl;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.common.protocol.WebClientUtil;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.datatrees.crawler.core.processor.plugin.Plugin;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
@@ -30,7 +30,7 @@ public class JavaPlugin extends Plugin<com.datatrees.crawler.core.domain.config.
 
     @Override
     protected Object invokePlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, String args,
-            Request request) throws Exception {
+            SpiderRequest request) throws Exception {
         AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
         if (getContext() instanceof SearchProcessorContext) {
             // add proxy if necessary

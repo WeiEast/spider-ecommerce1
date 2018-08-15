@@ -12,10 +12,10 @@ import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
 import com.datatrees.crawler.core.processor.segment.SegmentBase;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.util.CalculateUtils;
 
@@ -31,7 +31,7 @@ public class CalculateSegmentImpl extends SegmentBase<CalculateSegment> {
     }
 
     @Override
-    protected List<String> splitInputContent(String content, CalculateSegment segment, Request request, Response response) {
+    protected List<String> splitInputContent(String content, CalculateSegment segment, SpiderRequest request, SpiderResponse response) {
         List<String> result = new LinkedList<>();
         String expression = segment.getExpression();
         logger.info("start calculate segment processor with expression: {}", expression);
