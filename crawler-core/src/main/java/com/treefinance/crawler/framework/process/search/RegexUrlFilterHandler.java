@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
+import com.treefinance.crawler.framework.config.xml.filter.UrlFilter;
 import org.apache.commons.collections4.CollectionUtils;
 
 /**

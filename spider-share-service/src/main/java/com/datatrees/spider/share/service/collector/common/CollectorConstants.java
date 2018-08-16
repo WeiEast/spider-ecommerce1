@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.ProtocolStatusCodes;
+import com.treefinance.crawler.framework.protocol.ProtocolStatusCodes;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

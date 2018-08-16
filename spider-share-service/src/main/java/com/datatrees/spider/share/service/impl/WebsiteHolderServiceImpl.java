@@ -19,7 +19,7 @@ package com.datatrees.spider.share.service.impl;
 import javax.annotation.Resource;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.Website;
+import com.treefinance.crawler.framework.context.Website;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;

@@ -20,7 +20,7 @@ import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;

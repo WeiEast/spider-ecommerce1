@@ -20,7 +20,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.spider.share.service.collector.bdb.operator.BDBOperator;
 import com.sleepycat.je.DatabaseException;

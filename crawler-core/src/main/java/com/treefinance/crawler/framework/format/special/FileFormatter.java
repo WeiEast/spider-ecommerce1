@@ -19,11 +19,11 @@ package com.treefinance.crawler.framework.format.special;
 import javax.annotation.Nonnull;
 import java.io.File;
 
-import com.datatrees.common.protocol.ProtocolInput;
-import com.datatrees.common.protocol.util.CharsetUtil;
-import com.datatrees.common.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.protocol.ProtocolInput;
+import com.treefinance.crawler.framework.util.CharsetUtil;
+import com.treefinance.crawler.framework.protocol.util.UrlUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.FileUtils;
+import com.treefinance.crawler.framework.util.FileUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.format.CommonFormatter;

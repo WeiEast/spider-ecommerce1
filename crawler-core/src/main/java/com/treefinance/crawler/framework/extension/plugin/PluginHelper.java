@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.extension.plugin;
 import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.common.protocol.ProtocolOutput;
+import com.treefinance.crawler.framework.protocol.ProtocolOutput;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;

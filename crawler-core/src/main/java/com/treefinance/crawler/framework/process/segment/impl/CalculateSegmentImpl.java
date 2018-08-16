@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.segment.impl.CalculateSegment;
+import com.treefinance.crawler.framework.config.xml.segment.CalculateSegment;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;

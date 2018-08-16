@@ -18,7 +18,7 @@ package com.treefinance.crawler.support.selenium;
 
 import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.http.HTTPConstants;
+import com.treefinance.crawler.framework.protocol.http.HTTPConstants;
 import org.openqa.selenium.WebDriver;
 
 /**

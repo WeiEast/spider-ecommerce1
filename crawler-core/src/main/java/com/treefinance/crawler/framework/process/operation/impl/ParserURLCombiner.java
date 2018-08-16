@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.process.operation.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.consts.Constants;
 import org.apache.commons.lang3.ArrayUtils;
 
 /**

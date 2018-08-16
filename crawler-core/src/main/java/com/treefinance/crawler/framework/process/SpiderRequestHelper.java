@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.process;
 
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.consts.SpiderRequestAttrs;

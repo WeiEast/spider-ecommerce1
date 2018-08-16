@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.datatrees.common.protocol.util.CharsetUtil;
 import com.google.common.collect.Maps;
 import org.apache.commons.exec.*;
 import org.slf4j.Logger;

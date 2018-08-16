@@ -21,7 +21,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
+import com.treefinance.crawler.framework.config.enums.BusinessType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import org.apache.commons.lang3.StringUtils;

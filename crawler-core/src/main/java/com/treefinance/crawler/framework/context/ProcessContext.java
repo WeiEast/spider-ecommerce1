@@ -22,11 +22,10 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
+import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;

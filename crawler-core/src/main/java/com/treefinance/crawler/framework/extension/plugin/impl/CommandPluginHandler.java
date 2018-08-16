@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.extension.plugin.impl;
 
 import java.io.File;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.plugin.PluginType;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.enums.PluginType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.framework.exception.PluginInvokeException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

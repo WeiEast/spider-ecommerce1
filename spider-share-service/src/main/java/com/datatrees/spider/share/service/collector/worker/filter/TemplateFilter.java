@@ -16,7 +16,7 @@
 
 package com.datatrees.spider.share.service.collector.worker.filter;
 
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
 import org.apache.commons.lang.StringUtils;
 
 /**

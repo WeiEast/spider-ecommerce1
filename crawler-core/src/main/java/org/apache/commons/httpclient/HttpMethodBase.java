@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.util.CookieFormater;
+import com.treefinance.crawler.framework.util.CookieFormater;
 import com.datatrees.common.util.PatternUtils;
 import org.apache.commons.httpclient.auth.AuthState;
 import org.apache.commons.httpclient.cookie.CookiePolicy;

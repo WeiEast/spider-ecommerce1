@@ -1,7 +1,7 @@
 package com.treefinance.crawler.framework.process.operation.impl;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.TripleOperation;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

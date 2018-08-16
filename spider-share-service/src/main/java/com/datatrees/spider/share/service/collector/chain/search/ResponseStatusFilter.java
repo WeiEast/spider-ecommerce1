@@ -19,8 +19,7 @@ package com.datatrees.spider.share.service.collector.chain.search;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.chain.Context;

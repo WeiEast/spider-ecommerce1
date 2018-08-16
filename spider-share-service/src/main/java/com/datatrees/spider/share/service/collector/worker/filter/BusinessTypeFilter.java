@@ -22,7 +22,7 @@ import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
+import com.treefinance.crawler.framework.config.enums.BusinessType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.spider.share.service.AppCrawlerConfigService;
 import com.google.common.cache.Cache;

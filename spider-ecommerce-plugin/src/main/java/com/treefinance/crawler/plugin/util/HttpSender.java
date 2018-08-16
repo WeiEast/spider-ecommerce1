@@ -26,7 +26,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Map;
 
-import com.datatrees.common.protocol.util.CookieFormater;
+import com.treefinance.crawler.framework.util.CookieFormater;
 import com.treefinance.crawler.exception.UnexpectedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.*;

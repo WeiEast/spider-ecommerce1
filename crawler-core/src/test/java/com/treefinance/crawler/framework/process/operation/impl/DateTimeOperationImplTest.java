@@ -1,7 +1,7 @@
 package com.treefinance.crawler.framework.process.operation.impl;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.DateTimeOperation;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.context.function.*;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;

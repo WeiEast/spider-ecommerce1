@@ -54,7 +54,7 @@ public final class ClassLoaderFactory {
             throw new IllegalArgumentException("Can not find the resource of jar files to create class loader.");
         }
 
-        URL[] array = urls.toArray(new URL[urls.size()]);
+        URL[] array = urls.toArray(new URL[0]);
         if (parent != null) {
             return URLClassLoader.newInstance(array, parent);
         }

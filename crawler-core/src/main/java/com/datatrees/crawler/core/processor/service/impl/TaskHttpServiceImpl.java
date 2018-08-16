@@ -18,11 +18,11 @@ package com.datatrees.crawler.core.processor.service.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.service.ServiceBase;

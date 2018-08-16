@@ -20,10 +20,10 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
-import com.datatrees.crawler.core.domain.config.ExtractorConfig;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.treefinance.crawler.framework.context.Website;
+import com.treefinance.crawler.framework.config.xml.AbstractWebsiteConfig;
+import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.spider.share.common.share.service.ProxyService;

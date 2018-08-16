@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.XpathOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.XpathOperation;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

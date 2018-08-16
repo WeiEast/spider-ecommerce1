@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.process;
 
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.page.Regexp;
-import com.datatrees.crawler.core.domain.config.page.Replacement;
+import com.treefinance.crawler.framework.config.xml.page.Regexp;
+import com.treefinance.crawler.framework.config.xml.page.Replacement;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

@@ -21,8 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.ExtractOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.ExtractOperation;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

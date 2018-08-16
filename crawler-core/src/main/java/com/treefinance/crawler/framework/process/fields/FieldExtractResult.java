@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.process.fields;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import org.apache.commons.lang.StringUtils;
 
 /**

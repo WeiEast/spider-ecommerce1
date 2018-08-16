@@ -7,7 +7,7 @@ import java.util.Map;
 import com.ProcessorContextFactory;
 import com.TestHelper;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.ExtractRequest;
+import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.treefinance.crawler.framework.boot.Extractor;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.joda.time.format.DateTimeFormat;

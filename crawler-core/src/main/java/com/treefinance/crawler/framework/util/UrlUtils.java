@@ -19,7 +19,6 @@ package com.treefinance.crawler.framework.util;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
-import com.datatrees.common.protocol.util.CharsetUtil;
 import com.treefinance.crawler.exception.UnexpectedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

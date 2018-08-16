@@ -32,7 +32,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
 import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
-import com.datatrees.crawler.core.domain.config.login.LoginType;
+import com.treefinance.crawler.framework.config.enums.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.treefinance.crawler.framework.context.ProcessorResult;

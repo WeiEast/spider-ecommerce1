@@ -24,12 +24,12 @@ import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.domain.config.parser.IndexMapping;
-import com.datatrees.crawler.core.domain.config.parser.Parser;
-import com.datatrees.crawler.core.domain.config.parser.ParserPattern;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.treefinance.crawler.framework.config.xml.parser.IndexMapping;
+import com.treefinance.crawler.framework.config.xml.parser.Parser;
+import com.treefinance.crawler.framework.config.xml.parser.ParserPattern;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.google.common.collect.ImmutableList;

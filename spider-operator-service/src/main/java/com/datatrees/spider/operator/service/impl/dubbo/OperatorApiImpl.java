@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.Website;
+import com.treefinance.crawler.framework.context.Website;
 import com.datatrees.spider.operator.api.OperatorApi;
 import com.datatrees.spider.operator.domain.OperatorGroup;
 import com.datatrees.spider.operator.domain.OperatorLoginConfig;

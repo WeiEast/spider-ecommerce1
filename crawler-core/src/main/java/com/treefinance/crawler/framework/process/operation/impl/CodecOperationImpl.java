@@ -19,11 +19,11 @@ package com.treefinance.crawler.framework.process.operation.impl;
 import javax.annotation.Nonnull;
 import java.io.UnsupportedEncodingException;
 
-import com.datatrees.common.protocol.util.CharsetUtil;
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.codec.CodecType;
-import com.datatrees.crawler.core.domain.config.operation.impl.codec.HandlingType;
+import com.treefinance.crawler.framework.util.CharsetUtil;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.CodecOperation;
+import com.treefinance.crawler.framework.config.enums.operation.codec.CodecType;
+import com.treefinance.crawler.framework.config.enums.operation.codec.HandlingType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

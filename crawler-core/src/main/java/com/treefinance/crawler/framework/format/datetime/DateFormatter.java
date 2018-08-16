@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.crawler.framework.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;

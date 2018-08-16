@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.extension.manager;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 
 /**
  * @author Jerry

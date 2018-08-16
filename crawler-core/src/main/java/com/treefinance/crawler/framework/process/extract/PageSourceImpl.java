@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.datatrees.crawler.core.domain.config.extractor.PageSource;
-import com.datatrees.crawler.core.domain.config.page.Regexp;
-import com.datatrees.crawler.core.domain.config.page.Replacement;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.extractor.PageSource;
+import com.treefinance.crawler.framework.config.xml.page.Regexp;
+import com.treefinance.crawler.framework.config.xml.page.Replacement;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

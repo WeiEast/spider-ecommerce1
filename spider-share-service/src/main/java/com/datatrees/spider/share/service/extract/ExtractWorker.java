@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.ExtractRequest;
+import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.spider.share.domain.AbstractExtractResult;
 import com.datatrees.spider.share.domain.ExtractCode;

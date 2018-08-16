@@ -18,8 +18,8 @@ package com.datatrees.crawler.core.processor.common;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.config.xml.page.Page;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.process.search.URLHandler;

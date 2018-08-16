@@ -21,11 +21,11 @@ import java.io.*;
 import java.util.Objects;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.Content;
-import com.datatrees.common.protocol.ProtocolInput;
-import com.datatrees.common.protocol.ProtocolOutput;
-import com.datatrees.common.protocol.WebClientUtil;
-import com.datatrees.common.protocol.util.CharsetUtil;
+import com.treefinance.crawler.framework.protocol.Content;
+import com.treefinance.crawler.framework.protocol.ProtocolInput;
+import com.treefinance.crawler.framework.protocol.ProtocolOutput;
+import com.treefinance.crawler.framework.protocol.WebClientUtil;
+import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.treefinance.toolkit.util.RegExp;
 import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.io.FileUtils;

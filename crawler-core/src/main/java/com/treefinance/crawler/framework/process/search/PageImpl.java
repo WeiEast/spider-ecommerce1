@@ -26,18 +26,18 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.domain.config.filter.FilterType;
-import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
-import com.datatrees.crawler.core.domain.config.page.Regexp;
-import com.datatrees.crawler.core.domain.config.page.Replacement;
-import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.treefinance.crawler.framework.config.enums.url.FilterType;
+import com.treefinance.crawler.framework.config.xml.filter.UrlFilter;
+import com.treefinance.crawler.framework.config.xml.page.Regexp;
+import com.treefinance.crawler.framework.config.xml.page.Replacement;
+import com.treefinance.crawler.framework.config.xml.page.Page;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.config.xml.segment.AbstractSegment;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
@@ -439,7 +439,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
     private void checkContent(SpiderRequest request, SpiderResponse response) {
         SearchTemplateConfig templateConfig = SpiderRequestHelper.getTemplateConfig(request);
         if (templateConfig != null) {
-            com.datatrees.crawler.core.domain.config.search.Request requestConfig = templateConfig.getRequest();
+            com.treefinance.crawler.framework.config.xml.search.Request requestConfig = templateConfig.getRequest();
             if (requestConfig != null) {
                 String content = RequestUtil.getContent(request);
 

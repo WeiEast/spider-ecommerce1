@@ -21,10 +21,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.ExtractorConfig;
-import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
-import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
+import com.treefinance.crawler.framework.context.Website;
+import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
+import com.treefinance.crawler.framework.config.xml.extractor.ExtractorSelector;
+import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 

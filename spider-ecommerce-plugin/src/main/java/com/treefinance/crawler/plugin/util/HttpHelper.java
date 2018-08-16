@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import com.datatrees.common.protocol.util.CookieFormater;
+import com.treefinance.crawler.framework.util.CookieFormater;
 import com.treefinance.toolkit.util.kryo.KryoUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.http.ProtocolException;

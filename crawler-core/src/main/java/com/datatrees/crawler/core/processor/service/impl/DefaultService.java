@@ -22,21 +22,21 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.*;
-import com.datatrees.common.protocol.ProtocolInput.CookieScope;
-import com.datatrees.common.protocol.http.HttpResponse;
-import com.datatrees.common.protocol.metadata.Metadata;
-import com.datatrees.common.protocol.util.CookieFormater;
-import com.datatrees.common.protocol.util.CookieParser;
-import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.domain.config.page.impl.RetryMode;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.properties.cookie.AbstractCookie;
-import com.datatrees.crawler.core.domain.config.properties.cookie.BaseCookie;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.protocol.*;
+import com.treefinance.crawler.framework.protocol.ProtocolInput.CookieScope;
+import com.treefinance.crawler.framework.protocol.http.HttpResponse;
+import com.treefinance.crawler.framework.protocol.metadata.Metadata;
+import com.treefinance.crawler.framework.util.CookieFormater;
+import com.treefinance.crawler.framework.util.CookieParser;
+import com.treefinance.crawler.framework.config.xml.page.Page;
+import com.treefinance.crawler.framework.config.enums.page.RetryMode;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.properties.cookie.AbstractCookie;
+import com.treefinance.crawler.framework.config.xml.properties.cookie.BaseCookie;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
@@ -207,7 +207,7 @@ public class DefaultService extends ServiceBase {
             setCookies = ArrayUtils.addAll(setCookies, setCookies2);
 
             if (ArrayUtils.isNotEmpty(setCookies)) {
-                com.datatrees.common.protocol.Response response = output.getResponse();
+                com.treefinance.crawler.framework.protocol.Response response = output.getResponse();
 
                 String cookieString = "";
                 if (response instanceof HttpResponse && BooleanUtils.isTrue(coexist)) {
@@ -356,7 +356,7 @@ public class DefaultService extends ServiceBase {
 
         // get redirect Url from headers
         if (StringUtils.isBlank(current.getRedirectUrl())) {
-            String redirectUrl = output.getContent().getMetadata().get(Constant.REDIRECT_URL);
+            String redirectUrl = output.getContent().getMetadata().get(Constants.REDIRECT_URL);
             if (StringUtils.isNotBlank(redirectUrl)) {
                 current.setRedirectUrl(redirectUrl);
                 request.addVisibleScope(Constants.PAGE_REQUEST_CONTEXT_REDIRECT_URL, redirectUrl);

@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
+import com.treefinance.crawler.framework.config.xml.operation.AbstractOperation;
 import org.apache.commons.collections.CollectionUtils;
 
 /**

@@ -19,8 +19,8 @@ package com.treefinance.crawler.framework.process.operation;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.AbstractOperation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.ProcessingException;

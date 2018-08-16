@@ -19,10 +19,10 @@ package com.treefinance.crawler.framework.boot;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
+import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.bean.ExtractRequest;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.context.function.ExtractRequest;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.exception.UnexpectedException;

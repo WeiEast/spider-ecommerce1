@@ -23,9 +23,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.function.Function;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
+import com.treefinance.crawler.framework.context.Website;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
 import com.treefinance.crawler.framework.context.ProcessorResult;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.lang.SynchronizedMap;

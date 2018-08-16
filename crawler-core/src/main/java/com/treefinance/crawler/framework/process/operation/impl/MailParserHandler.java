@@ -23,12 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.protocol.Content;
-import com.datatrees.common.protocol.util.CharsetUtil;
+import com.treefinance.crawler.framework.protocol.Content;
+import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.common.FileUtils;
-import com.datatrees.crawler.core.processor.common.IPAddressUtil;
+import com.treefinance.crawler.framework.consts.Constants;
+import com.treefinance.crawler.framework.util.FileUtils;
+import com.treefinance.crawler.framework.util.IPAddressUtil;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;

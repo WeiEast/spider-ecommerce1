@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.process.search;
 
 import java.util.regex.Pattern;
 
-import com.datatrees.crawler.core.domain.config.filter.FilterType;
-import com.datatrees.crawler.core.domain.config.filter.UrlFilter;
+import com.treefinance.crawler.framework.config.enums.url.FilterType;
+import com.treefinance.crawler.framework.config.xml.filter.UrlFilter;
 import com.treefinance.toolkit.util.RegExp;
 
 /**

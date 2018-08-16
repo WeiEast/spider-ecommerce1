@@ -19,8 +19,8 @@ package com.treefinance.crawler.framework.process.extract;
 import javax.annotation.Nonnull;
 import java.util.*;
 
-import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
-import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
+import com.treefinance.crawler.framework.config.xml.extractor.ExtractorSelector;
+import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.toolkit.util.Preconditions;

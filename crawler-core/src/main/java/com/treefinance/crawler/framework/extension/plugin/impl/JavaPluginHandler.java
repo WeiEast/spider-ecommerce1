@@ -16,8 +16,8 @@
 
 package com.treefinance.crawler.framework.extension.plugin.impl;
 
-import com.datatrees.common.protocol.WebClientUtil;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
+import com.treefinance.crawler.framework.protocol.WebClientUtil;
+import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;

@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.domain.config.search.SearchType;
+import com.treefinance.crawler.framework.config.enums.SearchType;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.share.service.collector.chain.Context;

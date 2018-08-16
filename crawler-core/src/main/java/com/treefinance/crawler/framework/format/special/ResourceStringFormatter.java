@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.format.special;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.protocol.util.UrlUtils;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.treefinance.crawler.framework.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;

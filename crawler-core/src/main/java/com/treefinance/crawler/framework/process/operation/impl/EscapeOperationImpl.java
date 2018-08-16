@@ -18,10 +18,10 @@ package com.treefinance.crawler.framework.process.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.escape.EscapeType;
-import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.EscapeOperation;
+import com.treefinance.crawler.framework.config.enums.operation.escape.EscapeType;
+import com.treefinance.crawler.framework.config.enums.operation.escape.HandlingType;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.process.operation.Operation;

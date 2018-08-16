@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.segment.impl.XpathSegment;
+import com.treefinance.crawler.framework.config.xml.segment.XpathSegment;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

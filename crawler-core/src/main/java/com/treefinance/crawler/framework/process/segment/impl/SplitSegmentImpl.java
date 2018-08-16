@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
-import com.datatrees.crawler.core.domain.config.segment.impl.SplitSegment;
+import com.treefinance.crawler.framework.config.xml.segment.SplitSegment;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.process.segment.SegmentBase;

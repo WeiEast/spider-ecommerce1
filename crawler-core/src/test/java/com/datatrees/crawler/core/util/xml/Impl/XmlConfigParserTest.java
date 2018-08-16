@@ -3,7 +3,7 @@ package com.datatrees.crawler.core.util.xml.Impl;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 
-import com.datatrees.crawler.core.domain.config.SearchConfig;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
 import com.treefinance.crawler.framework.config.factory.xml.XmlConfigParser;
 import com.treefinance.toolkit.util.io.Streams;
 import org.junit.Test;

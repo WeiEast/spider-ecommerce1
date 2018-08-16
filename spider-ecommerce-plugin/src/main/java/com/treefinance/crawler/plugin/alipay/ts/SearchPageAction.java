@@ -19,7 +19,7 @@ package com.treefinance.crawler.plugin.alipay.ts;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.protocol.util.CookieFormater;
+import com.treefinance.crawler.framework.util.CookieFormater;
 import com.treefinance.crawler.support.selenium.SeleniumHelper;
 import com.treefinance.crawler.support.selenium.SeleniumOperation;
 import org.apache.commons.lang3.StringUtils;

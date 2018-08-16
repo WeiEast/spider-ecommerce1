@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.segment.impl.JsonPathSegment;
+import com.treefinance.crawler.framework.config.xml.segment.JsonPathSegment;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

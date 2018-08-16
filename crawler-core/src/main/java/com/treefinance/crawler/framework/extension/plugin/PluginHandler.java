@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.framework.exception.PluginInvokeException;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;

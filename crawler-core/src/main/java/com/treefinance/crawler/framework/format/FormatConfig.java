@@ -21,9 +21,9 @@ import java.io.Serializable;
 import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

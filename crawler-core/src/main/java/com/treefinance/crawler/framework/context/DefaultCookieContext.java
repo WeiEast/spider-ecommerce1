@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.datatrees.common.protocol.util.CookieFormater;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.util.CookieFormater;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.google.common.collect.ImmutableMap;
 import com.treefinance.crawler.lang.AtomicAttributes;
 import org.apache.commons.collections4.MapUtils;

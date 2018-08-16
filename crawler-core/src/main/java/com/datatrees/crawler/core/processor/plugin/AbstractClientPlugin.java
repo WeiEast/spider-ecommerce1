@@ -16,7 +16,7 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
-import com.datatrees.common.protocol.Protocol;
+import com.treefinance.crawler.framework.protocol.Protocol;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
 import com.treefinance.crawler.framework.extension.plugin.PluginHelper;

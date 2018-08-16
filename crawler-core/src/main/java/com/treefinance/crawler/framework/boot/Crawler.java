@@ -18,14 +18,14 @@ package com.treefinance.crawler.framework.boot;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.protocol.ProtocolStatusCodes;
-import com.datatrees.crawler.core.domain.config.page.impl.Page;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
+import com.treefinance.crawler.framework.protocol.ProtocolStatusCodes;
+import com.treefinance.crawler.framework.config.xml.page.Page;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
+import com.treefinance.crawler.framework.context.function.CrawlRequest;
+import com.treefinance.crawler.framework.context.function.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.exception.ResponseCheckException;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;

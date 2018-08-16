@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.util;
 import java.util.Collections;
 import java.util.List;
 
-import com.datatrees.common.protocol.Constant;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 
@@ -35,7 +35,7 @@ public class UrlExtractor {
 
     public static List<String> extract(String data) {
         if (StringUtils.isNotEmpty(data)) {
-            return RegExp.findAll(data, Constant.URL_REGEX, 1);
+            return RegExp.findAll(data, Constants.URL_REGEX, 1);
         }
         return Collections.emptyList();
     }

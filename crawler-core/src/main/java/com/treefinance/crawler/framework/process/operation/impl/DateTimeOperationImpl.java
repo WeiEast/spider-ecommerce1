@@ -18,10 +18,10 @@ package com.treefinance.crawler.framework.process.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
-import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
-import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.DateTimeOperation;
+import com.treefinance.crawler.framework.config.enums.operation.datetime.BaseType;
+import com.treefinance.crawler.framework.config.enums.operation.datetime.DateTimeFieldType;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;

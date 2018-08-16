@@ -19,8 +19,8 @@ package com.treefinance.crawler.framework.extension.plugin;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;

@@ -18,7 +18,7 @@ package com.treefinance.crawler.framework.decode;
 
 import java.nio.charset.Charset;
 
-import com.datatrees.common.protocol.util.CharsetUtil;
+import com.treefinance.crawler.framework.util.CharsetUtil;
 
 /**
  * @author Jerry

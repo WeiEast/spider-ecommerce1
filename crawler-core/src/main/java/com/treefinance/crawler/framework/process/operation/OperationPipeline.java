@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.process.operation;
 
 import java.util.List;
 
-import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
-import com.datatrees.crawler.core.domain.config.operation.AbstractOperation;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.AbstractOperation;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.treefinance.crawler.framework.exception.OperationException;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;

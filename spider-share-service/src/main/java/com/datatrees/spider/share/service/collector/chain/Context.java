@@ -18,8 +18,8 @@ package com.datatrees.spider.share.service.collector.chain;
 
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
+import com.treefinance.crawler.framework.context.function.CrawlRequest;
+import com.treefinance.crawler.framework.context.function.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.search.URLHandlerImpl;

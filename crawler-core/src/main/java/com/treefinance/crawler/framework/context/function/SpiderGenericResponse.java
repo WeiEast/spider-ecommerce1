@@ -16,8 +16,8 @@
 
 package com.treefinance.crawler.framework.context.function;
 
-import com.datatrees.common.protocol.ProtocolStatusCodes;
-import com.datatrees.crawler.core.processor.bean.Status;
+import com.treefinance.crawler.framework.protocol.ProtocolStatusCodes;
+import com.treefinance.crawler.framework.consts.Status;
 import com.treefinance.crawler.lang.AtomicAttributes;
 import org.apache.commons.lang3.StringUtils;
 

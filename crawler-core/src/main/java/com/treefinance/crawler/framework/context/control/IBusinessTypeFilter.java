@@ -18,7 +18,7 @@ package com.treefinance.crawler.framework.context.control;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
+import com.treefinance.crawler.framework.config.enums.BusinessType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 
 /**

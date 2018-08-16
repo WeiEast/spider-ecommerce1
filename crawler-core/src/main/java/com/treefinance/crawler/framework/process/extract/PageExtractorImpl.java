@@ -20,8 +20,8 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Objects;
 
-import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
-import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
+import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
+import com.treefinance.crawler.framework.config.xml.segment.AbstractSegment;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

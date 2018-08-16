@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.datatrees.common.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.protocol.util.UrlUtils;
 import it.unimi.dsi.lang.MutableString;
 import it.unimi.dsi.parser.Attribute;
 import it.unimi.dsi.parser.BulletParser;

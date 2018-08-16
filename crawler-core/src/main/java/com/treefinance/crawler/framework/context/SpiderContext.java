@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 
 /**
  * @author Jerry

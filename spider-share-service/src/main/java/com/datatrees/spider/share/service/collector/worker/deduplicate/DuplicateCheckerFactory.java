@@ -19,7 +19,7 @@ package com.datatrees.spider.share.service.collector.worker.deduplicate;
 import java.util.Set;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.Website;
+import com.treefinance.crawler.framework.context.Website;
 import com.datatrees.spider.share.service.collector.worker.deduplicate.impl.DuplicateCheckerImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

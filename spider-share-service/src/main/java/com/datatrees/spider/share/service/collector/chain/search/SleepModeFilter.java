@@ -17,9 +17,8 @@
 package com.datatrees.spider.share.service.collector.chain.search;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.context.function.CrawlResponse;
+import com.treefinance.crawler.framework.consts.Status;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;

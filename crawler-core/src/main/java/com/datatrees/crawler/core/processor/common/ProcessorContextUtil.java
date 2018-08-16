@@ -21,11 +21,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.protocol.util.CookieFormater;
-import com.datatrees.crawler.core.domain.Cookie;
-import com.datatrees.crawler.core.domain.WebsiteAccount;
+import com.treefinance.crawler.framework.util.CookieFormater;
+import com.treefinance.crawler.framework.login.Cookie;
+import com.treefinance.crawler.framework.login.WebsiteAccount;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

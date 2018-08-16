@@ -20,9 +20,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.common.protocol.ProtocolOutput;
-import com.datatrees.crawler.core.domain.config.page.AbstractPage;
-import com.datatrees.crawler.core.processor.Constants;
+import com.treefinance.crawler.framework.protocol.ProtocolOutput;
+import com.treefinance.crawler.framework.config.xml.page.AbstractPage;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;

@@ -23,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
+import com.treefinance.crawler.framework.config.enums.BusinessType;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.spider.share.dao.AppCrawlerConfigDAO;
