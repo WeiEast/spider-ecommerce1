@@ -18,7 +18,7 @@ package com.datatrees.spider.share.service.collector.actor;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.domain.CollectorMessage;
 import com.datatrees.spider.share.domain.model.Task;

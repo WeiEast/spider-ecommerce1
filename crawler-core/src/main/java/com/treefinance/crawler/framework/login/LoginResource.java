@@ -16,16 +16,12 @@
 
 package com.treefinance.crawler.framework.login;
 
-import com.datatrees.crawler.core.processor.common.resource.Resource;
-import com.treefinance.crawler.framework.login.Cookie;
-import com.treefinance.crawler.framework.login.WebsiteAccount;
-
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 10, 2014 2:14:42 PM
  */
-public interface LoginResource extends Resource {
+public interface LoginResource {
 
     WebsiteAccount getAccount(String accountKey);
 

@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.plugin.alipay.detail;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.plugin.alipay.BaseFieldExtractPlugin;
 
 /**

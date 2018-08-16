@@ -18,9 +18,9 @@ package com.treefinance.crawler.framework.extension.plugin.impl;
 
 import com.treefinance.crawler.framework.protocol.WebClientUtil;
 import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.plugin.PluginHandler;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;

@@ -17,7 +17,7 @@
 package com.datatrees.spider.share.service.collector.chain.urlHandler;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.datatrees.spider.share.domain.AbstractData;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;

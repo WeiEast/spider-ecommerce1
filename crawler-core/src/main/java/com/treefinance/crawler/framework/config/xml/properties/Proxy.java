@@ -21,6 +21,8 @@ import java.io.Serializable;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Tag;
+import com.treefinance.crawler.framework.config.enums.properties.Mode;
+import com.treefinance.crawler.framework.config.enums.properties.Scope;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>

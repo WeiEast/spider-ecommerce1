@@ -24,8 +24,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;

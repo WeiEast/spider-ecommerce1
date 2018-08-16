@@ -27,7 +27,7 @@ import java.util.concurrent.RejectedExecutionException;
 
 import com.datatrees.common.util.ThreadInterruptedUtil;
 import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;

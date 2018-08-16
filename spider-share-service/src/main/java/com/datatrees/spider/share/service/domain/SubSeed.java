@@ -18,7 +18,7 @@ package com.datatrees.spider.share.service.domain;
 
 import java.util.HashMap;
 
-import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.Proxy;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

@@ -20,9 +20,9 @@ import java.util.List;
 
 import com.treefinance.crawler.framework.context.function.CrawlRequest;
 import com.treefinance.crawler.framework.context.function.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.consts.Status;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;

@@ -16,11 +16,11 @@
 
 package com.datatrees.spider.share.service.plugin.util;
 
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.plugin.PluginContext;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.extension.plugin.PluginContext;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.framework.util.ServiceUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

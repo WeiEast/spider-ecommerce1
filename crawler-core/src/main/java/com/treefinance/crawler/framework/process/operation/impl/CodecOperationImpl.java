@@ -24,7 +24,7 @@ import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.CodecOperation;
 import com.treefinance.crawler.framework.config.enums.operation.codec.CodecType;
 import com.treefinance.crawler.framework.config.enums.operation.codec.HandlingType;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.process.operation.Operation;

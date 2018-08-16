@@ -25,10 +25,10 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import com.treefinance.crawler.plugin.util.HttpHelper;
 import com.treefinance.crawler.plugin.util.TopApi;
 import org.apache.commons.lang3.ArrayUtils;

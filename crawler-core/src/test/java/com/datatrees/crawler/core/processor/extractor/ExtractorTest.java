@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.ProcessorContextFactory;
 import com.TestHelper;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.treefinance.crawler.framework.boot.Extractor;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

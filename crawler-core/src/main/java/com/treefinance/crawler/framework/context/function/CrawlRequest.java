@@ -19,10 +19,9 @@ package com.treefinance.crawler.framework.context.function;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.process.search.URLHandler;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.lang.StringUtils;

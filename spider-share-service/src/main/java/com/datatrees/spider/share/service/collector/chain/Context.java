@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.treefinance.crawler.framework.context.function.CrawlRequest;
 import com.treefinance.crawler.framework.context.function.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.search.URLHandlerImpl;
 import com.datatrees.spider.share.service.collector.worker.deduplicate.DuplicateChecker;

@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.context.control;
 import javax.annotation.Nonnull;
 
 import com.treefinance.crawler.framework.config.enums.BusinessType;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 
 /**
  * the filter for crawling business.

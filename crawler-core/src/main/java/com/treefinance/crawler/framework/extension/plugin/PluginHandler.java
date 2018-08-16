@@ -23,9 +23,8 @@ import java.util.Objects;
 
 import com.datatrees.common.util.GsonUtils;
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.exception.PluginInvokeException;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;

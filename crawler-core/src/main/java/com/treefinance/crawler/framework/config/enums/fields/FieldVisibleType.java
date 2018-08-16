@@ -18,6 +18,7 @@ package com.treefinance.crawler.framework.config.enums.fields;
 
 import java.util.Arrays;
 
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -37,7 +38,7 @@ public enum FieldVisibleType {
     CONTEXT("context"),
     /**
      * only stored in <code>processor_result</code> of task context.
-     * @see com.datatrees.crawler.core.processor.SearchProcessorContext#processorResult
+     * @see SearchProcessorContext#processorResult
      */
     PROCESSOR_RESULT("processor_result");
 

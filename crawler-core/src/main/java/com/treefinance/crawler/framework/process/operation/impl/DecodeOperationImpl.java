@@ -22,7 +22,7 @@ import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.DecodeOperation;
 import com.treefinance.crawler.framework.config.enums.operation.decode.DecodeType;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.decode.impl.BasicDecoder;

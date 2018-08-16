@@ -25,7 +25,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.HttpUtils;
 import com.datatrees.spider.extra.plugin.xuexinwang.com.h5.utils.Sign;
 import com.datatrees.spider.share.common.http.ProxyUtils;

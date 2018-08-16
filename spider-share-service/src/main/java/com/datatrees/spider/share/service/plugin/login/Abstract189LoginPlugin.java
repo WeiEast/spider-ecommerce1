@@ -18,7 +18,7 @@ package com.datatrees.spider.share.service.plugin.login;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import org.apache.commons.lang.StringUtils;
 
 public abstract class Abstract189LoginPlugin extends AbstractLoginPlugin {

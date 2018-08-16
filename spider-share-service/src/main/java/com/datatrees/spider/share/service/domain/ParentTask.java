@@ -19,7 +19,7 @@ package com.datatrees.spider.share.service.domain;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.datatrees.spider.share.domain.CollectorMessage;
 
 /**

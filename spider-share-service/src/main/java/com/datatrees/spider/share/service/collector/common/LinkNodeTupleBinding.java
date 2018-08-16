@@ -19,7 +19,7 @@ package com.datatrees.spider.share.service.collector.common;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.sleepycat.bind.tuple.TupleBinding;
 import com.sleepycat.bind.tuple.TupleInput;
 import com.sleepycat.bind.tuple.TupleOutput;

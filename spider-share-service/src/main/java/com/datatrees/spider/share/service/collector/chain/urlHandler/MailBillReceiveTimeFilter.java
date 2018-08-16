@@ -20,7 +20,7 @@ import java.util.Date;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.treefinance.crawler.framework.config.enums.SearchType;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;

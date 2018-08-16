@@ -19,14 +19,13 @@ package com.datatrees.spider.operator.plugin.jiang_su_10000_web;
 import java.util.List;
 import java.util.Map;
 
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.datatrees.spider.operator.plugin.common.LoginUtilsForChina10000Web;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.spider.operator.plugin.common.LoginUtilsForChina10000Web;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;

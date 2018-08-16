@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.extension.spider;
 import javax.annotation.Nonnull;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.extension.ExtensionFactory;
 import com.treefinance.crawler.framework.extension.Interrupter;
 

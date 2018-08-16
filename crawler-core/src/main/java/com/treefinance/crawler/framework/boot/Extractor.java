@@ -20,10 +20,10 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.treefinance.crawler.framework.consts.Status;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.context.ResponseUtil;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

@@ -20,7 +20,7 @@ import java.util.Objects;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.service.ClassLoaderService;
 import com.treefinance.crawler.framework.exception.ExtensionException;

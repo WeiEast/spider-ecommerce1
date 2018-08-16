@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.treefinance.crawler.framework.protocol.ProtocolOutput;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.context.ResponseUtil;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;

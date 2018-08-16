@@ -18,7 +18,7 @@ package com.treefinance.crawler.plugin.alipay.zmxy;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.plugin.alipay.BaseFieldExtractPlugin;
 import org.apache.commons.lang3.StringUtils;
 

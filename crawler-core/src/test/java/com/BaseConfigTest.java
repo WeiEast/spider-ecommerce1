@@ -25,8 +25,8 @@ import com.datatrees.common.util.ResourceUtil;
 import com.treefinance.crawler.framework.context.Website;
 import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
 import com.treefinance.crawler.framework.config.xml.SearchConfig;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 

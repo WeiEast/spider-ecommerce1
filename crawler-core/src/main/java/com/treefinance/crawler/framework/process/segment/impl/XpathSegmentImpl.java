@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.treefinance.crawler.framework.config.xml.segment.XpathSegment;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;

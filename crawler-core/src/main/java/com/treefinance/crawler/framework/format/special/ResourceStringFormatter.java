@@ -20,9 +20,9 @@ import javax.annotation.Nonnull;
 
 import com.treefinance.crawler.framework.protocol.util.UrlUtils;
 import com.treefinance.crawler.framework.config.xml.service.AbstractService;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.format.CommonFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.crawler.framework.util.ServiceUtils;

@@ -22,8 +22,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.treefinance.crawler.framework.config.enums.BusinessType;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import org.apache.commons.lang3.StringUtils;
 
 /**

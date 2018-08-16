@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.common.http.ScriptEngineUtil;

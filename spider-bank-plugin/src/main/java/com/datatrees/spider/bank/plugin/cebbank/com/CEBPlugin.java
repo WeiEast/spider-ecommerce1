@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.datatrees.spider.bank.plugin.util.PdfUtils;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.ErrorCode;

@@ -18,6 +18,7 @@ package com.treefinance.crawler.framework.config.xml.properties;
 
 import java.io.Serializable;
 
+import com.treefinance.crawler.framework.config.enums.properties.UnicodeMode;
 import com.treefinance.crawler.framework.config.xml.properties.cookie.AbstractCookie;
 import com.treefinance.crawler.framework.config.xml.properties.cookie.BaseCookie;
 import com.treefinance.crawler.framework.config.xml.properties.cookie.CustomCookie;
@@ -47,7 +48,7 @@ public class Properties implements Serializable {
 
     private              Boolean        useTaskHttp;
 
-    private              UnicodeMode    unicodeMode;
+    private UnicodeMode unicodeMode;
 
     private              String         taskRegion;
 

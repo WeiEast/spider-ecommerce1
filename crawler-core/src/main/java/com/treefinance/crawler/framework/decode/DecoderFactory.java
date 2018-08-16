@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.decode;
 
-import com.treefinance.crawler.framework.config.xml.properties.UnicodeMode;
+import com.treefinance.crawler.framework.config.enums.properties.UnicodeMode;
 import com.treefinance.crawler.framework.decode.impl.*;
 
 /**

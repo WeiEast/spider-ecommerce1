@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.extension.plugin;
 
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 
 /**
  * @author Jerry

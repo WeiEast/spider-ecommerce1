@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ParentTask;

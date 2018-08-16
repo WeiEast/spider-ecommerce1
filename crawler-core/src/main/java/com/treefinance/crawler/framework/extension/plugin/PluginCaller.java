@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;

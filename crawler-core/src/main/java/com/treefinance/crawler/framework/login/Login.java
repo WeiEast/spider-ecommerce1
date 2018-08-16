@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.login;
 
 import com.treefinance.crawler.framework.config.xml.login.LoginConfig;
 import com.treefinance.crawler.framework.config.enums.LoginType;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

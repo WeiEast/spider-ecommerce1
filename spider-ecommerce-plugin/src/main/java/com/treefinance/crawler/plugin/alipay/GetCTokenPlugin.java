@@ -20,9 +20,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 import com.treefinance.toolkit.util.RegExp;
 

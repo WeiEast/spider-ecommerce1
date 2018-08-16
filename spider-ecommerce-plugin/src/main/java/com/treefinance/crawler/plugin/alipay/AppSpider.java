@@ -19,8 +19,8 @@ package com.treefinance.crawler.plugin.alipay;
 import java.io.IOException;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.SimplePage;
 import com.treefinance.crawler.plugin.util.HttpHelper;

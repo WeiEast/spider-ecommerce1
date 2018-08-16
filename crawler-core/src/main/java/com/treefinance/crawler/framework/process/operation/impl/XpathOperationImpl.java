@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.XpathOperation;
-import com.datatrees.crawler.core.util.xpath.XPathUtil;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;

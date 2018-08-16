@@ -20,7 +20,7 @@ import javax.annotation.Nonnull;
 
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.JsonPathOperation;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.context.function;
 import javax.annotation.Nonnull;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.lang.Attributes;
 import com.treefinance.crawler.lang.Copyable;

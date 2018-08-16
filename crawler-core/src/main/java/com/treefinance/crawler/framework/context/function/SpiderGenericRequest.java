@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 import com.datatrees.common.conf.Configuration;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.google.common.collect.ImmutableMap;
 import com.treefinance.crawler.lang.AtomicAttributes;
 import org.apache.commons.collections4.MapUtils;

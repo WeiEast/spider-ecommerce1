@@ -19,16 +19,16 @@ package com.datatrees.crawler.core.processor.common.resource;
 import java.util.Map;
 
 @Deprecated
-public interface DataResource extends Resource {
+public interface DataResource {
 
-    public Object getData(Map<String, Object> parameters);
+    Object getData(Map<String, Object> parameters);
 
-    public boolean ttlSave(String key, String value, long timeOut);
+    boolean ttlSave(String key, String value, long timeOut);
 
-    public boolean ttlPush(String key, String value, long timeOut);
+    boolean ttlPush(String key, String value, long timeOut);
 
-    public boolean sendToQueue(Map<String, Object> parameters);
+    boolean sendToQueue(Map<String, Object> parameters);
 
-    public boolean clearData(Map<String, Object> parameters);
+    boolean clearData(Map<String, Object> parameters);
 
 }

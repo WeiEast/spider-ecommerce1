@@ -22,10 +22,10 @@ import java.util.Map;
 
 import com.datatrees.common.conf.Configuration;
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;

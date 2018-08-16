@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.AbstractOperation;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.context.ResponseUtil;
 import com.treefinance.crawler.framework.exception.OperationException;
 import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

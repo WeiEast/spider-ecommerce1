@@ -21,11 +21,11 @@ import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin;
 import com.datatrees.spider.share.service.plugin.login.AbstractPicPlugin;
 import com.google.common.collect.ImmutableMap;

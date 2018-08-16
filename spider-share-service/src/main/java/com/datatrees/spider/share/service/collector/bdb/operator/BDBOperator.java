@@ -18,7 +18,7 @@ package com.datatrees.spider.share.service.collector.bdb.operator;
 
 import java.util.LinkedList;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.datatrees.spider.share.service.collector.bdb.manger.BDBFactory;
 import com.datatrees.spider.share.service.collector.bdb.wapper.BDBWapper;
 import com.datatrees.spider.share.service.collector.common.LinkNodeTupleBinding;

@@ -18,7 +18,7 @@ package com.treefinance.crawler.plugin.alipay.ts;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.support.selenium.WebDriverFactory;
 import org.joda.time.LocalDate;
 import org.openqa.selenium.WebDriver;

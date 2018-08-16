@@ -18,7 +18,7 @@ package com.datatrees.spider.share.service.collector.bdb.operator;
 
 import java.util.LinkedList;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

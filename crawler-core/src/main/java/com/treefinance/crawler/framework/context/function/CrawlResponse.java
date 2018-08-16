@@ -19,8 +19,7 @@ package com.treefinance.crawler.framework.context.function;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
+import com.treefinance.crawler.framework.context.ResponseUtil;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

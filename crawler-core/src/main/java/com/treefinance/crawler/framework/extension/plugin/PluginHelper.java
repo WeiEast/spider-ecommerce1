@@ -20,11 +20,11 @@ import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
 import com.treefinance.crawler.framework.protocol.ProtocolOutput;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.ResponseUtil;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.util.ServiceUtils;
 import org.apache.commons.lang.StringUtils;

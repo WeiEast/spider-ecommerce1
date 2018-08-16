@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.BackRedisUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;

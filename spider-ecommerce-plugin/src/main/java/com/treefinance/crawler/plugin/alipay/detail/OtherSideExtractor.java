@@ -18,8 +18,8 @@ package com.treefinance.crawler.plugin.alipay.detail;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.plugin.alipay.BaseFieldExtractPlugin;
 import com.treefinance.crawler.plugin.util.HttpSender;
 import com.treefinance.crawler.plugin.util.Unicode;

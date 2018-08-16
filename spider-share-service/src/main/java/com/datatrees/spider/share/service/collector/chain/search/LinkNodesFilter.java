@@ -19,8 +19,8 @@ package com.datatrees.spider.share.service.collector.chain.search;
 import javax.annotation.Nonnull;
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;

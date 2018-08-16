@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.extension.manager;
 
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.exception.PluginException;
 
 /**

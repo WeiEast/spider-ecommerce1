@@ -23,7 +23,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.plugin.china_10086_app.bean.*;
 import com.datatrees.spider.operator.plugin.china_10086_app.utils.MD5Util;

@@ -21,7 +21,7 @@ import java.util.Objects;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.exception.UnsupportedExtensionException;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import com.treefinance.crawler.framework.extension.spider.PageProcessor;

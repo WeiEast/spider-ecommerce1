@@ -19,9 +19,9 @@ package com.treefinance.crawler.framework.login;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.config.xml.login.LoginConfig;
 import com.treefinance.crawler.framework.config.enums.LoginType;
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;

@@ -16,9 +16,9 @@
 
 package com.treefinance.crawler.framework.decode;
 
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 
 /**

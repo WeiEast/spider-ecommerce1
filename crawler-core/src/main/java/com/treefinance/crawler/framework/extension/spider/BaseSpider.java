@@ -16,8 +16,8 @@
 
 package com.treefinance.crawler.framework.extension.spider;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
 import com.treefinance.crawler.framework.extension.Interrupter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -18,7 +18,7 @@ package com.treefinance.crawler.framework.context.function;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.toolkit.util.Preconditions;
 
 /**

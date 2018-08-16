@@ -19,7 +19,7 @@ package com.treefinance.crawler.framework.process.fields;
 import java.util.List;
 
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
 import com.treefinance.crawler.framework.context.pipeline.ProcessPipeline;
 import org.apache.commons.collections.CollectionUtils;

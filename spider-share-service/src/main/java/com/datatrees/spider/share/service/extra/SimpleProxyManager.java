@@ -16,9 +16,9 @@
 
 package com.datatrees.spider.share.service.extra;
 
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
+import com.treefinance.crawler.framework.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.ProxyStatus;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import org.slf4j.Logger;

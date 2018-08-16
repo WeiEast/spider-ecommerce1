@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.framework.process.search;
 
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 
 /**
  * link node handler usage: collect url , extract host url from current url
