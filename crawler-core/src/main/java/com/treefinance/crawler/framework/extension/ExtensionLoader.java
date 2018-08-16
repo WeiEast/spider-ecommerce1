@@ -32,8 +32,7 @@ public final class ExtensionLoader {
     private ExtensionLoader() {
     }
 
-    public static <T> T load(@Nonnull final File file, @Nonnull final String mainClass, final boolean forceReload, @Nullable final ClassLoader parent,
-            @Nonnull final Class<T> resultType) {
+    public static <T> T load(@Nonnull final File file, @Nonnull final String mainClass, final boolean forceReload, @Nullable final ClassLoader parent, @Nonnull final Class<T> resultType) {
         ClassLoader parentLoader = parent;
         if (parentLoader == null) {
             parentLoader = ExtensionLoader.class.getClassLoader();

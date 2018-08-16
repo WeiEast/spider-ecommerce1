@@ -30,22 +30,21 @@ public abstract class ProcessorValve extends ValveBase implements Processor {
 
     @Override
     public final void invoke(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws InvokeException, ResultEmptyException {
+        Object input = null;
+        if (isSingleton()) {
+            input = request.getInput();
+        }
+
+        initial(request, response);
+
         if (!isSkipped(request, response)) {
-            try {
-                preProcess(request, response);
-                process(request, response);
-                postProcess(request, response);
-            } catch (ResultEmptyException | InvokeException e) {
-                throw e;
-            } catch (Exception e) {
-                if (ignoreException(e)) {
-                    logger.error("Error invoking processor valve!", e);
-                } else {
-                    throw new ProcessingException("Error to invoke processor valve!", e);
-                }
-            }
+            triggerProcessing(request, response);
         } else {
             triggerAfterSkipped(request, response);
+        }
+
+        if (isSingleton()) {
+            request.setInput(input);
         }
 
         logger.debug("processor output: {}", response.getOutPut());
@@ -54,6 +53,29 @@ public abstract class ProcessorValve extends ValveBase implements Processor {
         if (next != null && !isEnd(request, response)) {
             next.invoke(request, response);
         }
+    }
+
+    private void triggerProcessing(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws InvokeException, ResultEmptyException {
+        try {
+            if (!preProcess(request, response)) {
+                return;
+            }
+
+            process(request, response);
+            postProcess(request, response);
+        } catch (ResultEmptyException | InvokeException e) {
+            throw e;
+        } catch (Exception e) {
+            if (ignoreException(e)) {
+                logger.error("Error invoking processor valve!", e);
+            } else {
+                throw new ProcessingException("Error to invoke processor valve!", e);
+            }
+        }
+    }
+
+    protected void initial(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
+
     }
 
     protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
@@ -66,7 +88,9 @@ public abstract class ProcessorValve extends ValveBase implements Processor {
         return false;
     }
 
-    protected void preProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception { }
+    protected boolean preProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
+        return true;
+    }
 
     protected void postProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception { }
 
@@ -74,4 +98,7 @@ public abstract class ProcessorValve extends ValveBase implements Processor {
         return false;
     }
 
+    protected boolean isSingleton() {
+        return false;
+    }
 }

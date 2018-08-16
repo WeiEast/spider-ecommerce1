@@ -5,11 +5,11 @@ import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.segment.impl.JsonPathSegment;
-import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -24,7 +24,7 @@ public class JsonPathSegmentImpl extends SegmentBase<JsonPathSegment> {
 
     @Override
     protected List<String> splitInputContent(String content, JsonPathSegment segment, SpiderRequest request, SpiderResponse response) {
-        if (StringUtils.isEmpty(content)) {
+        if(StringUtils.isEmpty(content)){
             return Collections.emptyList();
         }
 

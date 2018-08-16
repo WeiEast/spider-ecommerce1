@@ -9,16 +9,15 @@
 package com.datatrees.spider.bank.service.normalizer;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.bank.domain.EBankData;
 import com.datatrees.spider.bank.domain.model.Bank;
 import com.datatrees.spider.bank.service.BankService;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.framework.process.domain.ExtractObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -45,10 +44,10 @@ public class EbankMessageNormalizer implements MessageNormalizer {
             ((EBankData) object).setBankId(message.getTypeId());
             ((EBankData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && EBankData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
+        } else if (object instanceof ExtractObject && EBankData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             EBankData eBankData = new EBankData();
             eBankData.putAll((Map) object);
-            eBankData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
+
             message.setResultType(ResultType.EBANKBILL);
             message.setTypeId(this.getBankId(message));
             message.setMessageObject(eBankData);

@@ -30,7 +30,7 @@ public class EbankSubmitDataNormalizer implements SubmitNormalizer {
     public boolean normalize(SubmitMessage message) {
         if (message.getExtractMessage().getResultType().equals(ResultType.EBANKBILL)) {
             EBankExtractResult result = (EBankExtractResult) message.getResult();
-            Set<Map.Entry<String, Object>> entrySet = message.getExtractResultMap().entrySet();
+            Set<Map.Entry<String, Object>> entrySet = message.getPageExtractObject().entrySet();
             for (Map.Entry<String, Object> entry : entrySet) {
                 if (entry.getValue() instanceof Collection) {
                     for (Map map : (Collection<Map>) entry.getValue()) {

@@ -12,10 +12,10 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TemplateOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -31,8 +31,7 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request,
-            @Nonnull SpiderResponse response) throws Exception {
+    protected Object doOperation(@Nonnull TemplateOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String template = operation.getTemplate();
 
         Object output;

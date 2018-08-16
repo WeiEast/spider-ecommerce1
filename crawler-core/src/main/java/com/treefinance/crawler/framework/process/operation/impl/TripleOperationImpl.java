@@ -5,11 +5,11 @@ import javax.annotation.Nonnull;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TripleOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.triple.TripleType;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang3.StringUtils;
 
 public class TripleOperationImpl extends Operation<TripleOperation> {

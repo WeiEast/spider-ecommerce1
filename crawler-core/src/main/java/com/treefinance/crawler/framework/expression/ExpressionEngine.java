@@ -12,9 +12,9 @@ import com.treefinance.crawler.framework.context.function.SpiderResponse;
  */
 public class ExpressionEngine {
 
-    private final SpiderRequest request;
+    private final SpiderRequest       request;
 
-    private final SpiderResponse            response;
+    private final SpiderResponse      response;
 
     private       Map<String, Object> visibleFields;
 

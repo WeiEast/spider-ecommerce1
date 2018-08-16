@@ -1,61 +1,46 @@
 package com.datatrees.spider.share.service.domain;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.datatrees.spider.share.domain.AbstractExtractResult;
+import com.treefinance.crawler.framework.process.domain.PageExtractObject;
 
 /**
  * Created by wuminlang on 15/7/28.
  */
 public class SubmitMessage {
 
-    private ExtractMessage        extractMessage;
+    private final ExtractMessage extractMessage;
 
-    private Map                   extractResultMap;
+    private final AbstractExtractResult result;
 
-    private AbstractExtractResult result;
+    private PageExtractObject pageExtractObject;
 
-    private Map<String, String>   submitkeyResult = new HashMap<String, String>();
-
-    /**
-     * @return the result
-     */
-    public AbstractExtractResult getResult() {
-        return result;
+    public SubmitMessage(ExtractMessage extractMessage, AbstractExtractResult result) {
+        this.extractMessage = extractMessage;
+        this.result = result;
     }
 
-    /**
-     * @param result the result to set
-     */
-    public void setResult(AbstractExtractResult result) {
-        this.result = result;
+
+    public AbstractExtractResult getResult() {
+        return result;
     }
 
     public ExtractMessage getExtractMessage() {
         return extractMessage;
     }
 
-    public void setExtractMessage(ExtractMessage extractMessage) {
-        this.extractMessage = extractMessage;
+    public PageExtractObject getPageExtractObject() {
+        return pageExtractObject;
     }
 
-    public Map getExtractResultMap() {
-        return extractResultMap;
+    public void setPageExtractObject(PageExtractObject pageExtractObject) {
+        this.pageExtractObject = pageExtractObject;
     }
 
-    public void setExtractResultMap(Map extractResultMap) {
-        this.extractResultMap = extractResultMap;
+    public void addSubmitKey(String name, String value) {
+        extractMessage.addSubmitKey(name, value);
     }
 
-    /**
-     * @return the submitkeyResult
-     */
-    public Map<String, String> getSubmitkeyResult() {
-        return submitkeyResult;
-    }
-
-     @Override
+    @Override
     public String toString() {
         return "SubmitMessage [extractMessage=" + extractMessage + ", result=" + result + "]";
     }

@@ -132,50 +132,48 @@ public class DefaultData {
     }
 
     public static HashMap<String, String> getPayType() {
-        if (payType != null) {
+        if (payType == null) {
             synchronized (DefaultData.class) {
-                if (payType != null) {
-                    HashMap<String, String> hashMap = payType;
-                    return hashMap;
+                if (payType == null) {
+                    payType = new HashMap();
+                    payType.put("01", "营业厅");
+                    payType.put("02", "网上营业厅");
+                    payType.put("03", "掌上营业厅");
+                    payType.put("04", "短信营业厅");
+                    payType.put("05", "手机营业厅");
+                    payType.put("06", "自助终端");
+                    payType.put("07", "银行");
+                    payType.put("08", "空中充值");
+                    payType.put("09", "移动商城");
+                    payType.put("99", "其他");
                 }
             }
         }
-        payType = new HashMap();
-        payType.put("01", "营业厅");
-        payType.put("02", "网上营业厅");
-        payType.put("03", "掌上营业厅");
-        payType.put("04", "短信营业厅");
-        payType.put("05", "手机营业厅");
-        payType.put("06", "自助终端");
-        payType.put("07", "银行");
-        payType.put("08", "空中充值");
-        payType.put("09", "移动商城");
-        payType.put("99", "其他");
+
         return payType;
     }
 
     public static HashMap<String, String> getPayType1() {
-        if (payType1 != null) {
+        if (payType1 == null) {
             synchronized (DefaultData.class) {
-                if (payType1 != null) {
-                    HashMap<String, String> hashMap = payType1;
-                    return hashMap;
+                if (payType1 == null) {
+                    payType1 = new HashMap();
+                    payType1.put("01", "现金交费");
+                    payType1.put("02", "充值卡充值");
+                    payType1.put("03", "银行托收");
+                    payType1.put("04", "营销活动预存受理");
+                    payType1.put("05", "积分换话费业务受理");
+                    payType1.put("06", "第三方支付");
+                    payType1.put("07", "手机钱包");
+                    payType1.put("08", "空中充值");
+                    payType1.put("09", "代理商渠道办理");
+                    payType1.put("10", "批量冲销");
+                    payType1.put("11", "调帐");
+                    payType1.put("12", "其他");
                 }
             }
         }
-        payType1 = new HashMap();
-        payType1.put("01", "现金交费");
-        payType1.put("02", "充值卡充值");
-        payType1.put("03", "银行托收");
-        payType1.put("04", "营销活动预存受理");
-        payType1.put("05", "积分换话费业务受理");
-        payType1.put("06", "第三方支付");
-        payType1.put("07", "手机钱包");
-        payType1.put("08", "空中充值");
-        payType1.put("09", "代理商渠道办理");
-        payType1.put("10", "批量冲销");
-        payType1.put("11", "调帐");
-        payType1.put("12", "其他");
+
         return payType1;
     }
 

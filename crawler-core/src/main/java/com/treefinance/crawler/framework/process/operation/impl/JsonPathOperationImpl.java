@@ -4,7 +4,6 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.JsonPathOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.datatrees.crawler.core.util.json.JsonPathUtil;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
@@ -13,6 +12,7 @@ import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidDataException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 

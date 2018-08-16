@@ -70,13 +70,12 @@ public class SearchTemplateCombine {
      * @param pageNum
      * @return the search url
      */
-    public static String constructSearchURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax,
-            Map<String, Object> fieldMap) {
+    public static String constructSearchURL(String searchURLTemplate, String keyword, String urlCharset, int pageNum, boolean notOverloadMax, Map<String, Object> fieldMap) {
         try {
             String encodedKeyword = null;
             if (StringUtils.isNotEmpty(keyword)) {
                 encodedKeyword = encodeKeyword(keyword, urlCharset);
-                log.debug("original keyword: {},urlCharset: {}, encoded keyword: {}", keyword, urlCharset, encodedKeyword);
+                log.debug("original keyword: {},urlCharset: {}, encoded keyword: {}" ,keyword,urlCharset, encodedKeyword);
             }
 
             String searchURL = SearchUrlExpParser.eval(searchURLTemplate, pageNum, notOverloadMax, encodedKeyword, fieldMap);

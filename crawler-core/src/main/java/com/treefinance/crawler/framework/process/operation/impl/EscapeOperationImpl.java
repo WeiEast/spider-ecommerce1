@@ -14,13 +14,13 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.EscapeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.EscapeType;
 import com.datatrees.crawler.core.domain.config.operation.impl.escape.HandlingType;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */

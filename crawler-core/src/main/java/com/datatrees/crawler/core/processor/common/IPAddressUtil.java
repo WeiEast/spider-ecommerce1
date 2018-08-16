@@ -1,26 +1,20 @@
-package com.datatrees.crawler.core.processor.common;
-
 /*
- * Copyright 2004-2005 Sun Microsystems, Inc. All Rights Reserved. DO NOT ALTER OR REMOVE COPYRIGHT
- * NOTICES OR THIS FILE HEADER.
+ * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
  *
- * This code is free software; you can redistribute it and/or modify it under the terms of the GNU
- * General Public License version 2 only, as published by the Free Software Foundation. Sun
- * designates this particular file as subject to the "Classpath" exception as provided by Sun in the
- * LICENSE file that accompanied this code.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * This code is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
- * General Public License version 2 for more details (a copy is included in the LICENSE file that
- * accompanied this code).
+ *     http://www.apache.org/licenses/LICENSE-2.0
  *
- * You should have received a copy of the GNU General Public License version 2 along with this work;
- * if not, write to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
- * 02110-1301 USA.
- *
- * Please contact Sun Microsystems, Inc., 4150 Network Circle, Santa Clara, CA 95054 USA or visit
- * www.sun.com if you need additional information or have any questions.
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+package com.datatrees.crawler.core.processor.common;
 
 public class IPAddressUtil {
 
@@ -270,9 +264,7 @@ public class IPAddressUtil {
         if (addr.length < INADDR16SZ) {
             return false;
         }
-        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00) &&
-                (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff) &&
-                (addr[11] == (byte) 0xff)) {
+        if ((addr[0] == 0x00) && (addr[1] == 0x00) && (addr[2] == 0x00) && (addr[3] == 0x00) && (addr[4] == 0x00) && (addr[5] == 0x00) && (addr[6] == 0x00) && (addr[7] == 0x00) && (addr[8] == 0x00) && (addr[9] == 0x00) && (addr[10] == (byte) 0xff) && (addr[11] == (byte) 0xff)) {
             return true;
         }
         return false;

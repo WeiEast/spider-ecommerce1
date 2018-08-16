@@ -41,20 +41,19 @@ import org.slf4j.LoggerFactory;
  */
 public final class ClassLoaderManager {
 
-    private static final Logger                  LOGGER       = LoggerFactory.getLogger(ClassLoaderManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClassLoaderManager.class);
 
-    private static final Cache<Key, ClassLoader> LOADER_CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).softValues()
-            .removalListener((RemovalListener<Key, ClassLoader>) notification -> {
-                ClassLoader classLoader = notification.getValue();
-                if (classLoader instanceof URLClassLoader) {
-                    try {
-                        ((URLClassLoader) classLoader).close();
-                    } catch (IOException e) {
-                        String paths = Arrays.stream(((URLClassLoader) classLoader).getURLs()).map(URL::getPath).collect(Collectors.joining(","));
-                        LOGGER.error("Error closing classLoader:" + paths, e);
-                    }
-                }
-            }).build();
+    private static final Cache<Key, ClassLoader> LOADER_CACHE = CacheBuilder.newBuilder().expireAfterAccess(10, TimeUnit.MINUTES).softValues().removalListener((RemovalListener<Key, ClassLoader>) notification -> {
+        ClassLoader classLoader = notification.getValue();
+        if (classLoader instanceof URLClassLoader) {
+            try {
+                ((URLClassLoader) classLoader).close();
+            } catch (IOException e) {
+                String paths = Arrays.stream(((URLClassLoader) classLoader).getURLs()).map(URL::getPath).collect(Collectors.joining(","));
+                LOGGER.error("Error closing classLoader:" + paths, e);
+            }
+        }
+    }).build();
 
     public static ClassLoader findClassLoader(final File file, final ClassLoader classLoader, boolean expired) {
         try {
@@ -72,10 +71,10 @@ public final class ClassLoaderManager {
     private static class Key {
 
         // file path
-        private final Path        path;
+        private final Path path;
 
         // last modified time of file
-        private final long        lastModified;
+        private final long lastModified;
 
         private final ClassLoader classLoader;
 
@@ -94,8 +93,7 @@ public final class ClassLoaderManager {
             Key key = (Key) o;
 
             try {
-                return lastModified == key.lastModified && Files.isSameFile(path, key.path) &&
-                        (classLoader != null ? classLoader.equals(key.classLoader) : key.classLoader == null);
+                return lastModified == key.lastModified && Files.isSameFile(path, key.path) && (classLoader != null ? classLoader.equals(key.classLoader) : key.classLoader == null);
             } catch (IOException e) {
                 throw new UnexpectedException(e);
             }

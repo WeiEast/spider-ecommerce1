@@ -24,7 +24,6 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
@@ -33,6 +32,7 @@ import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;
+import com.treefinance.crawler.framework.process.ProcessorFactory;
 import org.apache.commons.lang3.StringUtils;
 
 /**

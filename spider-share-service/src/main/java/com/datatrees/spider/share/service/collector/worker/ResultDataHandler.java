@@ -59,7 +59,7 @@ public class ResultDataHandler {
     }
 
     public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage) {
-        List<Future<Object>> futureList = new ArrayList<Future<Object>>();
+        List<Future<Object>> futureList = new ArrayList<>();
         Task task = taskMessage.getTask();
         ParentTask parentTask = this.getParentTask(taskMessage);
         for (Object obj : objs) {

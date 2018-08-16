@@ -16,7 +16,7 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.process.search.URLHandler;
-import com.google.common.base.Preconditions;
+import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.lang.StringUtils;
 
 /**
@@ -27,15 +27,13 @@ import org.apache.commons.lang.StringUtils;
 public class CrawlRequest extends Request {
 
     private CrawlRequest() {
-        super();
     }
 
     public String getSearchTemplateId() {
         return RequestUtil.getCurrentTemplateId(this);
     }
 
-    public void setSearchTemplateId(String searchTemplateId) {
-        Preconditions.checkArgument(StringUtils.isNotEmpty(searchTemplateId));
+    private void setSearchTemplateId(String searchTemplateId) {
         RequestUtil.setCurrentTemplateId(this, searchTemplateId);
     }
 
@@ -43,7 +41,7 @@ public class CrawlRequest extends Request {
         return RequestUtil.getCurrentUrl(this);
     }
 
-    public void setUrl(LinkNode url) {
+    private void setUrl(LinkNode url) {
         RequestUtil.setCurrentUrl(this, url);
     }
 
@@ -51,7 +49,7 @@ public class CrawlRequest extends Request {
         return RequestUtil.getSearchTemplate(this);
     }
 
-    public void setSearchTemplate(String searchTemplate) {
+    private void setSearchTemplate(String searchTemplate) {
         RequestUtil.setSearchTemplate(this, searchTemplate);
     }
 
@@ -59,9 +57,8 @@ public class CrawlRequest extends Request {
         return RequestUtil.getURLHandler(this);
     }
 
-    public CrawlRequest setUrlHandler(URLHandler handler) {
+    private void setUrlHandler(URLHandler handler) {
         RequestUtil.setURLHandler(this, handler);
-        return this;
     }
 
     @Override
@@ -110,9 +107,9 @@ public class CrawlRequest extends Request {
         }
 
         public CrawlRequest build() {
-            com.treefinance.toolkit.util.Preconditions.notNull("searchUrl", url);
-            com.treefinance.toolkit.util.Preconditions.notNull("searchContext", searchContext);
-            com.treefinance.toolkit.util.Preconditions.notEmpty("templateId", templateId);
+            Preconditions.notNull("searchUrl", url);
+            Preconditions.notNull("searchContext", searchContext);
+            Preconditions.notEmpty("templateId", templateId);
 
             CrawlRequest crawlRequest = new CrawlRequest();
             crawlRequest.setUrl(url);

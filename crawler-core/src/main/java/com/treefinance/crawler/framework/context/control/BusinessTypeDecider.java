@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.datatrees.crawler.core.domain.config.search.BusinessType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * the decider to decide whether the given crawling business need to be call.
@@ -50,7 +51,7 @@ public final class BusinessTypeDecider {
 
     public static boolean support(BusinessType businessType, AbstractProcessorContext processorContext) {
         // 解析阶段不控制过滤
-        if (processorContext instanceof ExtractorProcessorContext) {
+        if (businessType == null || processorContext instanceof ExtractorProcessorContext) {
             return true;
         }
 
@@ -68,7 +69,7 @@ public final class BusinessTypeDecider {
 
     public static boolean support(String businessType, AbstractProcessorContext processorContext) {
         // 解析阶段不控制过滤
-        if (processorContext instanceof ExtractorProcessorContext) {
+        if (StringUtils.isEmpty(businessType) || processorContext instanceof ExtractorProcessorContext) {
             return true;
         }
 

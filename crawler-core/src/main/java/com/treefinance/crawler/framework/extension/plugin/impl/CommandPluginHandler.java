@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.plugin.impl;
+package com.treefinance.crawler.framework.extension.plugin.impl;
 
 import java.io.File;
 
@@ -14,10 +14,10 @@ import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.PluginType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
-import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.treefinance.crawler.framework.util.CommandLineExecutor;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
+import com.treefinance.crawler.framework.extension.plugin.PluginHandler;
+import com.treefinance.crawler.framework.util.CommandLineExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,11 +26,11 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Feb 19, 2014 1:21:47 PM
  */
-public class CommandPlugin extends Plugin {
+public class CommandPluginHandler extends PluginHandler {
 
-    private static final Logger logger = LoggerFactory.getLogger(CommandPlugin.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommandPluginHandler.class);
 
-    public CommandPlugin(AbstractPlugin metadata, AbstractProcessorContext context) {
+    public CommandPluginHandler(AbstractPlugin metadata, AbstractProcessorContext context) {
         super(metadata, context);
     }
 

@@ -6,16 +6,15 @@ package com.treefinance.crawler.framework.process.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.BaseType;
 import com.datatrees.crawler.core.domain.config.operation.impl.datetime.DateTimeFieldType;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.ExpressionEngine;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;

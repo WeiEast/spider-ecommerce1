@@ -22,7 +22,8 @@ import org.slf4j.LoggerFactory;
 public class SpecialDecoder implements Decoder {
 
     public static final  SpecialDecoder DEFAULT = new SpecialDecoder();
-    private static final Logger log = LoggerFactory.getLogger(SpecialDecoder.class);
+
+    private static final Logger         log     = LoggerFactory.getLogger(SpecialDecoder.class);
 
     @Override
     public String decode(String content, Charset charset) {
@@ -33,7 +34,7 @@ public class SpecialDecoder implements Decoder {
         return decodeUnicode(content, charset);
     }
 
-    public String decodeUnicode(String content, Charset charset) {
+    private String decodeUnicode(String content, Charset charset) {
         StringBuilder sb = new StringBuilder();
         int i = -1;
         int pos = 0;
@@ -50,4 +51,5 @@ public class SpecialDecoder implements Decoder {
         }
         return new String(sb.toString().getBytes(), charset);
     }
+
 }

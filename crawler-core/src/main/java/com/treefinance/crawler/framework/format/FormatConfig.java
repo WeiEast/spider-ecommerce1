@@ -27,9 +27,11 @@ import org.joda.time.format.DateTimeFormatter;
  */
 public class FormatConfig implements Serializable {
 
-    private final       SpiderRequest  request;
-    private final       SpiderResponse response;
-    private final       String   pattern;
+    private final SpiderRequest  request;
+
+    private final SpiderResponse response;
+
+    private final String         pattern;
 
     public FormatConfig(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response, @Nonnull FieldExtractor fieldExtractor) {
         this(request, response, fieldExtractor.getFormat());
@@ -59,15 +61,15 @@ public class FormatConfig implements Serializable {
 
     @Nonnull
     public DateTimeFormats getDateTimeFormats() {
-        return (DateTimeFormats) request.computeExtraIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats());
+        return request.computeExtraIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats(), DateTimeFormats.class);
     }
 
     public DateTimeFormatter getDateTimeFormatter(String pattern) {
         return getDateTimeFormats().getFormatter(pattern);
     }
 
-    @SuppressWarnings("unchecked")
     @Nonnull
+    @SuppressWarnings("unchecked")
     public Map<String, NumberUnit> getNumberFormatMap(Configuration conf) {
         return (Map<String, NumberUnit>) request.computeExtraIfAbsent(Constants.CRAWLER_REQUEST_NUMBER_MAP, key -> NumberUnitMapping.getNumberUnitMap(conf));
     }

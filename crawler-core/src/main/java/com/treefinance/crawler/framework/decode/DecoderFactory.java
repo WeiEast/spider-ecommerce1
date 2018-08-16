@@ -24,7 +24,7 @@ import com.treefinance.crawler.framework.decode.impl.*;
  * @version 1.0
  * @since Mar 12, 2014 8:03:50 PM
  */
-public class DecoderFactory {
+public final class DecoderFactory {
 
     private DecoderFactory() {}
 

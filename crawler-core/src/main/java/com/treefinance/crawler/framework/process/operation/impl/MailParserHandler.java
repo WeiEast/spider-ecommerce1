@@ -27,9 +27,9 @@ import com.datatrees.common.protocol.Content;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.processor.Constants;
-import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.IPAddressUtil;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
@@ -41,11 +41,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 下午3:07:06
  */
-public final class MailParserHandler {
+final class MailParserHandler {
     private static final Logger logger                = LoggerFactory.getLogger(MailParserHandler.class);
     private static final String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
     private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.attachmentType", "attachment");

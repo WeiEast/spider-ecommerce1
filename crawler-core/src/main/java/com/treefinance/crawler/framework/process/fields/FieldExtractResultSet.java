@@ -40,8 +40,8 @@ public class FieldExtractResultSet extends HashMap<String, FieldExtractResult> {
         }
 
         Map<String, Object> resultMap = new HashMap<>();
-        forEach((id, wrapper) -> {
-            Object result = wrapper.getResult();
+        forEach((id, fieldExtractResult) -> {
+            Object result = fieldExtractResult.getResult();
             if (result != null) {
                 resultMap.put(id, result);
             }

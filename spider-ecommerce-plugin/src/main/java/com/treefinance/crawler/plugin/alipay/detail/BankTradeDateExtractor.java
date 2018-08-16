@@ -32,7 +32,7 @@ public class BankTradeDateExtractor extends BaseFieldExtractPlugin<ExtractorProc
             logger.debug("App bank detail >>> {}", content);
         }
 
-        String tradeNumber = (String) processorContext.getContext().get("tradeNumber");
+        String tradeNumber = (String) processorContext.getAttribute("tradeNumber");
         if (tradeNumber == null) {
             tradeNumber = getValueByXpath(content, "//li/div[@class='cm-trade-rows']/@data-tradeNo");
         }

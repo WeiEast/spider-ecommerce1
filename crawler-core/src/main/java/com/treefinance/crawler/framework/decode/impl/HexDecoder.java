@@ -23,11 +23,11 @@ import org.slf4j.LoggerFactory;
  */
 public class HexDecoder implements Decoder {
 
-    public  static final HexDecoder DEFAULT = new HexDecoder();
+    public static final    HexDecoder DEFAULT = new HexDecoder();
 
-    protected static final   Logger log     = LoggerFactory.getLogger(HexDecoder.class);
+    protected static final Logger     log     = LoggerFactory.getLogger(HexDecoder.class);
 
-    protected static final String pattern = "((\\\\x([\\w\\d]{2}))+)";
+    protected static final String     pattern = "((\\\\x([\\w\\d]{2}))+)";
 
     @Override
     public String decode(String content, Charset charset) {

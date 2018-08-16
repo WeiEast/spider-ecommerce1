@@ -38,7 +38,7 @@ public abstract class ValveBase implements Valve {
     /**
      * The next Valve in the pipeline this Valve is a component of.
      */
-    protected       Valve  next   = null;
+    protected Valve next = null;
 
     /**
      * Return the next Valve in this pipeline, or <code>null</code> if this is the

@@ -17,9 +17,9 @@ import com.datatrees.crawler.core.domain.config.operation.impl.CodecOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.CodecType;
 import com.datatrees.crawler.core.domain.config.operation.impl.codec.HandlingType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -28,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 
 /**
  * handle codec operation decode/encode etc..
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Mar 27, 2014 12:30:43 PM
  */

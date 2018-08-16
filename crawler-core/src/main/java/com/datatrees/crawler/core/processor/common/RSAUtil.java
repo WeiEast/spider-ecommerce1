@@ -14,8 +14,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.security.*;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
@@ -47,29 +45,31 @@ public class RSAUtil {
             keyPairGen.initialize(1024);
             // 密钥对
             KeyPair keyPair = keyPairGen.generateKeyPair();
+
             // 公钥
-            PublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
-            // 私钥
-            PrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
+            PublicKey publicKey = keyPair.getPublic();
             // 得到公钥字符串
             String publicKeyString = getKeyString(publicKey);
+
+            // 私钥
+            PrivateKey privateKey = keyPair.getPrivate();
             // 得到私钥字符串
             String privateKeyString = getKeyString(privateKey);
-            // 将密钥对写入到文件
-            FileWriter pubfw = new FileWriter("publicKey.keystore");
-            FileWriter prifw = new FileWriter("privateKey.keystore");
-            BufferedWriter pubbw = new BufferedWriter(pubfw);
-            BufferedWriter pribw = new BufferedWriter(prifw);
-            pubbw.write(publicKeyString);
-            pribw.write(privateKeyString);
-            pubbw.flush();
-            pubbw.close();
-            pubfw.close();
-            pribw.flush();
-            pribw.close();
-            prifw.close();
+
+            try (FileWriter out = new FileWriter("publicKey.keystore");
+                 BufferedWriter pubbw = new BufferedWriter(out)) {
+                pubbw.write(publicKeyString);
+                pubbw.flush();
+            }
+
+            try (FileWriter out = new FileWriter("privateKey.keystore");
+                 BufferedWriter pribw = new BufferedWriter(out)) {
+                pribw.write(privateKeyString);
+                pribw.flush();
+            }
+
             // 将生成的密钥对返回
-            Map<String, String> map = new HashMap<String, String>();
+            Map<String, String> map = new HashMap<>();
             map.put("publicKey", publicKeyString);
             map.put("privateKey", privateKeyString);
             return map;

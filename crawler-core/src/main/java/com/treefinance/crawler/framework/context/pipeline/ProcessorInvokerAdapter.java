@@ -33,7 +33,7 @@ public abstract class ProcessorInvokerAdapter implements Processor, Invoker {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
-    public void invoke(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws InvokeException, ResultEmptyException {
+    public final void invoke(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws InvokeException, ResultEmptyException {
         try {
             preProcess(request, response);
             process(request, response);

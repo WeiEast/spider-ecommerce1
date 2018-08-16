@@ -13,17 +13,19 @@ import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
+import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.google.common.net.HttpHeaders;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;
-import com.treefinance.crawler.framework.decode.DecodeUtils;
+import com.treefinance.crawler.framework.decode.DecodeUtil;
 import com.treefinance.crawler.framework.expression.StandardExpression;
+import com.treefinance.crawler.framework.process.ProcessorFactory;
+import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.util.ServiceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -32,14 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 21, 2014 10:00:52 AM
  */
 public class LoginUtil {
 
-    private static final Logger logger = LoggerFactory.getLogger(LoginUtil.class);
-    private static LoginUtil loginUtil = new LoginUtil();
+    private static final Logger    logger    = LoggerFactory.getLogger(LoginUtil.class);
+    private static       LoginUtil loginUtil = new LoginUtil();
 
     private LoginUtil() {
     }
@@ -58,7 +60,7 @@ public class LoginUtil {
     public String doLogin(LoginConfig config, SearchProcessorContext context) {
         try {
             String jsonHeader = config.getHeaders();
-            String loginUrl = StandardExpression.eval(config.getUrlTemplate(), context.getContext());
+            String loginUrl = StandardExpression.eval(config.getUrlTemplate(), context.getVisibleScope());
             LinkNode linkNode = new LinkNode(loginUrl);
             // // add json headers
             if (StringUtils.isNotEmpty(jsonHeader)) {
@@ -110,7 +112,7 @@ public class LoginUtil {
             }
 
             LoginCheckConfig loginCheckConfig = config.getLoginCheckConfig();
-            String checkUrl = StandardExpression.eval(loginCheckConfig.getCheckUrl(), context.getContext());
+            String checkUrl = StandardExpression.eval(loginCheckConfig.getCheckUrl(), context.getVisibleScope());
             logger.info("do login check, url: {}", checkUrl);
 
             LinkNode linkNode = new LinkNode(checkUrl);
@@ -141,7 +143,7 @@ public class LoginUtil {
                 return false;
             }
 
-            String successPattern = StandardExpression.eval(loginCheckConfig.getSuccessPattern(), context.getContext());
+            String successPattern = StandardExpression.eval(loginCheckConfig.getSuccessPattern(), context.getVisibleScope());
             // match by page content or cookieString
             if (isSuccess(responseBody, context, successPattern)) {
                 callSegments(loginCheckConfig.getSegmentList(), context, responseBody);
@@ -158,7 +160,7 @@ public class LoginUtil {
             request.setProcessorContext(context);
 
             // decode
-            request.setInput(DecodeUtils.decodeContent(responseBody, request));
+            request.setInput(DecodeUtil.decodeContent(responseBody, request));
             for (AbstractSegment abstractSegment : segments) {
                 try {
                     SpiderResponse segResponse = SpiderResponseFactory.make();

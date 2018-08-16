@@ -16,7 +16,10 @@
 
 package com.treefinance.crawler.framework.context.function;
 
+import com.datatrees.common.protocol.ProtocolStatusCodes;
+import com.datatrees.crawler.core.processor.bean.Status;
 import com.treefinance.crawler.lang.AtomicAttributes;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author Jerry
@@ -24,15 +27,63 @@ import com.treefinance.crawler.lang.AtomicAttributes;
  */
 public class SpiderGenericResponse extends AtomicAttributes implements SpiderResponse {
 
-    private final static String OUTPUT = "Response.Output";
+    private int    status;
+
+    private Object output;
+
+    private Exception exception;
+
+    private String errorMsg;
 
     @Override
-    public Object getOutPut() {
-        return getAttribute(OUTPUT);
+    public int getStatus() {
+        return status;
     }
 
     @Override
-    public void setOutPut(Object content) {
-        setAttribute(OUTPUT, content);
+    public void setStatus(int status) {
+        this.status = status;
+    }
+
+    @Override
+    public Object getOutPut() {
+        return output;
+    }
+
+    @Override
+    public void setOutPut(Object output) {
+        this.output = output;
+    }
+
+    @Override
+    public void setException(Exception exception) {
+        this.exception = exception;
+    }
+
+    @Override
+    public String getErrorMsg() {
+        if (this.errorMsg == null) {
+            return this.exception == null ? StringUtils.EMPTY : this.exception.getMessage();
+        }
+
+        return this.errorMsg;
+    }
+
+    @Override
+    public void setErrorMsg(String errorMsg) {
+        this.errorMsg = errorMsg;
+    }
+
+    @Override
+    public boolean isError() {
+        return this.status == Status.PROCESS_EXCEPTION || this.status == ProtocolStatusCodes.EXCEPTION || this.status == ProtocolStatusCodes.SERVER_EXCEPTION;
+    }
+
+    @Override
+    public void clear() {
+        this.status = 0;
+        this.output = null;
+        this.exception = null;
+        this.errorMsg = null;
     }
 }

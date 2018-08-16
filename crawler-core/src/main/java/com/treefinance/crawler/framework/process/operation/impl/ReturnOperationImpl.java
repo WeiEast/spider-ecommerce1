@@ -12,9 +12,9 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.ReturnOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.operation.Operation;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -28,8 +28,7 @@ public class ReturnOperationImpl extends Operation<ReturnOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request,
-            @Nonnull SpiderResponse response) throws Exception {
+    protected Object doOperation(@Nonnull ReturnOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         return operatingData;
     }
 

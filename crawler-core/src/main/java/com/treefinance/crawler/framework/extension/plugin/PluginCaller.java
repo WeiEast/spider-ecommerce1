@@ -1,19 +1,18 @@
 package com.treefinance.crawler.framework.extension.plugin;
 
-import java.util.Map;
+import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import com.datatrees.common.pipeline.Request;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
+import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.plugin.Plugin;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.exception.PluginException;
+import com.treefinance.crawler.framework.extension.plugin.impl.CommandPluginHandler;
+import com.treefinance.crawler.framework.extension.plugin.impl.JavaPluginHandler;
 
 /**
  * @author Jerry
@@ -33,25 +32,33 @@ public final class PluginCaller {
     }
 
     public static Object call(AbstractPlugin pluginMetadata, AbstractProcessorContext context, PluginParamsSupplier parametersSupplier) {
-        Plugin plugin = PluginFactory.getPlugin(pluginMetadata, context);
+        PluginHandler pluginHandler = getPluginHandler(pluginMetadata, context);
 
         try {
-            SpiderRequest req = SpiderRequestFactory.make();
-
+            SpiderRequest request = SpiderRequestFactory.make();
+            // TODO: 2018/7/24 field scope shared
             if (parametersSupplier != null) {
-                Map<String, String> parameters = parametersSupplier.get();
-                if (parameters != null) {
-                    RequestUtil.setPluginRuntimeConf(req, parameters);
-                }
+                request.setInput(parametersSupplier.get());
             }
 
-            SpiderResponse resp = SpiderResponseFactory.make();
+            SpiderResponse response = SpiderResponseFactory.make();
 
-            plugin.invoke(req, resp);
+            pluginHandler.invoke(request, response);
 
-            return resp.getOutPut();
+            return response.getOutPut();
         } catch (Exception e) {
             throw new PluginException("Error calling plugin! >>> " + pluginMetadata, e);
         }
+    }
+
+    public static PluginHandler getPluginHandler(@Nonnull final AbstractPlugin metadata, @Nonnull final AbstractProcessorContext context) {
+        Objects.requireNonNull(metadata);
+        Objects.requireNonNull(context);
+
+        if (metadata instanceof JavaPlugin) {
+            return new JavaPluginHandler((JavaPlugin) metadata, context);
+        }
+
+        return new CommandPluginHandler(metadata, context);
     }
 }

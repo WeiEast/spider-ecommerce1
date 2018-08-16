@@ -31,6 +31,7 @@ public class ExtractRequest extends Request {
     public static class Builder {
 
         private ExtractorProcessorContext extractContext;
+
         private Object                    input;
 
         private Builder() {

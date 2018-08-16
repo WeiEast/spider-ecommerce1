@@ -7,9 +7,9 @@ import com.datatrees.common.protocol.ProtocolInput;
 import com.datatrees.common.protocol.util.CharsetUtil;
 import com.datatrees.common.protocol.util.UrlUtils;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.treefinance.crawler.framework.download.WrappedFile;
 import com.datatrees.crawler.core.processor.common.FileUtils;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.format.CommonFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
 

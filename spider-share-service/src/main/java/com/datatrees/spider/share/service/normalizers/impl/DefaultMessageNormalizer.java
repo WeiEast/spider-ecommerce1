@@ -8,14 +8,13 @@
 
 package com.datatrees.spider.share.service.normalizers.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.domain.DefaultData;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.framework.process.domain.ExtractObject;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,10 +32,10 @@ public class DefaultMessageNormalizer implements MessageNormalizer {
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             return true;
-        } else if (object instanceof HashMap && DefaultData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
+        } else if (object instanceof ExtractObject && DefaultData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             DefaultData defaultData = new DefaultData();
             defaultData.putAll((Map) object);
-            defaultData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
+
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             message.setMessageObject(defaultData);

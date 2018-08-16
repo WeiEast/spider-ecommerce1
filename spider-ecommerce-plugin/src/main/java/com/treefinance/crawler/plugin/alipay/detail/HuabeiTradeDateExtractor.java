@@ -32,7 +32,7 @@ public class HuabeiTradeDateExtractor extends BaseFieldExtractPlugin<ExtractorPr
             logger.debug("App huabei detail >>> {}", content);
         }
 
-        String tradeNumber = (String) processorContext.getContext().get("tradeNumber");
+        String tradeNumber = (String) processorContext.getAttribute("tradeNumber");
         if (tradeNumber == null) {
             tradeNumber = getValueByXpath(content, "//div[@class='am-list-item']/@data-biznum");
             if (tradeNumber != null) {

@@ -1,8 +1,8 @@
 package com.datatrees.spider.share.service;
 
-import com.datatrees.spider.share.service.domain.SubmitMessage;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
 
 public interface FileStoreService {
 
-    public void storeEviFile(SubmitMessage submitMessage);
+    void storeEviFile(String storePath, ExtractMessage extractMessage);
 }

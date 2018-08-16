@@ -20,19 +20,19 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.bean.ExtractRequest;
+import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.process.domain.PageExtractObject;
 import com.treefinance.crawler.framework.process.extract.ExtractorSelectorHandler;
 import com.treefinance.crawler.framework.process.extract.PageExtractorImpl;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Extractor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Extractor.class);
+    private static final Logger log = LoggerFactory.getLogger(Extractor.class);
 
     /**
      * crawler request main route step 1: request via httpclient step 2: parse page content
@@ -74,22 +74,24 @@ public class Extractor {
                     if (i >= length - 1) {
                         throw e;
                     }
-                    LOGGER.warn("Error invoking page extractor[{}], error: {}", pageExtractor.getId(), e.getMessage());
+                    log.warn("Error invoking page extractor[{}], error: {}", pageExtractor.getId(), e.getMessage());
                     continue;
                 }
 
-                if (MapUtils.isNotEmpty(ResponseUtil.getResponsePageExtractResultMap(response))) {
+                PageExtractObject extractObject = (PageExtractObject) response.getOutPut();
+                if (extractObject != null && extractObject.isNotEmpty()) {
                     ResponseUtil.setPageExtractor(response, pageExtractor);
                     break;
                 }
             }
         } catch (Exception e) {
             if (e instanceof ResultEmptyException) {
-                LOGGER.warn("extract request error." + e.getMessage());
+                log.warn("Error invoking page extractor, error: {}", e.getMessage());
             } else {
-                LOGGER.error("extract request error.", e);
+                log.error("Error invoking page extractor.", e);
             }
-            response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
+            response.setStatus(Status.PROCESS_EXCEPTION);
+            response.setException(e);
         }
         return response;
     }

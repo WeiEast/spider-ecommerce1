@@ -55,11 +55,13 @@ public class RequestUtil {
         req.setAttribute(Constants.CURRENT_SEARCH_TEMPLATE, content);
     }
 
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static Map<String, String> getPluginRuntimeConf(SpiderRequest req) {
         return (Map<String, String>) req.getAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF);
     }
 
+    @Deprecated
     public static void setPluginRuntimeConf(SpiderRequest req, Map<String, String> confList) {
         req.setAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF, confList);
     }
@@ -96,10 +98,12 @@ public class RequestUtil {
         req.setAttribute(Constants.CRAWLER_REQUEST_TEMPLATE, template);
     }
 
+    @Deprecated
     public static String getAttribute(SpiderRequest req, String key) {
         return (String) req.getAttribute(Constants.REQUEST_PREFIX + key);
     }
 
+    @Deprecated
     public static void setAttribute(SpiderRequest req, String key, Object obj) {
         req.setAttribute(Constants.REQUEST_PREFIX + key, obj);
     }

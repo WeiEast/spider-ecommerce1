@@ -29,14 +29,13 @@ import com.datatrees.crawler.core.domain.config.page.Regexp;
 import com.datatrees.crawler.core.domain.config.page.Replacement;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.treefinance.crawler.framework.process.PageHelper;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.treefinance.crawler.framework.process.PageHelper;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
@@ -81,8 +80,9 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
 
             logger.debug("Actual page source content: {}", result);
 
+            // TODO: 2018/7/27 不清楚为什么要设置pageSource放在context中
             // set source field to context
-            request.getProcessorContext().addAttribute(source.getField(), result);
+            request.addContextScope(source.getField(), result);
 
             builder.append(result);
         }
@@ -90,7 +90,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         String content = builder.toString();
         logger.debug("Actual extracting content: {}", content);
 
-        RequestUtil.setContent(request, content);
+        response.setOutPut(content);
     }
 
     @SuppressWarnings("unchecked")
@@ -98,8 +98,7 @@ public class PageSourceImpl extends ProcessorInvokerAdapter {
         String separator = StringUtils.defaultString(source.getSeparator());
         AbstractPlugin plugin = source.getPlugin();
 
-        logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator,
-                plugin != null ? plugin.getId() : null);
+        logger.debug("Get page content. <<< source-ref: {}, separator: {}, plugin-ref: {}", source.getField(), separator, plugin != null ? plugin.getId() : null);
 
         if (plugin != null) {
             Object value = FieldUtils.getFieldValue(input, source.getField());

@@ -31,7 +31,7 @@ import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 11:27:49 AM
  */

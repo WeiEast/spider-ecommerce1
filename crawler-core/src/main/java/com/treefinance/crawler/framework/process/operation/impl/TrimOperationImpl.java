@@ -12,10 +12,10 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.TrimOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.google.common.base.CharMatcher;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -30,8 +30,7 @@ public class TrimOperationImpl extends Operation<TrimOperation> {
     }
 
     @Override
-    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request,
-            @Nonnull SpiderResponse response) throws Exception {
+    protected Object doOperation(@Nonnull TrimOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         String input = (String) operatingData;
 
         String output = StringUtils.trim(input);

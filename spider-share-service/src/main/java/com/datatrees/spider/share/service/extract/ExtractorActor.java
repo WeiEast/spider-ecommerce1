@@ -34,7 +34,7 @@ public class ExtractorActor extends AbstractActor {
     @Override
     public void processComplete(Object message) {
         if (message instanceof ExtractMessage) {
-            getSender().tell(((ExtractMessage) message));
+            getSender().tell(message);
         } else {
             unhandled(message);
         }

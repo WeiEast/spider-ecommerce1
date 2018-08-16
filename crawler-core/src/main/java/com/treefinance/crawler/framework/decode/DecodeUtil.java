@@ -16,6 +16,7 @@
 
 package com.treefinance.crawler.framework.decode;
 
+import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
@@ -25,17 +26,22 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
  * @version 1.0
  * @since 2015年10月21日 下午5:57:10
  */
-public class DecodeUtils {
+public final class DecodeUtil {
+
+    private DecodeUtil() {
+    }
 
     public static String decodeContent(String content, SpiderRequest request) {
         String result = content;
 
-        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
-        Decoder decoder = context.getUnicodeDecoder();
-        if (decoder != null) {
-            String charset = RequestUtil.getContentCharset(request);
-            result = decoder.decode(content, charset);
-            RequestUtil.setContent(request, result);
+        AbstractProcessorContext context = request.getProcessorContext();
+        if(context instanceof SearchProcessorContext){
+            Decoder decoder = ((SearchProcessorContext) context).getUnicodeDecoder();
+            if(decoder != null){
+                String charset = RequestUtil.getContentCharset(request);
+                result = decoder.decode(content, charset);
+                RequestUtil.setContent(request, result);
+            }
         }
 
         return result;

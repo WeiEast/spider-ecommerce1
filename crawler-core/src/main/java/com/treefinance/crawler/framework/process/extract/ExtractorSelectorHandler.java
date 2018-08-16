@@ -23,15 +23,15 @@ import com.datatrees.crawler.core.domain.config.extractor.ExtractorSelector;
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.util.FieldUtils;
+import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="">Cheng Wang</A>
- * @version 1.0
- * @since 2015年7月14日 下午3:59:14
+ * @author Jerry
+ * @since 17:56 2018/7/25
  */
 public class ExtractorSelectorHandler {
 
@@ -46,7 +46,7 @@ public class ExtractorSelectorHandler {
 
     public List<PageExtractor> select(SpiderRequest request) {
         Object input = request.getInput();
-        com.treefinance.toolkit.util.Preconditions.notNull("input", input);
+        Preconditions.notNull("input", input);
 
         List<PageExtractor> selected = new ArrayList<>();
 

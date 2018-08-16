@@ -20,7 +20,7 @@ public class NumberFormatter extends ConfigurableFormatter<Number> {
         String val = value.replaceAll("\\s+", "");
 
         Map<String, NumberUnit> numberMap = config.getNumberFormatMap(this.getConf());
-        NumberUnit unit = findTimeUnitForNumber(numberMap, val);
+        NumberUnit unit = findNumberUnitForNumber(numberMap, val);
         Number result = null;
         if (unit != null) {
             result = getNumber(val);
@@ -51,7 +51,7 @@ public class NumberFormatter extends ConfigurableFormatter<Number> {
         return result;
     }
 
-    private NumberUnit findTimeUnitForNumber(Map<String, NumberUnit> numberMap, String value) {
+    private NumberUnit findNumberUnitForNumber(Map<String, NumberUnit> numberMap, String value) {
         NumberUnit result = null;
         if (MapUtils.isNotEmpty(numberMap)) {
             for (Map.Entry<String, NumberUnit> entry : numberMap.entrySet()) {
@@ -61,12 +61,11 @@ public class NumberFormatter extends ConfigurableFormatter<Number> {
                     logger.debug("find period: {} unit : {}", value, result);
                     break;
                 }
-
             }
         }
 
         if (result == null) {
-            logger.debug("can't find correct number format  conf! " + value + "set to default!");
+            logger.debug("can't find correct number format conf and use default instead! value: {}", value);
             result = NumberUnit.ONE;
         }
         return result;

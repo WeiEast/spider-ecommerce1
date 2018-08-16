@@ -13,9 +13,9 @@ import java.util.Collections;
 import java.util.List;
 
 import com.datatrees.crawler.core.domain.config.segment.impl.BaseSegment;
-import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.segment.SegmentBase;
 
 /**
  * @author <A HREF="">Cheng Wang</A>

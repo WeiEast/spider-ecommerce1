@@ -72,12 +72,14 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
     }
 
     @Override
-    protected final void preProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
+    protected final boolean preProcess(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         if (logger.isDebugEnabled()) {
             logger.debug("Starting operation processing >> {}", Jackson.toJSONString(operation));
         }
 
         validate(operation, request, response);
+
+        return true;
     }
 
     protected void validate(@Nonnull T operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
@@ -122,7 +124,7 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
         return getOperatingEntity(request, response).isEmpty();
     }
 
-    private OperationEntity getOperatingEntity(SpiderRequest request, SpiderResponse response) {
+    private final OperationEntity getOperatingEntity(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
         OperationEntity entity = (OperationEntity) response.getOutPut();
         if (entity == null) {
             String content = (String) request.getInput();

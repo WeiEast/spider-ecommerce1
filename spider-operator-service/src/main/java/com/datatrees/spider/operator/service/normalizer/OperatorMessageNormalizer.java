@@ -9,13 +9,11 @@
 package com.datatrees.spider.operator.service.normalizer;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.operator.dao.OperatorDAO;
 import com.datatrees.spider.operator.domain.OperatorData;
 import com.datatrees.spider.operator.domain.model.Operator;
@@ -24,6 +22,7 @@ import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.framework.process.domain.ExtractObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -53,10 +52,10 @@ public class OperatorMessageNormalizer implements MessageNormalizer {
             ((OperatorData) object).setOperatorId(message.getTypeId());
             ((OperatorData) object).setResultType(message.getResultType().getValue());
             return true;
-        } else if (object instanceof HashMap && OperatorData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
+        } else if (object instanceof ExtractObject && OperatorData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             OperatorData operatorData = new OperatorData();
             operatorData.putAll((Map) object);
-            operatorData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
+
             message.setMessageObject(operatorData);
             message.setResultType(ResultType.OPERATOR);
             message.setTypeId(this.getOperatorId(message));

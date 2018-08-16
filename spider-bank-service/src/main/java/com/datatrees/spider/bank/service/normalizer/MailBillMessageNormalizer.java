@@ -9,12 +9,14 @@
 package com.datatrees.spider.bank.service.normalizer;
 
 import javax.annotation.Resource;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.bank.service.BankService;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
@@ -23,6 +25,7 @@ import com.datatrees.spider.share.service.domain.data.MailBillData;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
 import com.treefinance.crawler.exception.UncheckedInterruptedException;
 import com.treefinance.crawler.framework.download.WrappedFile;
+import com.treefinance.crawler.framework.process.domain.ExtractObject;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,25 +33,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月31日 上午11:50:36
  */
 @Service
 public class MailBillMessageNormalizer implements MessageNormalizer {
 
-    private static final Logger logger = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
+    private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
     @Resource
-    private BankService bankService;
-    private String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
-    private List<String> loadFileBankList  = null;
-    private List<String> needLoadFieldList = null;
+    private              BankService  bankService;
+    private              String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
 
-    {
-        loadFileBankList = Arrays.asList(loadFileBankIds.split(" *; *"));
-        needLoadFieldList = Arrays.asList(SubmitConstant.SUBMITTER_NEEDUPLOAD_KEY.split(" *, *"));
+    private              List<String> loadFileBankList  = Arrays.asList(loadFileBankIds.split(" *; *"));
 
-    }
+    private              List<String> needLoadFieldList = Arrays.asList(SubmitConstant.SUBMITTER_NEEDUPLOAD_KEY.split(" *, *"));
+
 
     @Override
     public boolean normalize(ExtractMessage message) {
@@ -61,10 +61,10 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
             return true;
-        } else if (object instanceof HashMap && MailBillData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
+        } else if (object instanceof ExtractObject && MailBillData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             MailBillData mailBillData = new MailBillData();
             mailBillData.putAll((Map) object);
-            mailBillData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
+
             message.setResultType(ResultType.MAILBILL);
             message.setTypeId(this.getBankId(mailBillData));
             message.setMessageObject(mailBillData);

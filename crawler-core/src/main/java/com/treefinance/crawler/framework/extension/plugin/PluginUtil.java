@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.plugin;
+package com.treefinance.crawler.framework.extension.plugin;
 
 import java.util.Collections;
 import java.util.Map;

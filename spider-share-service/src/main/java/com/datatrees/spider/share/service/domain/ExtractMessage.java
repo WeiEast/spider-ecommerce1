@@ -161,6 +161,10 @@ public class ExtractMessage {
         this.submitkeyResult = submitkeyResult;
     }
 
+    public void addSubmitKey(String name, String value) {
+        submitkeyResult.put(name, value);
+    }
+    
     /**
      * @return the task
      */

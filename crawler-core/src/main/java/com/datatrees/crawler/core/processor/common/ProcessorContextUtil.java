@@ -36,8 +36,7 @@ public class ProcessorContextUtil {
             return;
         }
         context.addAttribute(Constants.COOKIE_STRING, cookieString);
-        boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ?
-                ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
+        boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookieString, retainQuote);
         context.addAttribute(Constants.COOKIE, cookieMap);
     }
@@ -73,7 +72,7 @@ public class ProcessorContextUtil {
         context.addAttribute(key, value);
     }
 
-    public static void addValues(AbstractProcessorContext context, Map values) {
+    public static void addValues(AbstractProcessorContext context, Map<String, Object> values) {
         context.addAttributes(values);
     }
 
@@ -95,8 +94,7 @@ public class ProcessorContextUtil {
     }
 
     public static void addThreadLocalResponse(AbstractProcessorContext context, SpiderResponse response) {
-        Object responseList = context
-                .computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE, k -> new ArrayList<SpiderResponse>());
+        Object responseList = context.computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_RESPONSE, k -> new ArrayList<SpiderResponse>());
         ((List) responseList).add(response);
     }
 
@@ -109,8 +107,7 @@ public class ProcessorContextUtil {
     }
 
     public static void addThreadLocalLinkNode(AbstractProcessorContext context, LinkNode linkNode) {
-        Object linkNodeList = context
-                .computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_LINKNODE, k -> new ArrayList<LinkNode>());
+        Object linkNodeList = context.computeThreadAttrIfAbsent(Thread.currentThread(), Constants.THREAD_LOCAL_LINKNODE, k -> new ArrayList<LinkNode>());
         ((List) linkNodeList).add(linkNode);
     }
 

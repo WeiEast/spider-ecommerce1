@@ -68,6 +68,10 @@ public class FieldExtractResult {
         return result != null;
     }
 
+    public String getFieldName() {
+        return getExtractor().getField();
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */

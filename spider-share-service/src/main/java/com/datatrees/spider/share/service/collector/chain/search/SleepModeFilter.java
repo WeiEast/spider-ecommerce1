@@ -23,7 +23,7 @@ public class SleepModeFilter implements Filter {
     @Override
     public void doFilter(Context context, FilterChain filterChain) {
         CrawlResponse response = context.getCrawlResponse();
-        int codeStatus = ResponseUtil.getResponseStatus(response);
+        int codeStatus = response.getStatus();
         if (Status.FILTERED != codeStatus) {
             SearchProcessor searchProcessor = context.getSearchProcessor();
             long waitIntervalMillis = searchProcessor.getWaitIntervalMillis();

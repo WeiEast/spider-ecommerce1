@@ -5,10 +5,10 @@ import javax.annotation.Nullable;
 import java.util.*;
 
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.treefinance.crawler.framework.process.fields.FieldExtractResult;
-import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResult;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;

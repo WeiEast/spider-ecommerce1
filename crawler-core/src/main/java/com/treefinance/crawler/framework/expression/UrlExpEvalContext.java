@@ -18,8 +18,7 @@ public class UrlExpEvalContext extends ExpEvalContext {
         this(placeholderMapping, true, false, urlEncodedKeys, charset);
     }
 
-    public UrlExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, List<String> urlEncodedKeys,
-            String charset) {
+    public UrlExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, List<String> urlEncodedKeys, String charset) {
         super(placeholderMapping, failOnUnknown, allowNull);
         this.urlEncodedKeys = urlEncodedKeys == null ? Collections.emptyList() : urlEncodedKeys;
         this.charset = charset;

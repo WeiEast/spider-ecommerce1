@@ -71,17 +71,17 @@ public class BDBEnvironmentContext {
         log.info("clear file : " + folder.getName());
         try {
             File[] files = folder.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    destroyEnv(file);
-                }
-                boolean flag = file.delete();
-                if (!flag) {
-                    log.info("This file  has been deleted.." + file.getName());
+            if(files != null){
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        destroyEnv(file);
+                    }
+                    if (!file.delete()) {
+                        log.info("This file  has been deleted.." + file.getName());
+                    }
                 }
             }
-            boolean flag = folder.delete();
-            if (!flag) {
+            if (!folder.delete()) {
                 log.info("This folder  has been deleted..." + folder.getName());
             }
         } catch (Exception e) {

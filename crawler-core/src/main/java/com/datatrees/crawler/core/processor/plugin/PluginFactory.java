@@ -8,13 +8,7 @@
 
 package com.datatrees.crawler.core.processor.plugin;
 
-import javax.annotation.Nonnull;
-import java.util.Objects;
-
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.plugin.impl.CommandPlugin;
-import com.datatrees.crawler.core.processor.plugin.impl.JavaPlugin;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
@@ -33,17 +27,6 @@ public final class PluginFactory {
     @Deprecated
     public static AbstractProcessorContext getProcessorContext() {
         return ProcessContextHolder.getProcessorContext();
-    }
-
-    public static Plugin getPlugin(@Nonnull final AbstractPlugin metadata, @Nonnull final AbstractProcessorContext context) {
-        Objects.requireNonNull(metadata);
-        Objects.requireNonNull(context);
-
-        if (metadata instanceof com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) {
-            return new JavaPlugin((com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin) metadata, context);
-        }
-
-        return new CommandPlugin(metadata, context);
     }
 
 }

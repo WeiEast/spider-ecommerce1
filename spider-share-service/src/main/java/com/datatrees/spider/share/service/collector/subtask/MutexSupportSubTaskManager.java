@@ -175,11 +175,11 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
 
     static class SubTaskFuture {
 
-        String      mutexKey;
+        private String      mutexKey;
 
-        Container   container;
+        private Container   container;
 
-        Future<Map> future;
+        private Future<Map> future;
 
         /**
          * @param mutexKey

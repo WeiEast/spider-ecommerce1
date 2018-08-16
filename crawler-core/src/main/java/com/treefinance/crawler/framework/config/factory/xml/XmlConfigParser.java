@@ -5,9 +5,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.util.ReflectionUtils;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Path;
-import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.ConfigParser;
 import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
 import com.treefinance.crawler.framework.exception.ConfigParseException;

@@ -6,7 +6,7 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.common;
+package com.treefinance.crawler.framework.process;
 
 import javax.annotation.Nonnull;
 import java.lang.reflect.Constructor;
@@ -88,17 +88,17 @@ public final class ProcessorFactory {
         register(OperationType.RETURNMATCH, ReturnMatchOperationImpl.class);
 
         register(ServiceType.Plugin_Service, PluginServiceImpl.class);
-        register(ServiceType.Default, DefaultService.class);
         register(ServiceType.Task_Http_Service, TaskHttpServiceImpl.class);
+        register(ServiceType.Default, DefaultService.class);
 
         register(ResultType.DATE, DateFormatter.class);
         register(ResultType.String, StringFormatter.class);
         register(ResultType.NUMBER, NumberFormatter.class);
         register(ResultType.PAYMENT, PaymentFormatter.class);
         register(ResultType.FILE, FileFormatter.class);
-        register(ResultType.RESOURCESTRING, ResourceStringFormatter.class);
+        register(ResultType.RESOURCE_STRING, ResourceStringFormatter.class);
         register(ResultType.CURRENCY, CurrencyFormatter.class);
-        register(ResultType.CURRENCYPAYMENT, CurrencyPaymentFormatter.class);
+        register(ResultType.CURRENCY_PAYMENT, CurrencyPaymentFormatter.class);
         register(ResultType.RMB, RmbFormatter.class);
         register(ResultType.BOOLEAN, BooleanFormatter.class);
         register(ResultType.INT, IntegerFormatter.class);

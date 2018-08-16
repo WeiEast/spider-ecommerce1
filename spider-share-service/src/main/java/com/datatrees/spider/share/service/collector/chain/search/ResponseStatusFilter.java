@@ -10,7 +10,6 @@ import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -24,7 +23,7 @@ public class ResponseStatusFilter extends ResponsesFilter {
         Task task = searchProcessor.getTask();
         for (SpiderResponse response : responses) {
 
-            int codeStatus = ResponseUtil.getResponseStatus(response);
+            int codeStatus = response.getStatus();
 
             if (Status.FILTERED == codeStatus) {
                 task.getFilteredCount().incrementAndGet();
@@ -33,7 +32,7 @@ public class ResponseStatusFilter extends ResponsesFilter {
                 task.getOpenUrlCount().incrementAndGet();
             }
 
-            if (StringUtils.isNotBlank(ResponseUtil.getResponseErrorMsg(response))) {
+            if (response.isError()) {
                 // record failed count
                 task.getRequestFailedCount().incrementAndGet();
             }

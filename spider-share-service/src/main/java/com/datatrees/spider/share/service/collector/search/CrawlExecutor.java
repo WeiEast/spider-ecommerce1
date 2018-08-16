@@ -82,7 +82,7 @@ public class CrawlExecutor {
     private void doExecute(SearchProcessor searchProcessor, LinkQueue linkQueue, String keyword, Integer threadCount) throws ResultEmptyException {
         searchProcessor.initWithKeyword(keyword);
         String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), keyword, searchProcessor.getEncoding(), 0, true,
-                searchProcessor.getProcessorContext().getContext());
+                searchProcessor.getProcessorContext().getVisibleScope());
 
         log.info("Actual search seed url: {}", url);
 

@@ -65,8 +65,7 @@ public final class PluginHelper {
         return invokeDefaultService(linkNode, processorContext, null, retry);
     }
 
-    public static SpiderResponse invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration,
-            Integer retry) throws Exception {
+    public static SpiderResponse invokeDefaultService(LinkNode linkNode, AbstractProcessorContext processorContext, Configuration configuration, Integer retry) throws Exception {
         Objects.requireNonNull(linkNode);
         Objects.requireNonNull(processorContext);
 

@@ -15,16 +15,16 @@ import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DecodeOperation;
 import com.datatrees.crawler.core.domain.config.operation.impl.decode.DecodeType;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.decode.impl.BasicDecoder;
 import com.treefinance.crawler.framework.decode.impl.HexDecoder;
 import com.treefinance.crawler.framework.decode.impl.StandardDecoder;
 import com.treefinance.crawler.framework.process.operation.Operation;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年11月19日 下午12:05:28
  */

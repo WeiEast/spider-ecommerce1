@@ -24,7 +24,21 @@ import com.treefinance.crawler.lang.Attributes;
  */
 public interface SpiderResponse extends Attributes {
 
+    int getStatus();
+
+    void setStatus(int status);
+
     Object getOutPut();
 
-    void setOutPut(Object content);
+    void setOutPut(Object output);
+
+    void setException(Exception exception);
+
+    String getErrorMsg();
+
+    void setErrorMsg(String errorMsg);
+
+    boolean isError();
+
+    void clear();
 }

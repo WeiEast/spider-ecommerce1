@@ -17,24 +17,24 @@
 package com.treefinance.crawler.framework.process.extract;
 
 import javax.annotation.Nonnull;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 
 import com.datatrees.crawler.core.domain.config.page.impl.PageExtractor;
 import com.datatrees.crawler.core.domain.config.segment.AbstractSegment;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.process.extract.PageSourceImpl;
-import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
+import com.treefinance.crawler.framework.process.ProcessorFactory;
+import com.treefinance.crawler.framework.process.domain.PageExtractObject;
+import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年7月14日 下午9:14:20
  */
@@ -56,62 +56,37 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
             return;
         }
 
+        // processing tag 'page-source'
         PageSourceImpl pageSourceImpl = new PageSourceImpl(pageExtractor.getPageSourceList());
         pageSourceImpl.invoke(request, response);
+        // the result of page-source handler.
+        String pageContent = (String) response.getOutPut();
 
-        this.extractObjectsWithSegments(segments, request, response);
-    }
-
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    private void segResultConvert(Map segmentResultMap, Object segResult, AbstractSegment abstractSegment) {
-        if (segResult == null) {
-            return;
-        }
-
-        Object oldValue = segmentResultMap.putIfAbsent(abstractSegment.getName(), segResult);
-
-        if (oldValue instanceof Collection) {
-            if (segResult instanceof Collection) {
-                ((Collection) oldValue).addAll((Collection) segResult);
-            } else {
-                ((Collection) oldValue).add(segResult);
-            }
-        } else if (oldValue != null) {
-            List newValue = new ArrayList();
-            newValue.add(oldValue);
-
-            if (segResult instanceof Collection) {
-                newValue.addAll((Collection) segResult);
-            } else {
-                newValue.add(segResult);
-            }
-            segmentResultMap.put(abstractSegment.getName(), newValue);
-        }
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void extractObjectsWithSegments(List<AbstractSegment> segments, SpiderRequest req, SpiderResponse resp) throws ResultEmptyException {
-        logger.info("extractObjectsWithSegments: segment size.." + segments.size());
-        Map segmentResultMap = new HashMap();
-        for (AbstractSegment abstractSegment : segments) {
+        logger.info("processing segment for page-extractor: {}, segment-size: {}", pageExtractor.getId(), segments.size());
+        PageExtractObject extractObject = new PageExtractObject();
+        for (AbstractSegment segment : segments) {
             try {
+                request.setInput(pageContent);
+
                 SpiderResponse segResponse = SpiderResponseFactory.make();
-                SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 
-                segmentBase.invoke(req, segResponse);
+                SegmentBase segmentBase = ProcessorFactory.getSegment(segment);
+                segmentBase.invoke(request, segResponse);
 
-                Object segResult = ResponseUtil.getSegmentsResults(segResponse);
+                Object segResult = segResponse.getOutPut();
 
-                this.segResultConvert(segmentResultMap, segResult, abstractSegment);
-
+                extractObject.setFieldExtractValue(segment.getName(), segResult);
             } catch (ResultEmptyException e) {
                 throw e;
             } catch (Exception e) {
                 logger.error("invoke segment processor error!", e);
+            } finally {
+                request.clear();
             }
         }
 
-        ResponseUtil.setResponsePageExtractResultMap(resp, segmentResultMap);
+        // set the result of segment processor.
+        response.setOutPut(extractObject);
     }
 
 }

@@ -38,19 +38,22 @@ import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.process.PageHelper;
-import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
-import com.treefinance.crawler.framework.decode.DecodeUtils;
+import com.treefinance.crawler.framework.decode.DecodeUtil;
 import com.treefinance.crawler.framework.parser.HTMLParser;
+import com.treefinance.crawler.framework.process.PageHelper;
+import com.treefinance.crawler.framework.process.ProcessorFactory;
+import com.treefinance.crawler.framework.process.SpiderRequestHelper;
+import com.treefinance.crawler.framework.process.SpiderResponseHelper;
+import com.treefinance.crawler.framework.process.domain.PageExtractObject;
+import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.util.URLSplitter;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
@@ -66,191 +69,67 @@ import org.apache.commons.lang.StringUtils;
  */
 public class PageImpl extends ProcessorInvokerAdapter {
 
-    private static final String titleRegex     = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
-
-    private static final int    URL_MAX_LENGTH = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
-
+    private static final String titleRegex         = PropertiesConfiguration.getInstance().get("page.title.regex", "<title>([^<]*)</title>");
+    private static final int    URL_MAX_LENGTH     = PropertiesConfiguration.getInstance().getInt("url.max.length", 1024);
+    private static final int    TITLE_LENGTH_LIMIT = 2048;
     private final        Page   page;
 
     public PageImpl(@Nonnull Page page) {
         this.page = Objects.requireNonNull(page);
     }
 
+    public Page getPage() {
+        return page;
+    }
+
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         LinkNode current = RequestUtil.getCurrentUrl(request);
+        Preconditions.checkNotNull(current, "source url should not be null!");
 
-        String content = RequestUtil.getContent(request);
-        String searchTemplate = RequestUtil.getSearchTemplate(request);
+        String pageContent = RequestUtil.getContent(request);
+        pageContent = DecodeUtil.decodeContent(pageContent, request);
 
-        setPageNum(current);
-        Map<String, LinkNode> pageUrlMap = findPageUrls(content, current, searchTemplate, request);// detect
-        // page
-        // linknode
-        content = DecodeUtils.decodeContent(content, request);
+        checkContent(request, response);
 
-        // check block pattern
-        checkBlock(request, response);
-
-        List<LinkNode> urlLinkNodes = new ArrayList<>();
-        boolean needParse = needParser(ResponseUtil.getResponseStatus(response));
-        // if block or no search result return
-        if (needParse) {
-            List<Replacement> replacements = page.getReplacementList();
-            if (CollectionUtils.isNotEmpty(replacements)) {
-                content = PageHelper.replaceText(content, replacements);
-            }
-            Regexp regexp = page.getRegexp();
-            if (regexp != null) {
-                content = PageHelper.getTextByRegexp(content, regexp);
-            }
-            request.setInput(content);
-
-            if (StringUtils.isNotEmpty(content)) {
-                // page title handler
-                String pageTitle = getPageTitle(content);
-                if (StringUtils.isNotBlank(pageTitle)) {
-                    current.setPageTitle(pageTitle.trim());
-                }
-
-                // filter the invaild part of title
-                if (StringUtils.isNotBlank(current.getPageTitle()) && StringUtils.isNotBlank(page.getPageTitleRegex())) {
-                    current.setPageTitle(getFiltedPageTitle(current.getPageTitle(), page.getPageTitleRegex()));
-                }
-
-                // get segment
-                List<AbstractSegment> segments = page.getSegmentList();
-
-                Map<String, LinkNode> urlLists;
-                if (CollectionUtils.isNotEmpty(segments)) {
-                    // extract url with segment
-                    urlLists = extractObjectsWithSegments(segments, request, response);
-                } else {
-                    // extract url
-                    urlLists = extractUrlsWithOutSegments(content, request);
-                    // EMPTY
-                }
-                urlLists.putAll(pageUrlMap);
-
-                // add redirect url
-                if (BooleanUtils.isTrue(page.getRedirectUrlAdd()) && StringUtils.isNotBlank(current.getRedirectUrl())) {
-                    LinkNode redirectNode = new LinkNode(current.getRedirectUrl());
-                    redirectNode.setReferer(current.getUrl());
-                    redirectNode.setDepth(current.getDepth());
-                    urlLists.put(redirectNode.getUrl(), redirectNode);
-                    logger.info("add redirect url to urlLists, url: {}, referer: {}", current.getRedirectUrl(), current.getReferer());
-                }
-
-                // filter url set url depth
-                urlLinkNodes = filterUrls(urlLists, current, request);
-            } else {
-                logger.warn("after page replace content is empty! LinkNode: {}", current);
-            }
-
-        } else {
-            logger.warn("Need not Parse that no search result return or encounter block flag");
+        if (skipParsing(response)) {
+            logger.warn("Skip page processing with the incorrect response status. - LinkNode: {}", current);
+            return;
         }
+
+        String content = resolveContent(pageContent);
+        if (StringUtils.isEmpty(content)) {
+            logger.warn("Empty page content after content resolving! - LinkNode: {}", current);
+            return;
+        }
+
+        resolveCurrentUrl(current, content);
+
+        Map<String, LinkNode> urlLists;
+        List<AbstractSegment> segments = page.getSegmentList();
+        if (CollectionUtils.isNotEmpty(segments)) {
+            // extract url with segment
+            urlLists = extractObjectsWithSegments(content, segments, request, response);
+        } else {
+            // extract url
+            urlLists = new HashMap<>();
+
+            extractUrls(content, current, urlLists);
+        }
+
+        findAndAddPageUrls(pageContent, current, request, urlLists);// detect
+
+        // add redirect url
+        addRedirectUrl(current, urlLists);
+
+        // filter url set url depth
+        List<LinkNode> urlLinkNodes = filterUrls(urlLists, current, request);
 
         ResponseUtil.setResponseLinkNodes(response, urlLinkNodes);
     }
 
-    private Map<String, LinkNode> findPageUrls(String content, LinkNode current, String searchTemplate, SpiderRequest request) {
-        Map<String, LinkNode> urlLists = new LinkedHashMap<>();
-        String charset = RequestUtil.getContentCharset(request);
-        String keyword = RequestUtil.getKeyWord(request);
-        try {
-            String contentRegex = page.getContentPageRegex();
-            if (StringUtils.isNotEmpty(contentRegex) && StringUtils.isNotEmpty(searchTemplate) && StringUtils.isNotEmpty(content)) {
-                Matcher matcher = RegExp.getMatcher(contentRegex, content);
-                while (matcher.find()) {
-                    String pNumber = matcher.group(1);
-                    try {
-                        int pNum = Integer.parseInt(pNumber);
-                        logger.info("add paging number: {},  match-text: {}", pNum, matcher.group(0));
-                        String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false,
-                                request.getProcessorContext().getContext());
-                        if (StringUtils.isNotEmpty(pageUrl)) {
-                            logger.info("add page url: {}", pageUrl);
-                            LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
-                            tmp.setpNum(pNum);
-                            urlLists.put(pageUrl, tmp);
-                        }
-
-                    } catch (Exception e) {}
-                }
-            }
-        } catch (Exception e) {
-            logger.error("extract page urls error!", e);
-        }
-        return urlLists;
-    }
-
-    private boolean needParser(Integer responseStatus) {
-        return responseStatus != Status.NO_SEARCH_RESULT;
-    }
-
-    private void setPageNum(LinkNode current) {
-        try {
-            String pageRegex = page.getPageNumRegex();
-            if (StringUtils.isNotEmpty(pageRegex)) {
-                String pidS = RegExp.group(current.getUrl(), pageRegex, 1);
-
-                int pNum = -1;
-                try {
-                    pNum = Integer.parseInt(pidS);
-                } catch (NumberFormatException nfe) {
-                    // eat it if not configured correctly.
-                }
-                logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
-                current.setpNum(pNum);
-            }
-        } catch (Exception e) {
-            logger.error("set page num error!", e);
-        }
-    }
-
-    private void checkBlock(SpiderRequest request, SpiderResponse response) {
-        String content = RequestUtil.getContent(request);
-
-        SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
-
-        String templateId = RequestUtil.getCurrentTemplateId(request);
-
-        SearchTemplateConfig templateConfig = context.getSearchTemplateConfig(templateId);
-        if (templateConfig != null) {
-            com.datatrees.crawler.core.domain.config.search.Request reqBean = templateConfig.getRequest();
-            if (reqBean != null) {
-                String blockPattern = reqBean.getBlockPattern();
-                String noResultPattern = reqBean.getNoResultPattern();
-                String lastPagePattern = reqBean.getLastPagePattern();
-
-                setResponseStatus(response, Status.LAST_PAGE, lastPagePattern, content);
-                setResponseStatus(response, Status.NO_SEARCH_RESULT, noResultPattern, content);
-                setResponseStatus(response, Status.BLOCKED, blockPattern, content);
-
-            }
-        }
-    }
-
-    private void setResponseStatus(SpiderResponse response, int status, String pattern, String content) {
-        if (StringUtils.isNotEmpty(pattern)) {
-            if (RegExp.find(content, pattern)) {
-                logger.info("set status: {}", Status.format(status));
-                ResponseUtil.setResponseStatus(response, status);
-            }
-        }
-    }
-
-    private String getPageTitle(String content) {
-        String title = RegExp.group(content, titleRegex, Pattern.CASE_INSENSITIVE, 1);
-        if (StringUtils.isNotEmpty(title) && title.length() > 2048) {
-            title = title.substring(0, 2048);
-        }
-        return title;
-    }
-
-    private String getFiltedPageTitle(String title, String regex) {
-        return RegExp.group(title, regex, Pattern.CASE_INSENSITIVE, 1);
+    private boolean skipParsing(SpiderResponse response) {
+        return response.getStatus() == Status.NO_SEARCH_RESULT;
     }
 
     /**
@@ -262,39 +141,38 @@ public class PageImpl extends ProcessorInvokerAdapter {
             SearchProcessorContext processorContext = (SearchProcessorContext) request.getProcessorContext();
 
             String templateId = RequestUtil.getCurrentTemplateId(request);
-
             SearchTemplateConfig searchTemplateConfig = processorContext.getSearchTemplateConfig(templateId);
             String revisitPattern = null;
             if (searchTemplateConfig != null && searchTemplateConfig.getRequest() != null && StringUtils.isNotBlank(searchTemplateConfig.getRequest().getReVisitPattern())) {
                 revisitPattern = searchTemplateConfig.getRequest().getReVisitPattern();
             }
 
-            URLHandler urlHandler = RequestUtil.getURLHandler(request);
-
             UrlFilterHandler urlFilterHandler = createUrlFilterHandler(processorContext, request.getConfiguration());
+
+            URLHandler urlHandler = RequestUtil.getURLHandler(request);
 
             for (Entry<String, LinkNode> entry : urlLists.entrySet()) {
                 String originalURL = entry.getKey();
                 LinkNode node = entry.getValue();
                 Collection<String> urls = URLSplitter.split(originalURL);
                 for (String url : urls) {
-                    boolean removed = false;
                     LinkNode tmp;
                     if (urls.size() > 1) {
                         tmp = GsonUtils.fromJson(GsonUtils.toJson(node), LinkNode.class);
                     } else {
                         tmp = node;
                     }
+
                     tmp.setUrl(url);
                     tmp.setPageTitle(current.getPageTitle());
 
                     logger.debug("filter url : {}", url);
 
                     // run url handler
+                    boolean removed = false;
                     if (urlHandler != null) {
                         try {
                             removed = urlHandler.handle(current, tmp);
-
                             // return true/false remove node
                         } catch (Exception e) {
                             logger.error("invoke url handler exception!", e);
@@ -303,8 +181,8 @@ public class PageImpl extends ProcessorInvokerAdapter {
 
                     if (!removed) {
                         if (tmp.isHosting() || !urlFilterHandler.filter(url)) {
-                            String referer = StringUtils.isNotEmpty(current.getRedirectUrl()) ? current.getRedirectUrl() : current.getUrl();
                             if (StringUtils.isEmpty(tmp.getReferer())) {
+                                String referer = StringUtils.isNotEmpty(current.getRedirectUrl()) ? current.getRedirectUrl() : current.getUrl();
                                 tmp.setReferer(referer);
                             }
                             int depth = current.getDepth();
@@ -318,6 +196,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
 
                             // adjust depth
                             processorContext.adjustUrlDepth(tmp, templateId, depth);
+
                             nodes.add(tmp);
                             logger.debug("{} @@accept url: {}", current.getUrl(), url);
                         } else {
@@ -333,13 +212,14 @@ public class PageImpl extends ProcessorInvokerAdapter {
                      * != null) { try { depth = PatternUtils.match(revisitPattern, url) ? depth - 1
                      * : depth; } catch (Exception e) { log.error("check revisit error!", e); } }
                      *
-                     * // adjust depth wrapper.adjustUrlDepth(tmp, template, depth); nodes.add(tmp);
+                     * // adjust depth wrapper.adjustUrlDepth(tmp, templateId, depth); nodes.add(tmp);
                      * log.debug(current.getUrl() + "@@accept url:" + url); } else {
                      * log.debug(current.getUrl() + "@@filter url:" + url); }
                      */
                 }
             }
         }
+
         logger.debug("After url filter... original={} @@after={}", urlLists.size(), nodes.size());
         // nodes.add(current);
         return nodes;
@@ -373,30 +253,44 @@ public class PageImpl extends ProcessorInvokerAdapter {
         return new RegexUrlFilterHandler(urlFilters);
     }
 
-    private Map<String, LinkNode> extractUrlsWithOutSegments(String content, SpiderRequest request) {
-        Map<String, LinkNode> linkNodeMap = new LinkedHashMap<>();
-
-        LinkNode current = RequestUtil.getCurrentUrl(request);
-        String baseURL = (StringUtils.isEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
-
-        // parser url from html
-        extractHtmlLinks(content, baseURL, current, linkNodeMap);
-
-        extractTextUrls(current.getUrl(), content, linkNodeMap);
-
-        return linkNodeMap;
+    private void addRedirectUrl(LinkNode current, Map<String, LinkNode> urlLists) {
+        if (BooleanUtils.isTrue(page.getRedirectUrlAdd()) && StringUtils.isNotBlank(current.getRedirectUrl())) {
+            LinkNode redirectNode = new LinkNode(current.getRedirectUrl());
+            redirectNode.setReferer(current.getUrl());
+            redirectNode.setDepth(current.getDepth());
+            urlLists.put(redirectNode.getUrl(), redirectNode);
+            logger.info("add redirect url to urlLists, url: {}, referer: {}", current.getRedirectUrl(), current.getReferer());
+        }
     }
 
-    private void extractHtmlLinks(String content, String baseURL, LinkNode current, Map<String, LinkNode> linkNodeMap) {
-        // parser url from html
-        HTMLParser htmlParser = new HTMLParser();
-        htmlParser.parse(content, baseURL);
-        for (Entry<String, String> fl : htmlParser.getLinks().entrySet()) {
-            String key = fl.getKey();
-            if (!linkNodeMap.containsKey(key)) {
-                linkNodeMap.put(key, new LinkNode(fl.getKey()).setReferer(current.getUrl()));
-                logger.debug(" extractor url >> {}", fl.getKey());
+    private void findAndAddPageUrls(String content, LinkNode current, SpiderRequest request, @Nonnull Map<String, LinkNode> urlLists) {
+        try {
+            String contentRegex = page.getContentPageRegex();
+            String searchTemplate;
+            if (StringUtils.isNotEmpty(contentRegex) && StringUtils.isNotEmpty(searchTemplate = RequestUtil.getSearchTemplate(request)) && StringUtils.isNotEmpty(content)) {
+                Matcher matcher = RegExp.getMatcher(contentRegex, content);
+                if (matcher.find()) {
+                    String keyword = RequestUtil.getKeyWord(request);
+                    String charset = RequestUtil.getContentCharset(request);
+                    do {
+                        String pNumber = matcher.group(1);
+                        try {
+                            int pNum = Integer.valueOf(pNumber);
+                            logger.info("add paging number: {},  match-text: {}", pNum, matcher.group());
+                            String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, request.getGlobalScopeAsMap());
+                            if (StringUtils.isNotEmpty(pageUrl)) {
+                                logger.info("add page url: {}", pageUrl);
+                                LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
+                                tmp.setpNum(pNum);
+                                urlLists.put(pageUrl, tmp);
+                            }
+
+                        } catch (Exception e) {}
+                    } while (matcher.find());
+                }
             }
+        } catch (Exception e) {
+            logger.error("extract page urls error!", e);
         }
     }
 
@@ -404,52 +298,50 @@ public class PageImpl extends ProcessorInvokerAdapter {
      * get url list need too steps first extract field urls second extract page by regex finally
      * resolve url by base url
      */
-    private Map<String, LinkNode> extractObjectsWithSegments(List<AbstractSegment> segments, SpiderRequest req, SpiderResponse resp) throws ResultEmptyException {
-        Map<String, LinkNode> linkNodes = new LinkedHashMap<>();
-        StringBuilder pageContent = new StringBuilder();
+    @Nonnull
+    private Map<String, LinkNode> extractObjectsWithSegments(String pageContent, List<AbstractSegment> segments, SpiderRequest request, SpiderResponse response) throws ResultEmptyException {
+        StringBuilder mergedContent = null;
 
-        LinkNode current = RequestUtil.getCurrentUrl(req);
-        Preconditions.checkNotNull(current, "source url should not be null!");
-        String baseURL = (StringUtils.isNotEmpty(current.getBaseUrl()) ? current.getBaseUrl() : current.getUrl());
+        if (BooleanUtils.isTrue(page.getUrlExtract())) {
+            mergedContent = new StringBuilder();
+            SpiderRequestHelper.setKeepSegmentProcessingData(request, true);
+        }
 
-        List<Map<String, Object>> segmentResult = new ArrayList<>();
-        logger.info("URL: {}, segment-size: {}", baseURL, segments.size());
-        for (AbstractSegment abstractSegment : segments) {
+        PageExtractObject extractObject = new PageExtractObject();
+        for (AbstractSegment segment : segments) {
             try {
+                request.setInput(pageContent);
+
                 SpiderResponse segResponse = SpiderResponseFactory.make();
-                SegmentBase segmentBase = ProcessorFactory.getSegment(abstractSegment);
 
-                segmentBase.invoke(req, segResponse);
+                SegmentBase segmentBase = ProcessorFactory.getSegment(segment);
+                segmentBase.invoke(request, segResponse);
 
-                @SuppressWarnings("unchecked") List<String> contentSplit = ResponseUtil.getSegmentsContent(segResponse);
+                Object segResult = segResponse.getOutPut();
 
-                @SuppressWarnings("unchecked") Object segResult = ResponseUtil.getSegmentsResults(segResponse);
+                extractObject.setFieldExtractValue(segment.getName(), segResult);
 
-                if (segResult instanceof Map) {
-                    segmentResult.add((Map) segResult);
-                } else if (segResult instanceof List) {
-                    segmentResult.addAll((List) segResult);
-                } else {
-                    logger.warn("unaccepted segResult type: {}", segResult);
-                }
-
-                if (BooleanUtils.isTrue(page.getUrlExtract())) {
+                if (mergedContent != null) {
+                    List<String> contents = SpiderResponseHelper.getSegmentProcessingData(segResponse);
                     // append content split to detect url
-                    for (String split : contentSplit) {
-                        pageContent.append(split);
+                    if (CollectionUtils.isNotEmpty(contents)) {
+                        for (String split : contents) {
+                            mergedContent.append(split);
+                        }
                     }
                 }
             } catch (ResultEmptyException e) {
                 throw e;
             } catch (Exception e) {
                 logger.error("invoke segment processor error!", e);
+            } finally {
+                request.clear();
             }
         }
 
-        // combine field urls
-        logger.debug("start to extract field url: {}", baseURL);
-
+        Map<String, LinkNode> linkNodes = new HashMap<>();
         List<Object> instanceList = new ArrayList<>();
+        Collection<Object> segmentResult = extractObject.values();
         for (Object obj : segmentResult) {
             if (obj instanceof LinkNode) {
                 linkNodes.put(((LinkNode) obj).getUrl(), (LinkNode) obj);
@@ -458,48 +350,119 @@ public class PageImpl extends ProcessorInvokerAdapter {
             }
         }
 
-        if (BooleanUtils.isTrue(page.getUrlExtract())) {
-            String content = pageContent.toString();
+        if (mergedContent != null && mergedContent.length() > 0) {
+            String content = mergedContent.toString();
             logger.debug("after segment page content: {}", content);
 
-            logger.debug("start to extract html link urls: {}", baseURL);
-            extractHtmlLinks(content, baseURL, current, linkNodes);
-            // extract text url add to map
-            logger.debug("start to extract text urls: {}", baseURL);
-            extractTextUrls(current.getUrl(), content, linkNodes);
+            extractUrls(content, RequestUtil.getCurrentUrl(request), linkNodes);
         }
 
         // return the page objects
-        ResponseUtil.setResponseObjectList(resp, instanceList);
+        ResponseUtil.setResponseObjectList(response, instanceList);
         // return all link-nodes in current page
         return linkNodes;
     }
 
-    public Page getPage() {
-        return page;
-    }
+    private void extractUrls(String content, LinkNode current, Map<String, LinkNode> linkNodeMap) {
+        String currentUrl = current.getUrl();
 
-    protected void extractTextUrls(String currentUrl, String content, Map<String, LinkNode> linkNodeMap) {
+        // extract urls by html parser
+        logger.debug("start to extract html links: {}", currentUrl);
+        HTMLParser htmlParser = new HTMLParser();
+        htmlParser.parse(content, StringUtils.isNotEmpty(current.getBaseUrl()) ? current.getBaseUrl() : currentUrl);
+        for (Entry<String, String> fl : htmlParser.getLinks().entrySet()) {
+            String key = fl.getKey();
+            logger.debug(" extractor url >> {}", key);
+            linkNodeMap.computeIfAbsent(key, s -> new LinkNode(s).setReferer(currentUrl));
+        }
+
+        // extract urls by custom url extractor
+        logger.debug("start to extract text urls: {}", currentUrl);
         List<String> textUrls = UrlExtractor.extract(content);
         for (String nextURL : textUrls) {
             try {
-                nextURL = URLUtil.urlFormat(nextURL);
-                if (nextURL == null || nextURL.length() > URL_MAX_LENGTH) {
+                String url = URLUtil.urlFormat(nextURL.trim());
+                if (StringUtils.isEmpty(url) || url.length() > URL_MAX_LENGTH) {
                     continue;
                 }
+
+                logger.debug("new url extracted in text extractor: {}", url);
+                linkNodeMap.computeIfAbsent(url, s -> new LinkNode(url).setReferer(currentUrl));
             } catch (Exception e) {
                 logger.error("url format error...", e);
-                continue;
-            }
-
-            LinkNode tmp = new LinkNode(nextURL).setReferer(currentUrl);
-            if (StringUtils.isNotBlank(nextURL) && !linkNodeMap.containsKey(nextURL)) {
-                linkNodeMap.put(nextURL, tmp);
-                logger.debug("new url extracted in text extractor: {}", nextURL);
-            } else {
-                logger.debug("text extractor url exists: {}", nextURL);
             }
         }
+    }
+
+    private void resolveCurrentUrl(LinkNode current, String content) {
+        String title = RegExp.group(content, titleRegex, Pattern.CASE_INSENSITIVE, 1).trim();
+        if (StringUtils.isNotEmpty(title) && title.length() > TITLE_LENGTH_LIMIT) {
+            title = title.substring(0, TITLE_LENGTH_LIMIT);
+        }
+
+        String pageTitle = StringUtils.isNotEmpty(title) ? title : current.getPageTitle();
+        if (StringUtils.isNotEmpty(pageTitle) && StringUtils.isNotBlank(page.getPageTitleRegex())) {
+            pageTitle = RegExp.group(pageTitle, page.getPageTitleRegex(), Pattern.CASE_INSENSITIVE, 1);
+        }
+        current.setPageTitle(pageTitle);
+
+        try {
+            String pageRegex = page.getPageNumRegex();
+            if (StringUtils.isNotEmpty(pageRegex)) {
+                String pidS = RegExp.group(current.getUrl(), pageRegex, 1);
+
+                int pNum = Integer.valueOf(pidS);
+
+                logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
+                current.setpNum(pNum);
+            }
+        } catch (Exception e) {
+            logger.error("set page num error!", e);
+        }
+    }
+
+    private String resolveContent(String pageContent) {
+        String content = pageContent;
+        List<Replacement> replacements = page.getReplacementList();
+        if (CollectionUtils.isNotEmpty(replacements)) {
+            content = PageHelper.replaceText(content, replacements);
+        }
+
+        Regexp regexp = page.getRegexp();
+        if (regexp != null) {
+            content = PageHelper.getTextByRegexp(content, regexp);
+        }
+
+        return content;
+    }
+
+    private void checkContent(SpiderRequest request, SpiderResponse response) {
+        SearchTemplateConfig templateConfig = SpiderRequestHelper.getTemplateConfig(request);
+        if (templateConfig != null) {
+            com.datatrees.crawler.core.domain.config.search.Request requestConfig = templateConfig.getRequest();
+            if (requestConfig != null) {
+                String content = RequestUtil.getContent(request);
+
+                if (resetResponseStatusWithPattern(content, requestConfig.getBlockPattern(), Status.BLOCKED, response)) {
+                    return;
+                }
+
+                if (resetResponseStatusWithPattern(content, requestConfig.getNoResultPattern(), Status.NO_SEARCH_RESULT, response)) {
+                    return;
+                }
+
+                resetResponseStatusWithPattern(content, requestConfig.getLastPagePattern(), Status.LAST_PAGE, response);
+            }
+        }
+    }
+
+    private boolean resetResponseStatusWithPattern(String content, String pattern, int status, SpiderResponse response) {
+        if (StringUtils.isNotEmpty(pattern) && RegExp.find(content, pattern)) {
+            logger.info("set status: {}", Status.format(status));
+            response.setStatus(status);
+            return true;
+        }
+        return false;
     }
 
 }

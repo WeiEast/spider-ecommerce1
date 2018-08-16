@@ -29,8 +29,6 @@ import org.apache.commons.lang3.ArrayUtils;
  */
 public class ParserURLCombiner {
 
-    public static final String EMP = "EMP";
-
     public static String encodeUrl(String url, String... args) {
         if (ArrayUtils.isEmpty(args)) {
             return url;

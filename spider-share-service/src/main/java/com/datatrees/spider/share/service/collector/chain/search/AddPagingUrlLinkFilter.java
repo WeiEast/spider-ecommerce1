@@ -7,12 +7,11 @@ import com.datatrees.crawler.core.processor.bean.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +56,7 @@ public class AddPagingUrlLinkFilter implements Filter {
     }
 
     private boolean needAddPagingUrl(CrawlRequest request, CrawlResponse response) {
-        int responseStatus = ResponseUtil.getResponseStatus(response);
+        int responseStatus = response.getStatus();
 
         if (responseStatus == Status.NO_SEARCH_RESULT || responseStatus == Status.LAST_PAGE) {
             log.warn("needAddPagingUrl : false, responseStatus: {}", responseStatus);
@@ -75,7 +74,7 @@ public class AddPagingUrlLinkFilter implements Filter {
         log.info("getPageLinkUrl currentPageNum: {}", currentPageNum);
         return SearchTemplateCombine
                 .constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum,
-                        true, searchProcessor.getProcessorContext().getContext());
+                        true, searchProcessor.getProcessorContext().getVisibleScope());
     }
 
     /**

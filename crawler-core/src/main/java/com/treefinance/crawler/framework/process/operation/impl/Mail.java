@@ -28,11 +28,11 @@ import org.apache.james.mime4j.parser.MimeEntityConfig;
 import org.apache.james.mime4j.storage.StorageProvider;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月8日 上午11:39:58
  */
-public class Mail extends Message {
+class Mail extends Message {
 
     private StringBuffer      txtBody     = new StringBuffer();
     private StringBuffer      htmlBody    = new StringBuffer();

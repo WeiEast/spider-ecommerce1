@@ -12,15 +12,15 @@ import javax.annotation.Nonnull;
 
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.CalculateOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import com.treefinance.crawler.framework.util.CalculateUtils;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since 2015年10月21日 上午10:29:59
  */
@@ -31,7 +31,7 @@ public class CalculateOperationImpl extends Operation<CalculateOperation> {
     }
 
     @Override
-    protected void validate(@Nonnull CalculateOperation operation, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
+    protected void validate(@Nonnull CalculateOperation operation, @Nonnull SpiderRequest request,@Nonnull  SpiderResponse response) throws Exception {
         super.validate(operation, request, response);
 
         if (StringUtils.isEmpty(operation.getValue())) {

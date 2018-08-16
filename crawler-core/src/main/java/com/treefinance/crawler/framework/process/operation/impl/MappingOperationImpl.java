@@ -8,7 +8,6 @@ import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.MappingOperation;
-import com.treefinance.crawler.framework.process.operation.Operation;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -16,6 +15,7 @@ import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
+import com.treefinance.crawler.framework.process.operation.Operation;
 import org.apache.commons.lang3.StringUtils;
 
 /**

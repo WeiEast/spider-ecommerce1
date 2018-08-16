@@ -21,19 +21,17 @@ import javax.annotation.Nonnull;
 import com.datatrees.common.protocol.ProtocolStatusCodes;
 import com.datatrees.crawler.core.domain.config.page.impl.Page;
 import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.CrawlRequest;
 import com.datatrees.crawler.core.processor.bean.CrawlResponse;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.ProcessorFactory;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
 import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.process.search.PageImpl;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
+import com.treefinance.crawler.framework.process.ProcessorFactory;
+import com.treefinance.crawler.framework.process.search.PageImpl;
 import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang.BooleanUtils;
@@ -90,15 +88,15 @@ public class Crawler {
                     throw e;
                 } catch (Exception e) {
                     // response code failed
-                    if (BooleanUtils.isTrue(page.getResponseCheck()) && RegExp.find(ResponseUtil.getResponseStatus(response).toString(), getFailurePattern(page))) {
+                    if (BooleanUtils.isTrue(page.getResponseCheck()) && RegExp.find(Integer.toString(response.getStatus()), getFailurePattern(page))) {
                         throw new ResponseCheckException("page:" + page.getId() + ",url:" + request.getUrl() + " response check failed!", e);
                     } else {
                         throw e;
                     }
                 }
 
-                // reset content
-                response.setOutPut(null);
+                // reset response
+                response.clear();
 
                 if (url.isNeedRequeue()) {
                     LOGGER.info("need requeue linkNode: {}", url);
@@ -108,7 +106,7 @@ public class Crawler {
                     pageProcessor.invoke(request, response);
                 }
             } else {
-                ResponseUtil.setResponseStatus(response, Status.FILTERED);
+                response.setStatus(Status.FILTERED);
                 LOGGER.info("no available page found for linkNode: {}, template: {},set filtered.", url, templateId);
             }
 
@@ -116,8 +114,8 @@ public class Crawler {
             throw e;
         } catch (Exception e) {
             LOGGER.error("Error crawling url : {}", request.getUrl(), e);
-            response.setErrorMsg(e.toString()).setStatus(Status.PROCESS_EXCEPTION);
-            response.setAttribute(Constants.CRAWLER_EXCEPTION, e);
+            response.setStatus(Status.PROCESS_EXCEPTION);
+            response.setException(e);
         }
 
         return response;

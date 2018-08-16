@@ -6,12 +6,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.datatrees.common.util.ReflectionUtils;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.ChildTag;
 import com.treefinance.crawler.framework.config.annotation.Tag;
-import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
-import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.factory.ConfigBuilder;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.CDATA;
 import org.jdom2.Document;
@@ -28,7 +28,9 @@ import org.jdom2.output.XMLOutputter;
 public class XmlConfigBuilder implements ConfigBuilder {
 
     private static final XmlConfigBuilder INSTANCE    = new XmlConfigBuilder();
+
     private static final String           splitRegex  = "/";
+
     private static final List<Class>      boxingTypes = Arrays.asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
 
     private XmlConfigBuilder() {

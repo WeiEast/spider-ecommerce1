@@ -18,10 +18,10 @@ package com.treefinance.crawler.framework.process.fields;
 
 import java.util.List;
 
-import com.treefinance.crawler.framework.context.pipeline.ProcessPipeline;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
+import com.treefinance.crawler.framework.context.pipeline.ProcessPipeline;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -39,8 +39,7 @@ public class FieldExtractorPipeline extends ProcessPipeline {
                     FieldExtractorImpl fieldExtractorImpl = new FieldExtractorImpl(fieldExtractor);
                     addValve(fieldExtractorImpl);
                 } else {
-                    logger.warn("Skipped field-extractor[{}] with the forbidden business. field: {}, businessType: {} ,taskId: {}",
-                            fieldExtractor.getId(), fieldExtractor.getField(), fieldExtractor.getBusinessType(), context.getTaskId());
+                    logger.warn("Skipped field-extractor[{}] with the forbidden business. field: {}, businessType: {} ,taskId: {}", fieldExtractor.getId(), fieldExtractor.getField(), fieldExtractor.getBusinessType(), context.getTaskId());
                 }
             }
         }

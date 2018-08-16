@@ -6,14 +6,15 @@
  * Copyright (c) datatrees.com Inc. 2015
  */
 
-package com.datatrees.crawler.core.processor.plugin.impl;
+package com.treefinance.crawler.framework.extension.plugin.impl;
 
 import com.datatrees.common.protocol.WebClientUtil;
+import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.processor.plugin.Plugin;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.extension.plugin.PluginHandler;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 
 /**
@@ -22,15 +23,14 @@ import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
  * @version 1.0
  * @since Feb 19, 2014 1:10:33 PM
  */
-public class JavaPlugin extends Plugin<com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin> {
+public class JavaPluginHandler extends PluginHandler<JavaPlugin> {
 
-    public JavaPlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, AbstractProcessorContext context) {
+    public JavaPluginHandler(JavaPlugin metadata, AbstractProcessorContext context) {
         super(metadata, context);
     }
 
     @Override
-    protected Object invokePlugin(com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin metadata, String args,
-            SpiderRequest request) throws Exception {
+    protected Object invokePlugin(JavaPlugin metadata, String args, SpiderRequest request) throws Exception {
         AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
         if (getContext() instanceof SearchProcessorContext) {
             // add proxy if necessary

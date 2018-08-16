@@ -88,8 +88,7 @@ public class DefaultService extends ServiceBase {
             input.setCoExist(coexist);
         }
 
-        input.setFollowRedirect(true).setRedirectUriEscaped(context.isRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context))
-                .setAllowCircularRedirects(context.isAllowCircularRedirects());
+        input.setFollowRedirect(true).setRedirectUriEscaped(context.isRedirectUriEscaped()).setState(ProcessorContextUtil.getHttpState(context)).setAllowCircularRedirects(context.isAllowCircularRedirects());
 
         Protocol protocol = this.getHttpClient(context.getHttpClientType());
 
@@ -105,7 +104,7 @@ public class DefaultService extends ServiceBase {
                 current.increaseRetryCount();
                 logger.warn("Error setting proxy >>> {}, sleep {}ms, request []retry, url: {}", e.getMessage(), sleepSecond, i, url);
                 if (i == retryCount - 1) {
-                    ResponseUtil.setResponseStatus(response, Status.NO_PROXY);
+                    response.setStatus(Status.NO_PROXY);
                     logger.warn("set no proxy status url: {}", url);
                     break;
                 } else {
@@ -118,7 +117,7 @@ public class DefaultService extends ServiceBase {
                 logger.debug("Response code: {}, response body: {}", content.getResponseCode(), content.getContentAsString());
             }
             ResponseUtil.setProtocolResponse(response, output);
-            ResponseUtil.setResponseStatus(response, output.getStatusCode());
+            response.setStatus(output.getStatusCode());
             if (output.isSuccess() || output.isRedirector()) {
                 visitSucess = true;
 
@@ -144,22 +143,19 @@ public class DefaultService extends ServiceBase {
                         logger.warn("sleep {}ms, request [{}] retry, url:{}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.REQUEUE) {
-                        logger.warn("sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(),
-                                url, content);
+                        logger.warn("sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         // node requeue
                         current.setNeedRequeue(true);
-                        ResponseUtil.setResponseStatus(response, Status.REQUEUE);
+                        response.setStatus(Status.REQUEUE);
                     } else if (page.getRetryMode() == RetryMode.PROXY_RETRY) {
-                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, url: {}, content: {}", sleepMills, current.getRetryCount(),
-                                url, content);
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         this.proxyRelease(proxy, context);
                         continue;
                     } else if (page.getRetryMode() == RetryMode.PROXY_REQUEUE) {
-                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills,
-                                current.getRetryCount(), url, content);
+                        logger.warn("wait proxy change sleep {}ms, request [{}] retry, node will requeue url: {}, content: {}", sleepMills, current.getRetryCount(), url, content);
                         // node requeue
                         current.setNeedRequeue(true);
-                        ResponseUtil.setResponseStatus(response, Status.REQUEUE);
+                        response.setStatus(Status.REQUEUE);
                         this.proxyRelease(proxy, context);
                     }
                 }
@@ -168,6 +164,7 @@ public class DefaultService extends ServiceBase {
 
                 response.setOutPut(content);
 
+                // TODO: 2018/8/13 bad practice，考虑到本类调用太散，后期逐步改
                 RequestUtil.setContent(request, content);
                 RequestUtil.setContentCharset(request, output.getContent().getCharSet());
                 break;
@@ -263,8 +260,7 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-    private void notifyProxyStatus(@Nullable final Proxy proxy, @Nonnull final ProxyStatus status,
-            @Nonnull final SearchProcessorContext context) throws Exception {
+    private void notifyProxyStatus(@Nullable final Proxy proxy, @Nonnull final ProxyStatus status, @Nonnull final SearchProcessorContext context) throws Exception {
         if (proxy != null) {
             ProxyManager proxyManager = context.getProxyManager();
             if (proxyManager != null) {
@@ -273,8 +269,7 @@ public class DefaultService extends ServiceBase {
         }
     }
 
-    private Proxy setProxy(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context,
-            @Nonnull final String url) throws Exception {
+    private Proxy setProxy(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context, @Nonnull final String url) throws Exception {
         Proxy proxy = context.getProxy(url, false);
         if (proxy != null) {
             input.setProxy(proxy.format());
@@ -334,7 +329,7 @@ public class DefaultService extends ServiceBase {
     private void addHeaders(@Nonnull final ProtocolInput input, @Nonnull final SearchProcessorContext context, @Nonnull final LinkNode current) {
         input.addHeaders(context.getDefaultHeader());
         input.addHeaders(current.getHeaders());
-        if (org.apache.commons.lang3.StringUtils.isNotEmpty(current.getReferer())) {
+        if (StringUtils.isNotEmpty(current.getReferer())) {
             input.addHeader(HttpHeaders.REFERER, current.getReferer());
         }
     }

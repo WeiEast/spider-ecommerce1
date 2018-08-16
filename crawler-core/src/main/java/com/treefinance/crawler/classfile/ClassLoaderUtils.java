@@ -28,8 +28,7 @@ public final class ClassLoaderUtils {
     private ClassLoaderUtils() {
     }
 
-    public static <T> T loadAndInstantiate(File file, ClassLoader parent, boolean forceReload, String className,
-            Class<T> resultType) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static <T> T loadAndInstantiate(File file, ClassLoader parent, boolean forceReload, String className, Class<T> resultType) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Objects.requireNonNull(className);
         Objects.requireNonNull(resultType);
         ClassLoader classLoader = ClassLoaderManager.findClassLoader(file, parent, forceReload);

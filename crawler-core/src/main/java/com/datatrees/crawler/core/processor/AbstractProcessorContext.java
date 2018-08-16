@@ -33,15 +33,15 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class AbstractProcessorContext extends ProcessContext {
 
-    protected final Long                taskId;
+    protected final Long                            taskId;
 
-    protected Map<String, Object> context;
+    protected       Map<String, Object>             context;
 
-    private final   Map<String, Object> statusContext;
+    private final   Map<String, Object>             statusContext;
 
-    private final   Map<Thread, Object> threadContext;
+    private final   Map<Thread, Object>             threadContext;
 
-    private ProcessorResult<String, Object> processorResult;
+    private         ProcessorResult<String, Object> processorResult;
 
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
@@ -70,7 +70,6 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         return context;
     }
 
-
     public void setContext(Map<String, Object> context) {
         if (context == null) {
             getContext().clear();
@@ -88,16 +87,22 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         return Collections.unmodifiableMap(context);
     }
 
-    public void addAttribute(String name, Object value) {
-        getContext().put(name, value);
-    }
-
     public Object getAttribute(String name) {
         return getContext().get(name);
     }
 
+    public void addAttribute(String name, Object value) {
+        if (value == null) {
+            getContext().remove(name);
+        } else {
+            getContext().put(name, value);
+        }
+    }
+
     public void addAttributes(Map<String, Object> attributes) {
-        getContext().putAll(attributes);
+        if (attributes != null) {
+            getContext().putAll(attributes);
+        }
     }
 
     /**

@@ -17,7 +17,7 @@ import java.util.Map;
  * @since 2015年7月31日 下午12:21:28
  */
 @SuppressWarnings({"rawtypes", "serial", "unchecked"})
-public abstract class AbstractData extends HashMap {
+public abstract class AbstractData extends HashMap<String, Object> {
 
     public static final String UNIQUESIGN  = "uniqueSign";
 

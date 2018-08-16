@@ -12,20 +12,19 @@ import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
 import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginUtil;
 import com.datatrees.crawler.core.processor.proxy.Proxy;
 import com.datatrees.crawler.core.processor.service.ServiceBase;
 import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.treefinance.crawler.framework.extension.plugin.PluginUtil;
 import org.apache.commons.lang.StringUtils;
 
 public class PluginServiceImpl extends ServiceBase<PluginService> {
 
-    private final int retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
+    private final        int    retryCount = PropertiesConfiguration.getInstance().getInt("pluginService.retry.count", 3);
 
     public PluginServiceImpl(@Nonnull PluginService service) {
         super(service);
@@ -71,7 +70,7 @@ public class PluginServiceImpl extends ServiceBase<PluginService> {
                 } catch (Exception e) {
                     logger.error("do plugin service error url:" + url + " , do revisit ... " + e.getMessage(), e);
                     if (i == retryCount - 1) {
-                        ResponseUtil.setResponseStatus(response, ProtocolStatusCodes.EXCEPTION);
+                        response.setStatus(ProtocolStatusCodes.EXCEPTION);
                         throw e;
                     }
                     current.increaseRetryCount();

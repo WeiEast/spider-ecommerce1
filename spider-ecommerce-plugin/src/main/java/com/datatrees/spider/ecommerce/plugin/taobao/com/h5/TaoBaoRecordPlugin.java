@@ -83,12 +83,12 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         logger.debug("访问安全页2：{}", pageContent);
         String identity = PatternUtils.group(pageContent, "identity:\\s*'([^']+)'", 1);
         String sessionid = PatternUtils.group(pageContent, "sessionid:\\s*'([^']+)'", 1);
-        context.getContext().put("identity", identity);
-        context.getContext().put("sessionid", sessionid);
-        context.getContext().put("smTag", smTag);
-        context.getContext().put("smReturn", smReturn);
-        context.getContext().put("smSign", smSign);
-        context.getContext().put("smPolicy", smPolicy);
+        context.addAttribute("identity", identity);
+        context.addAttribute("sessionid", sessionid);
+        context.addAttribute("smTag", smTag);
+        context.addAttribute("smReturn", smReturn);
+        context.addAttribute("smSign", smSign);
+        context.addAttribute("smPolicy", smPolicy);
         url = "https://pin.aliyun.com/get_img?identity=" + identity + "&sessionid=" + sessionid + "&type=150_40&t=" + System.currentTimeMillis();
         checkNode = new LinkNode(url);
         checkNode.setReferer(url);
@@ -104,12 +104,12 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
     @Override
     public String vaildPicCode(Map<String, String> parms, String pidCode) {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        String identity = (String) context.getContext().get("identity");
-        String sessionid = (String) context.getContext().get("sessionid");
-        String smTag = (String) context.getContext().get("smTag");
-        String smReturn = (String) context.getContext().get("smReturn");
-        String smSign = (String) context.getContext().get("smSign");
-        String smPolicy = (String) context.getContext().get("smPolicy");
+        String identity = (String) context.getAttribute("identity");
+        String sessionid = (String) context.getAttribute("sessionid");
+        String smTag = (String) context.getAttribute("smTag");
+        String smReturn = (String) context.getAttribute("smReturn");
+        String smSign = (String) context.getAttribute("smSign");
+        String smPolicy = (String) context.getAttribute("smPolicy");
         LinkNode validNode = new LinkNode("https://pin.aliyun.com/check_img?code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=&identity=" + identity + "&sessionid=" + sessionid + "&delflag=0&type=150_40");
         String pageContent = (String) getResponseByWebRequest(validNode, AbstractLoginPlugin.ContentType.Content, null);
         logger.debug("校验后交易页面1：{}", pageContent);

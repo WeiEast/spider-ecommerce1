@@ -50,28 +50,9 @@ public class CrawlResponse extends Response {
         return this;
     }
 
-    public int getStatus() {
-        return ResponseUtil.getResponseStatus(this);
-    }
-
-    public CrawlResponse setStatus(int status) {
-        ResponseUtil.setResponseStatus(this, status);
-        return this;
-    }
-
-    public String getErrorMsg() {
-        return ResponseUtil.getResponseErrorMsg(this);
-    }
-
-    public CrawlResponse setErrorMsg(String errorMsg) {
-        ResponseUtil.setResponseErrorMsg(this, errorMsg);
-        return this;
-    }
-
     public String info() {
         StringBuilder info = new StringBuilder();
-        info.append("status:").append(getStatus()).append("\n").append("error info:").append(getErrorMsg()).append("\n").append("urls size:")
-                .append(getUrls().size());
+        info.append("status:").append(getStatus()).append("\n").append("error info:").append(getErrorMsg()).append("\n").append("urls size:").append(getUrls().size());
         return info.toString();
     }
 

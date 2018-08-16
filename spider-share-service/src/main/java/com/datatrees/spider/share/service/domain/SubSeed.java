@@ -17,7 +17,7 @@ import com.datatrees.crawler.core.processor.proxy.Proxy;
  * @version 1.0
  * @since 2015年12月19日 下午4:25:02
  */
-public class SubSeed extends HashMap {
+public class SubSeed extends HashMap<String, Object> {
 
     public final static String WEBSITE_NAME       = "websiteName";
 

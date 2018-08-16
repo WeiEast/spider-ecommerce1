@@ -31,7 +31,7 @@ public class WebBankOtherSideExtractor extends OtherSideExtractor {
     protected String getTradeNo(String content, ExtractorProcessorContext processorContext) {
         JSONObject jsonObject = null;
 
-        String bizType = (String) processorContext.getContext().get("bizType");
+        String bizType = (String) processorContext.getAttribute("bizType");
         if (bizType == null) {
             jsonObject = JSON.parseObject(content);
             bizType = jsonObject.getString("c_bizType");
@@ -39,7 +39,7 @@ public class WebBankOtherSideExtractor extends OtherSideExtractor {
 
         String tradeNo = null;
         if (BIZ_TYPE.equals(bizType)) {
-            tradeNo = (String) processorContext.getContext().get("tradeNumber");
+            tradeNo = (String) processorContext.getAttribute("tradeNumber");
             if (tradeNo == null) {
                 if (jsonObject == null) {
                     jsonObject = JSON.parseObject(content);

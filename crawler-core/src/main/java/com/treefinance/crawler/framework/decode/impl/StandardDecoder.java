@@ -24,11 +24,10 @@ import org.slf4j.LoggerFactory;
 public class StandardDecoder implements Decoder {
 
     public static final  StandardDecoder DEFAULT = new StandardDecoder();
-    private static final Logger log = LoggerFactory.getLogger(HexDecoder.class);
+    private static final Logger          log     = LoggerFactory.getLogger(HexDecoder.class);
 
     @Override
     public String decode(String content, Charset charset) {
-
         String result = content;
         if (charset == null) {
             charset = Charset.defaultCharset();
@@ -38,11 +37,11 @@ public class StandardDecoder implements Decoder {
         try {
             result = StringEscapeUtils.unescapeJava(result);
         } catch (Exception e) {
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             String[] hex = result.split("\\\\u");
-            for (int i = 0; i < hex.length; i++) {
-                if (StringUtils.isNotBlank(hex[i])) {
-                    int data = Integer.parseInt(hex[i], 16);
+            for (String aHex : hex) {
+                if (StringUtils.isNotBlank(aHex)) {
+                    int data = Integer.parseInt(aHex, 16);
                     sb.append((char) data);
                 }
             }

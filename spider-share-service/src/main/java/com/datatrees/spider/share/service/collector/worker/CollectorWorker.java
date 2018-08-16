@@ -317,7 +317,7 @@ public class CollectorWorker {
     private void addDefaultHeaders(SearchProcessorContext context, Request request) {
         String headerString = request.getDefaultHeader();
         if (StringUtils.isNotBlank(headerString)) {
-            headerString = StandardExpression.eval(headerString, context.getContext());
+            headerString = StandardExpression.eval(headerString, context.getVisibleScope());
             Map<String, String> defaultHeader = GsonUtils.fromJson(headerString, new TypeToken<Map<String, String>>() {}.getType());
             if (MapUtils.isNotEmpty(defaultHeader)) {
                 context.getDefaultHeader().putAll(defaultHeader);

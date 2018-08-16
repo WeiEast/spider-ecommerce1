@@ -49,11 +49,11 @@ import org.slf4j.LoggerFactory;
 
 /**
  * parser segment content and send request or extract urls
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 20, 2014 8:57:12 PM
  */
-public class ParserHandler {
+class ParserHandler {
 
     private static final Logger  logger            = LoggerFactory.getLogger(ParserHandler.class);
     private final        Parser  parser;
@@ -189,12 +189,12 @@ public class ParserHandler {
 
         List<String> urls = UrlExtractor.extract(url);
         if (urls.size() != 1) {
-            logger.info("url was not formatted in parser request! >> {}", url);
+            logger.warn("url was not formatted in parser request! >> {}", url);
             return url;
         }
 
         LinkNode currentLinkNode = new LinkNode(url);
-        // // add json headers
+        // add json headers
         if (StringUtils.isNotEmpty(headers)) {
             Map<String, String> headersMap = GsonUtils.fromJson(headers, new TypeToken<Map<String, String>>() {}.getType());
             currentLinkNode.addHeaders(headersMap);
