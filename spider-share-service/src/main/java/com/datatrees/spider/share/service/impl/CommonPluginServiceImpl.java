@@ -84,6 +84,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
                 TaskUtils.addTaskShare(taskId, AttributeKey.GROUP_NAME, website.getGroupName());
                 TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TITLE, website.getWebsiteTitle());
                 TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_TYPE, website.getWebsiteType());
+                TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
 
                 //设置代理
                 ProxyUtils.setProxyEnable(taskId, param.isProxyEnable());
@@ -115,6 +116,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
                 logger.info("{}-->初始化-->成功", param.getActionName());
                 return result.success();
             }
+            TaskUtils.addTaskShare(taskId, AttributeKey.WEBSITE_NAME, websiteName);
             result = classLoaderService.getCommonPluginService(param).init(param);
             if (!result.getStatus()) {
                 monitorService.sendTaskLog(taskId, websiteName, TemplateUtils.format("{}-->初始化-->失败", param.getActionName()));
