@@ -2,12 +2,10 @@ package com.datatrees.spider.bank.service.impl.dubbo;
 
 import javax.annotation.Resource;
 
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.bank.api.MailServiceApiForExMailQQ;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,8 @@ public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ 
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         param.setWebsiteName(GroupEnum.EXMAIL_QQ_H5.getWebsiteName());
+        TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+
         HttpResult<Object> result = commonPluginService.init(param);
         return result;
 
@@ -41,6 +41,7 @@ public class MailServiceApiForExMailQQImpl implements MailServiceApiForExMailQQ 
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
         param.setWebsiteName(GroupEnum.EXMAIL_QQ_H5.getWebsiteName());
+        TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
 
         param.setFormType(FormType.LOGIN);
         HttpResult<Object> result = commonPluginService.submit(param);
