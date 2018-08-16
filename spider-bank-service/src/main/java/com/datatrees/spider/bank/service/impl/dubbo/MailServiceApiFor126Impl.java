@@ -19,14 +19,11 @@ package com.datatrees.spider.bank.service.impl.dubbo;
 import javax.annotation.Resource;
 
 import com.alibaba.fastjson.JSON;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.bank.api.MailServiceApiFor126;
 import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.domain.GroupEnum;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +46,8 @@ public class MailServiceApiFor126Impl implements MailServiceApiFor126 {
         param.setWebsiteName(GroupEnum.MAIL_126_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
+        TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
+
 
         String initKey = RedisKeyPrefixEnum.LOGIN_INIT.getRedisKey(param.getTaskId());
         Boolean initStatus = RedisUtils.setnx(initKey, "true", RedisKeyPrefixEnum.LOGIN_INIT.toSeconds());
@@ -68,6 +67,7 @@ public class MailServiceApiFor126Impl implements MailServiceApiFor126 {
         param.setWebsiteName(GroupEnum.MAIL_126_H5.getWebsiteName());
         param.setFormType(FormType.LOGIN);
         param.setAutoSendLoginSuccessMsg(false);
+        TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.WEBSITE_NAME, param.getWebsiteName());
         return commonPluginService.refeshQRCode(param);
     }
 
