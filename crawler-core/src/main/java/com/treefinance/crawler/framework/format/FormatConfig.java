@@ -77,7 +77,7 @@ public class FormatConfig implements Serializable {
 
     @Nonnull
     public DateTimeFormats getDateTimeFormats() {
-        return request.computeExtraIfAbsent(Constants.CRAWLER_DATE_FROMAT, k -> new DateTimeFormats(), DateTimeFormats.class);
+        return request.computeExtraIfAbsent(Constants.CRAWLER_DATE_FORMAT, k -> new DateTimeFormats(), DateTimeFormats.class);
     }
 
     public DateTimeFormatter getDateTimeFormatter(String pattern) {

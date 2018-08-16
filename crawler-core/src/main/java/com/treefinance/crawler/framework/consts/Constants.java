@@ -44,15 +44,7 @@ public final class Constants {
 
     public static final String CURRENT_SEARCH_TEMPLATE               = "CURRENT_SEARCH_TEMPLATE";
 
-    public static final String PARSER_WEBSITE_CONFIG                 = "PARSER_WEBSITE_CONFIG";
-
     public static final String URL_BLACK_LIST                        = ".*(\\.(css|js|bmp|gif|jpe?g" + "|png|tiff?|mid|mp2|mp3|mp4" + "|wav|avi|mov|mpeg|ram|m4v|pdf" + "|rm|smil|wmv|swf|wma|zip|rar|gz|xml))$";
-
-    // response section
-    public static final String RESPONSE_LIST                         = "RESPONSE_LIST";
-
-    // need retry
-    public static final String RESPONSE_NEED_RETRY_REQUEST           = "Response.NeedRetryRequest";
 
     public static final String RESPONSE_LINKNODES                    = "Response.LinkNodes";
 
@@ -60,7 +52,7 @@ public final class Constants {
 
     public static final String CRAWLER_URL_FIELD                     = "url";
 
-    public static final String CRAWLER_RREQUEST_URL_HANDLER          = "CRAWLER_RREQUEST_URL_HANDLER";
+    public static final String CRAWLER_REQUEST_URL_HANDLER = "CRAWLER_REQUEST_URL_HANDLER";
 
     public static final String CRAWLER_RREQUEST_PLUGIN_CONF          = "CRAWLER_RREQUEST_PLUGIN_CONF";
 
@@ -72,7 +64,7 @@ public final class Constants {
 
     public static final String CRAWLER_REQUEST_KEYWORD               = "CRAWLER_REQUEST_KEYWORD";
 
-    public static final String CRAWLER_DATE_FROMAT                   = "CRAWLER_DATE_FROMAT";
+    public static final String CRAWLER_DATE_FORMAT = "CRAWLER_DATE_FORMAT";
 
     public static final String DOWNLOAD_FILE_STORE_PATH              = "download.file.store.path";
 
@@ -80,21 +72,9 @@ public final class Constants {
 
     public static final String NUMBER_FORMAT_CONFIG                  = "number.format.config";
 
-    public static final String UNICODE_FORMAT_CONFIG                 = "UNICODE_FORMAT_CONFIG";
-
-    public static final String CRAWLER_REQUEST_PERIOD_MAP            = "CRAWLER_REQUEST_PERIOD_MAP";
-
-    public static final String CRAWLER_REQUEST_FILESIZE_MAP          = "CRAWLER_REQUEST_FILESIZE_MAP";
-
-    public static final String PAGE_EXTRACTOR_URL_NORMALIZERURL      = "normalizerUrl";
-
-    public static final String STATUS_CHECKER_RESULT_TYPE            = "status.type";
-
     public static final String CRAWLER_REQUEST_NUMBER_MAP            = "CRAWLER_REQUEST_NUMBER_MAP";
 
     public static final String CRAWLER_REQUEST_TEMPLATE              = "CRAWLER_REQUEST_TEMPLATE";
-
-    public static final String CRAWLER_EXCEPTION                     = "CRAWLER_EXCEPTION";
 
     public static final String CRAWLER_REQUEST_RETRY_COUNT           = "CRAWLER_REQUEST_RETRY_COUNT";
 

@@ -48,11 +48,11 @@ public class RequestUtil {
     }
 
     public static URLHandler getURLHandler(SpiderRequest req) {
-        return (URLHandler) req.getAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER);
+        return (URLHandler) req.getAttribute(Constants.CRAWLER_REQUEST_URL_HANDLER);
     }
 
     public static void setURLHandler(SpiderRequest req, URLHandler handler) {
-        req.setAttribute(Constants.CRAWLER_RREQUEST_URL_HANDLER, handler);
+        req.setAttribute(Constants.CRAWLER_REQUEST_URL_HANDLER, handler);
     }
 
     public static String getCurrentTemplateId(SpiderRequest req) {
