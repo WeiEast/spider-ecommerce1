@@ -31,7 +31,7 @@ import com.datatrees.crawler.core.domain.config.service.AbstractService;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;

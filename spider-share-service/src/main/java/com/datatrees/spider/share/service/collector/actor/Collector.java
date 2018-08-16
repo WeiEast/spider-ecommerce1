@@ -35,7 +35,7 @@ import com.datatrees.common.zookeeper.watcher.AbstractLockerWatcher;
 import com.datatrees.crawler.core.domain.config.login.LoginType;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.ProcessorResult;
+import com.treefinance.crawler.framework.context.ProcessorResult;
 import com.datatrees.spider.share.common.utils.IpUtils;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;

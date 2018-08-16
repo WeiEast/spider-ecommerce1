@@ -20,8 +20,8 @@ import java.util.Collections;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.common.exception.PluginException;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.exception.PluginException;
 import org.apache.commons.lang3.StringUtils;
 
 /**

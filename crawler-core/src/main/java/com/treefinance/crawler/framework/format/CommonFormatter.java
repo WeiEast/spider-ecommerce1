@@ -18,7 +18,7 @@ package com.treefinance.crawler.framework.format;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.processor.common.exception.FormatException;
+import com.treefinance.crawler.framework.exception.FormatException;
 import org.apache.commons.lang3.StringUtils;
 
 /**

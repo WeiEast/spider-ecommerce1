@@ -21,7 +21,7 @@ import java.io.File;
 import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
 import com.datatrees.crawler.core.domain.config.plugin.PluginType;
 import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.exception.PluginInvokeException;
+import com.treefinance.crawler.framework.exception.PluginInvokeException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import com.treefinance.crawler.framework.extension.plugin.PluginHandler;

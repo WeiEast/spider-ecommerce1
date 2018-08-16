@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.datatrees.crawler.core.util;
+package com.treefinance.crawler.lang;
 
 import java.util.Collection;
 import java.util.HashMap;

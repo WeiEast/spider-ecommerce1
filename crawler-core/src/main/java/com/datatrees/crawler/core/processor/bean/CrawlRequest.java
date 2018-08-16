@@ -19,7 +19,7 @@ package com.datatrees.crawler.core.processor.bean;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.common.pipeline.Request;
+import com.treefinance.crawler.framework.context.function.Request;
 import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.crawler.core.processor.common.RequestUtil;

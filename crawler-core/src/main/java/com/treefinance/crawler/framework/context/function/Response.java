@@ -14,38 +14,17 @@
  * limitations under the License.
  */
 
-/**
- * ParseException.java
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since Jan 4, 2013 8:28:45 PM
- */
-
-package com.datatrees.crawler.core.util.xml.exception;
+package com.treefinance.crawler.framework.context.function;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since Jan 4, 2013 8:28:45 PM
+ * @since Feb 18, 2014 2:08:43 PM
  */
-@Deprecated
-public class ParseException extends Exception {
+public class Response extends SpiderGenericResponse {
 
-    private static final long serialVersionUID = 1402629003842283884L;
-
-    public ParseException() {
+    public Response() {
         super();
     }
 
-    public ParseException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ParseException(String message) {
-        super(message);
-    }
-
-    public ParseException(Throwable cause) {
-        super(cause);
-    }
 }

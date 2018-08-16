@@ -1,11 +1,10 @@
 package com.treefinance.crawler.framework.process.operation.impl;
 
-import com.treefinance.crawler.framework.context.pipeline.InvokeException;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.crawler.core.domain.config.extractor.FieldExtractor;
 import com.datatrees.crawler.core.domain.config.operation.impl.DateTimeOperation;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.context.function.*;
+import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import org.junit.Test;
 
 /**
@@ -25,9 +24,9 @@ public class DateTimeOperationImplTest {
 
         DateTimeOperationImpl impl = new DateTimeOperationImpl(operation, extractor);
 
-        Request request = new Request();
+        SpiderRequest request = SpiderRequestFactory.make();
         request.setInput("1967-01-01");
-        Response response = new Response();
+        SpiderResponse response = SpiderResponseFactory.make();
         impl.invoke(request, response);
 
         operation = new DateTimeOperation();

@@ -14,19 +14,23 @@
  * limitations under the License.
  */
 
-package com.datatrees.common.pipeline;
+package com.treefinance.crawler.framework.context;
 
-import com.treefinance.crawler.framework.context.function.SpiderGenericResponse;
+import java.util.Map;
+
+import com.treefinance.crawler.lang.SynchronizedMap;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
- * @since Feb 18, 2014 2:08:43 PM
+ * @since 2015年8月3日 下午1:52:39
  */
-public class Response extends SpiderGenericResponse {
+public class ProcessorResult<K, V> extends SynchronizedMap<K, V> {
 
-    public Response() {
-        super();
+    public ProcessorResult() {
     }
 
+    public ProcessorResult(Map<K, V> m) {
+        super(m);
+    }
 }

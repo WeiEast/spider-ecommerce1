@@ -13,40 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-/**
- * ReflectionException.java
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
- * @version 1.0
- * @since Jan 5, 2013 9:58:07 AM
- */
-
-package com.datatrees.crawler.core.util.xml.exception;
+package com.treefinance.crawler.framework.context.function;
 
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
- * @since Jan 5, 2013 9:58:07 AM
+ * @since Feb 18, 2014 2:08:31 PM
  */
-@Deprecated
-public class ReflectionException extends RuntimeException {
+public class Request extends SpiderGenericRequest {
 
-    private static final long serialVersionUID = 350421172069238874L;
-
-    public ReflectionException() {
+    public Request() {
         super();
     }
 
-    public ReflectionException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public ReflectionException(String message) {
-        super(message);
-    }
-
-    public ReflectionException(Throwable cause) {
-        super(cause);
+    @Override
+    public String toString() {
+        return "Request [Input()=" + getInput() + "]";
     }
 
 }

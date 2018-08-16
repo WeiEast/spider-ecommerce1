@@ -21,7 +21,7 @@ package com.datatrees.common.protocol.util;
  * @version 1.0
  * @since Feb 24, 2014 1:51:43 PM
  */
-public class LangUtils {
+public final class LangUtils {
 
     public static final int HASH_SEED   = 17;
 

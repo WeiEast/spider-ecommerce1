@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.datatrees.crawler.core.processor.common.exception;
+package com.treefinance.crawler.framework.exception;
 
 /**
  * @author Jerry

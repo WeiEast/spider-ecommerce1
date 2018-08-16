@@ -14,28 +14,31 @@
  * limitations under the License.
  */
 
-package com.datatrees.crawler.core.util;
-
-import com.datatrees.common.protocol.ProtocolStatusCodes;
+package com.treefinance.crawler.framework.exception;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
- * @since Mar 10, 2014 4:11:30 PM
+ * @since Mar 13, 2014 9:58:08 AM
  */
-@Deprecated
-public class ResponseCodeUtil {
+public class FormatException extends Exception {
 
-    public static boolean isSuccess(int code) {
-        return ProtocolStatusCodes.SUCCESS == code;
+    private static final long serialVersionUID = 4771152402176370660L;
+
+    public FormatException() {
+        super();
     }
 
-    public static boolean isRedirector(int code) {
-        return code == ProtocolStatusCodes.MOVED || code == ProtocolStatusCodes.TEMP_MOVED;
+    public FormatException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    public static boolean isFail(int code) {
-        return code == ProtocolStatusCodes.EXCEPTION;
+    public FormatException(String message) {
+        super(message);
+    }
+
+    public FormatException(Throwable cause) {
+        super(cause);
     }
 
 }

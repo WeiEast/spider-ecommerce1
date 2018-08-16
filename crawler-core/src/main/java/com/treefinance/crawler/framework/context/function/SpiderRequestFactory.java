@@ -16,8 +16,6 @@
 
 package com.treefinance.crawler.framework.context.function;
 
-import com.datatrees.common.pipeline.Request;
-
 /**
  * @author Jerry
  * @since 12:02 2018/8/2

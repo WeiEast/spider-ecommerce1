@@ -19,7 +19,7 @@ package com.datatrees.crawler.core.processor.bean;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.datatrees.common.pipeline.Response;
+import com.treefinance.crawler.framework.context.function.Response;
 import com.datatrees.crawler.core.processor.common.ResponseUtil;
 
 /**

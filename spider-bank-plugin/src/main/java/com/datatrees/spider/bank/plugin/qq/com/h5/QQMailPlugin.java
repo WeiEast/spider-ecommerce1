@@ -25,7 +25,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;

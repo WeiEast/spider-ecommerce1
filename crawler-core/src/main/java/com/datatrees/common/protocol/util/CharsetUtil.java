@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since Feb 20, 2014 9:43:26 AM
  */
-public class CharsetUtil {
+public final class CharsetUtil {
 
     public static final  Charset ASCII      = Consts.ASCII;
 
@@ -42,6 +42,9 @@ public class CharsetUtil {
     public static final  String  DEFAULT    = UTF_8_NAME;
 
     private static final Logger  LOGGER     = LoggerFactory.getLogger(CharsetUtil.class);
+
+    private CharsetUtil() {
+    }
 
     public static Charset getCharset(String charsetName, String defaultCharset) {
         Charset charset = null;

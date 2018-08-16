@@ -21,6 +21,7 @@ package com.datatrees.crawler.core.processor.common.exception;
  * @version 1.0
  * @since Feb 20, 2014 10:18:32 AM
  */
+@Deprecated
 public class PluginException extends com.treefinance.crawler.framework.exception.PluginException {
 
     private static final long serialVersionUID = 1221616889742123419L;

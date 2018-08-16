@@ -14,24 +14,24 @@
  * limitations under the License.
  */
 
-package com.datatrees.crawler.core.processor.common.exception;
+package com.treefinance.crawler.framework.exception;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
- * @since 2015年7月19日 下午12:51:33
+ * @since 2015年7月20日 下午2:33:22
  */
-public class LoginException extends Exception {
+public class NoProxyException extends Exception {
 
     /**
      *
      */
-    private static final long serialVersionUID = -8294941996422304777L;
+    private static final long serialVersionUID = 5091756903422887675L;
 
     /**
      *
      */
-    public LoginException() {
+    public NoProxyException() {
         super();
     }
 
@@ -41,7 +41,7 @@ public class LoginException extends Exception {
      * @param enableSuppression
      * @param writableStackTrace
      */
-    public LoginException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public NoProxyException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
@@ -49,21 +49,21 @@ public class LoginException extends Exception {
      * @param message
      * @param cause
      */
-    public LoginException(String message, Throwable cause) {
+    public NoProxyException(String message, Throwable cause) {
         super(message, cause);
     }
 
     /**
      * @param message
      */
-    public LoginException(String message) {
+    public NoProxyException(String message) {
         super(message);
     }
 
     /**
      * @param cause
      */
-    public LoginException(Throwable cause) {
+    public NoProxyException(Throwable cause) {
         super(cause);
     }
 

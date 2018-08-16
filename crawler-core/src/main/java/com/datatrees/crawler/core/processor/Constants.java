@@ -32,21 +32,6 @@ public final class Constants {
 
     public static final String HTTP_HEADER_REFERER                   = "Referer";
 
-    @Deprecated
-    public static final String SEGMENTS_CONTENT                      = "SEGMENTS_CONTENT";
-
-    @Deprecated
-    public static final String SEGMENTS_RESULT_MAP                   = "SEGMENTS_RESULT_MAP";
-
-    @Deprecated
-    public static final String SEGMENTS_RESULTS                      = "SEGMENTS_RESULTS";
-
-    @Deprecated
-    public static final String SEGMENT_RESULT_CLASS_NAMES            = "SEGMENT_RESULT_CLASS_NAMES";
-
-    @Deprecated
-    public static final String PAGE_EXTRACT_RESULT_MAP               = "PAGE_EXTRACT_RESULT_MAP";
-
     public static final String PAGE_EXTRACT_OBJECT_LIST              = "PAGE_EXTRACT_OBJECT_LIST";
 
     public static final String PAGE_EXTRACT                          = "PAGE_EXTRACT";
@@ -64,10 +49,6 @@ public final class Constants {
     // response section
     public static final String RESPONSE_LIST                         = "RESPONSE_LIST";
 
-    public static final String RESPONSE_CONTENT                      = "Response.Output";
-
-    public static final String RESPONSE_ERROR_MSG                    = "Response.ErrorMsg";
-
     // need retry
     public static final String RESPONSE_NEED_RETRY_REQUEST           = "Response.NeedRetryRequest";
 
@@ -76,12 +57,6 @@ public final class Constants {
     public static final String RESPONSE_Protocol_OUTPUT              = "Response.Protocol.OUTPUT";
 
     public static final String CRAWLER_URL_FIELD                     = "url";
-
-    public static final String PROCESSER_CONTEXT                     = "PROCESSER_CONTEXT";
-
-    public static final String CRAWLER_RREQUEST_CONTEXT              = "CRAWLER_RREQUEST_CONTEXT";
-
-    public static final String RREQUEST_VISIBLE_FIELS                = "RREQUEST_VISIBLE_FIELS";
 
     public static final String CRAWLER_RREQUEST_URL_HANDLER          = "CRAWLER_RREQUEST_URL_HANDLER";
 

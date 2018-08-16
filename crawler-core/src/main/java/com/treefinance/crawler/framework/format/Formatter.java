@@ -18,7 +18,7 @@ package com.treefinance.crawler.framework.format;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.processor.common.exception.FormatException;
+import com.treefinance.crawler.framework.exception.FormatException;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 

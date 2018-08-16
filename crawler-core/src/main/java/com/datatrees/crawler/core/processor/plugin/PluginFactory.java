@@ -24,6 +24,7 @@ import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
  * @version 1.0
  * @since Feb 20, 2014 7:29:26 PM
  */
+@Deprecated
 public final class PluginFactory {
 
     private PluginFactory() {
@@ -32,7 +33,6 @@ public final class PluginFactory {
     /**
      * @see ProcessContextHolder#getProcessorContext()
      */
-    @Deprecated
     public static AbstractProcessorContext getProcessorContext() {
         return ProcessContextHolder.getProcessorContext();
     }
