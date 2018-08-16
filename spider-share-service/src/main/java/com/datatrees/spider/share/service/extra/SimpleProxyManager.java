@@ -16,18 +16,18 @@
 
 package com.datatrees.spider.share.service.extra;
 
-import com.treefinance.crawler.framework.proxy.ProxyManager;
-import com.treefinance.crawler.framework.proxy.Proxy;
-import com.treefinance.crawler.framework.proxy.ProxyStatus;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.treefinance.crawler.framework.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
+import com.treefinance.crawler.framework.proxy.ProxyStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 代理,重新定义,以taskId为唯一标识
  */
-public class SimpleProxyManager extends ProxyManager {
+public class SimpleProxyManager implements ProxyManager {
 
     private static final Logger       logger = LoggerFactory.getLogger(SimpleProxyManager.class);
 

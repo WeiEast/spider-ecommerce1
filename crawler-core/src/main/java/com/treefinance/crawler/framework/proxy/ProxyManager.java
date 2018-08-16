@@ -21,11 +21,11 @@ package com.treefinance.crawler.framework.proxy;
  * @version 1.0
  * @since 2015年7月5日 下午11:29:29
  */
-public abstract class ProxyManager {
+public interface ProxyManager {
 
-    public abstract Proxy getProxy() throws Exception;
+    Proxy getProxy() throws Exception;
 
-    public abstract void callBackProxy(ProxyStatus status) throws Exception;
+    void callBackProxy(ProxyStatus status) throws Exception;
 
-    public abstract void release() throws Exception;
+    void release() throws Exception;
 }
