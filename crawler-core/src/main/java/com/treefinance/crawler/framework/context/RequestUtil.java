@@ -16,8 +16,6 @@
 
 package com.treefinance.crawler.framework.context;
 
-import java.util.Map;
-
 import com.treefinance.crawler.framework.config.xml.page.Page;
 import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.crawler.framework.context.function.LinkNode;
@@ -61,17 +59,6 @@ public class RequestUtil {
 
     public static void setCurrentTemplateId(SpiderRequest req, String content) {
         req.setAttribute(Constants.CURRENT_SEARCH_TEMPLATE, content);
-    }
-
-    @Deprecated
-    @SuppressWarnings("unchecked")
-    public static Map<String, String> getPluginRuntimeConf(SpiderRequest req) {
-        return (Map<String, String>) req.getAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF);
-    }
-
-    @Deprecated
-    public static void setPluginRuntimeConf(SpiderRequest req, Map<String, String> confList) {
-        req.setAttribute(Constants.CRAWLER_RREQUEST_PLUGIN_CONF, confList);
     }
 
     public static String getContent(SpiderRequest req) {
