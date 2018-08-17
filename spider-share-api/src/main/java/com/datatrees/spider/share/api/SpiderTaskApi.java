@@ -1,10 +1,12 @@
 package com.datatrees.spider.share.api;
 
+import java.util.List;
 import java.util.Map;
 
 import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 
 /**
  * 对外Task服务
@@ -61,7 +63,6 @@ public interface SpiderTaskApi {
      */
     HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
 
-
     /**
      * 查询处理结果
      * @param processId 处理号
@@ -84,4 +85,7 @@ public interface SpiderTaskApi {
      * @return
      */
     HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra);
+
+    List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
+
 }
