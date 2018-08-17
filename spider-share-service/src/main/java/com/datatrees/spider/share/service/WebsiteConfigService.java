@@ -1,10 +1,12 @@
 package com.datatrees.spider.share.service;
 
+import java.util.List;
 import java.util.Map;
 
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 
 /**
@@ -37,5 +39,9 @@ public interface WebsiteConfigService {
      * @param map
      */
     void initBankCache(Map<Integer, String> map);
+
+    WebsiteConf getWebsiteConf(String websiteName);
+
+    List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
 
 }

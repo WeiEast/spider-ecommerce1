@@ -3,6 +3,7 @@ package com.datatrees.spider.share.service.impl.dubbo;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
@@ -166,4 +167,27 @@ public class SpiderTaskApiImpl implements SpiderTaskApi {
     public ProcessResult queryProcessResult(long processId) {
         return ProcessResultUtils.queryProcessResult(processId);
     }
+
+    @Override
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra) {
+        HttpResult<String> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(directiveId)) {
+                logger.warn("verifyQr invalid param taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            DirectiveResult<String> directiveResult = redisService.getDirectiveResult(directiveId, 2, TimeUnit.SECONDS);
+            if (null == directiveResult) {
+                logger.warn("verifyQr timeout taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            TimeUnit.MILLISECONDS.sleep(500);//不能让前端一直轮询
+            logger.info("verifyQr result taskId={},directiveId={},qrStatus={}", taskId, directiveId, directiveResult.getStatus());
+            return result.success(directiveResult.getStatus());
+        } catch (Exception e) {
+            logger.error("verifyQr error taskId={},directiveId={}", taskId, directiveId);
+            return result.success(DirectiveRedisCode.FAILED);
+        }
+    }
+
 }

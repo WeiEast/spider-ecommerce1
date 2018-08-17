@@ -1,9 +1,14 @@
 package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
+import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.crawler.core.domain.Website;
 import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
 import com.datatrees.crawler.core.domain.config.ExtractorConfig;
@@ -11,7 +16,10 @@ import com.datatrees.crawler.core.domain.config.SearchConfig;
 import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
 import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.spider.share.common.share.service.ProxyService;
+import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.GroupEnum;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
@@ -44,6 +52,9 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
 
     @Resource
     private              WebsiteHolderService websiteHolderService;
+
+    @Resource
+    private              RedisService         redisService;
 
     public WebsiteConfigServiceImpl() {
         parentConfigHandler = (ParentConfigHandler<AbstractWebsiteConfig>) type -> {
@@ -122,7 +133,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = CrawlerConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = CrawlerConfigFactory
+                        .build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {
@@ -157,6 +169,41 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public void initBankCache(Map<Integer, String> map) {
         bankIds.putAll(map);
+    }
+
+    @Override
+    public WebsiteConf getWebsiteConf(String websiteName) {
+        logger.info("getWebsiteConf start websiteName={}", websiteName);
+        Map<String, String> map = redisService.getCache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, new TypeReference<Map<String, String>>() {});
+        String newWebsiteName;
+        if (null == map || !map.containsKey(websiteName)) {
+            String property = PropertiesConfiguration.getInstance().get(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP.getRedisKey());
+            map = JSON.parseObject(property, Map.class);
+            redisService.cache(RedisKeyPrefixEnum.WEBSITENAME_TRANSFORM_MAP, map);
+        }
+        newWebsiteName = map.get(websiteName);
+        if (StringUtils.isBlank(newWebsiteName)) {
+            logger.warn("no this websiteName in properties, websiteName is {}", websiteName);
+            return null;
+        }
+        WebsiteConf conf = websiteHolderService.getWebsiteConf(newWebsiteName);
+        if (null != conf) {
+            //中文
+            conf.setName(websiteName);
+        }
+        return conf;
+    }
+
+    @Override
+    public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList) {
+        List<WebsiteConf> confList = new ArrayList<>();
+        for (String websiteName : websiteNameList) {
+            WebsiteConf websiteConf = getWebsiteConf(websiteName);
+            if (null != websiteConf) {
+                confList.add(websiteConf);
+            }
+        }
+        return confList;
     }
 
 }
