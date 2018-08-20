@@ -23,9 +23,9 @@ package com.datatrees.spider.share.service.domain;
  */
 public interface SubTaskAble extends TaskRelated, TemplteAble {
 
-    public SubSeed getSubSeed();
+    SubSeed getSubSeed();
 
-    public boolean isSynced();
+    boolean isSynced();
 
-    public boolean noStatus();
+    boolean noStatus();
 }

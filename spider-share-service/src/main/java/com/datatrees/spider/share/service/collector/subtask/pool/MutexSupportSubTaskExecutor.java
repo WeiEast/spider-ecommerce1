@@ -19,16 +19,20 @@ package com.datatrees.spider.share.service.collector.subtask.pool;
 import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.spider.share.service.collector.actor.Collector;
 import com.datatrees.spider.share.service.collector.subtask.container.Container;
 import com.datatrees.spider.share.service.collector.subtask.container.Mutex;
-import com.datatrees.spider.share.service.domain.SubTaskCollectorMessage;
+import com.datatrees.spider.share.service.domain.SpiderTask;
+import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.service.domain.SubTask;
+import com.datatrees.spider.share.service.domain.SubTaskCollectorMessage;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -48,13 +52,6 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
     @Resource
     private              Collector       collector;
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * SubTaskExecutor#submitSubTask(com.datatrees.
-     * rawdatacentral.core.model.subtask.SubTask)
-     */
     @SuppressWarnings("rawtypes")
     @Override
     public Future<Map> submit(Container container) {
@@ -80,26 +77,17 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         });
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
-        SubTaskCollectorMessage message = new SubTaskCollectorMessage();
-        // set from parent tassk
-        message.setCookie(task.getParentTask().getCookie());
-        message.setEndURL(task.getParentTask().getCollectorMessage().getEndURL());
-        message.setNeedDuplicate(task.getParentTask().getCollectorMessage().isNeedDuplicate());
-        message.setLevel1Status(task.getParentTask().getCollectorMessage().isLevel1Status());
-        message.setParentTaskID(task.getParentTask().getTaskId());//taskLogId
-        message.setTaskId(task.getTaskId());
-        message.setSubSeed(task.getSeed());
-        // set from seed
-        message.setSynced(BooleanUtils.isTrue(task.getSeed().isSync()));
-        message.setLoginCheckIgnore(BooleanUtils.isTrue(task.getSeed().getLoginCheckIgnore()));
-        message.setTemplateId(task.getSeed().getTemplateId());
-        message.setWebsiteName(task.getSeed().getWebsiteName());
-        Map property = new HashMap();
-        property.putAll(task.getParentTask().getProperty());
-        property.putAll(task.getSeed());
+        SpiderTask parentTask = task.getParentTask();
+        SubTaskCollectorMessage message = new SubTaskCollectorMessage(parentTask);
+
+        SubSeed subSeed = task.getSeed();
+        message.setSubSeed(subSeed);
+
+        Map<String, Object> property = new HashMap<>(parentTask.getProperty());
+        property.putAll(subSeed);
         message.setProperty(property);
+
         return message;
     }
 

@@ -19,8 +19,6 @@ package com.datatrees.spider.share.domain;
 import java.io.Serializable;
 import java.util.Map;
 
-import com.datatrees.spider.share.domain.ExtractCode;
-
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
@@ -31,33 +29,33 @@ public abstract class AbstractExtractResult implements Serializable {
     /**
      *
      */
-    private static final long                serialVersionUID = 3890382241592488877L;
+    private static final long serialVersionUID = 3890382241592488877L;
 
-    private              int                 id;
+    private int id;
 
-    private              int                 taskId;
+    private Integer taskId;
 
-    private              int                 websiteId;
+    private int websiteId;
 
-    private              String              uniqueSign;
+    private String uniqueSign;
 
-    private              String              uniqueMd5;
+    private String uniqueMd5;
 
-    private              int                 status;
+    private int status;
 
-    private              String              remark;
+    private String remark;
 
-    private              String              storagePath;
+    private String storagePath;
 
-    private              String              resultType;
+    private String resultType;
 
-    private              String              url;
+    private String url;
 
-    private              String              pageExtractId;
+    private String pageExtractId;
 
-    private              long                duration;
+    private long duration;
 
-    private              Map<String, Object> extraInfo;
+    private Map<String, Object> extraInfo;
 
     /**
      * @return the extraInfo
@@ -126,14 +124,14 @@ public abstract class AbstractExtractResult implements Serializable {
     /**
      * @return the taskId
      */
-    public int getTaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
     /**
      * @param taskId the taskId to set
      */
-    public void setTaskId(int taskId) {
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 

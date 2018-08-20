@@ -25,9 +25,9 @@ import java.util.function.Function;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
+import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.lang.SynchronizedMap;
-import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -49,7 +49,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
-        this.taskId = Objects.requireNonNull(taskId);
+        this.taskId = taskId;
         this.context = new SynchronizedMap<>();
         this.statusContext = new SynchronizedMap<>();
         this.threadContext = new SynchronizedMap<>();
@@ -60,11 +60,6 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     public Long getTaskId() {
         return taskId;
-    }
-
-    @Deprecated
-    public AbstractPlugin getPluginDescByID(String pid) {
-        return super.getPluginMetadataById(pid);
     }
 
     /**
@@ -95,7 +90,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         return getContext().get(name);
     }
 
-    public void addAttribute(String name, Object value) {
+    public void setAttribute(String name, Object value) {
         if (value == null) {
             getContext().remove(name);
         } else {
@@ -193,7 +188,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
      * @return
      */
     public void set(String key, Object value) {
-        addAttribute(key, value);
+        setAttribute(key, value);
     }
 
     /**

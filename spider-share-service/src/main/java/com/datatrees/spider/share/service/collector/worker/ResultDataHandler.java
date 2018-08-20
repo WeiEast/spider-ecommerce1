@@ -24,14 +24,11 @@ import akka.dispatch.Future;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.datatrees.common.actor.WrappedActorRef;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.service.domain.ParentTask;
+import com.datatrees.spider.share.service.domain.SpiderTask;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizerFactory;
-import com.datatrees.spider.share.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -52,37 +49,19 @@ public class ResultDataHandler {
     @Resource
     private              WrappedActorRef          extractorActorRef;
 
-    private ParentTask getParentTask(TaskMessage taskMessage) {
-        ParentTask parentTask = new ParentTask();
-        SearchProcessorContext processorContext = taskMessage.getContext();
-        Task task = taskMessage.getTask();
-
-        parentTask.setCollectorMessage(taskMessage.getCollectorMessage());
-        parentTask.setCookie(ProcessorContextUtil.getCookieString(processorContext));
-        parentTask.setProperty(processorContext.getProcessorResult());
-        parentTask.setTaskId(task.getId());
-        parentTask.setWebsiteName(processorContext.getWebsiteName());
-        parentTask.setProcessorContext(processorContext);
-        return parentTask;
-    }
-
     public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage) {
         List<Future<Object>> futureList = new ArrayList<>();
-        Task task = taskMessage.getTask();
-        ParentTask parentTask = this.getParentTask(taskMessage);
+
+        SpiderTask task = new SpiderTask(taskMessage.getProcessId(), taskMessage.getContext());
+        task.setCollectorMessage(taskMessage.getCollectorMessage());
+
         for (Object obj : objs) {
-            ExtractMessage message = new ExtractMessage();
-            message.setMessageObject(obj);
-            message.setTaskLogId(task.getId());
-            message.setTaskId(task.getTaskId());
-            message.setWebsiteId(task.getWebsiteId());
-            message.setTask(parentTask);
-            message.setWebsiteName(taskMessage.getWebsiteName());
+            ExtractMessage message = new ExtractMessage(task, obj);
+
             try {
                 boolean result = messageNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future = Patterns
-                            .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

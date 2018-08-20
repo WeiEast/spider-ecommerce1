@@ -45,12 +45,13 @@ public class ExtractResultHandlerFactory {
                 break;
             }
         }
+
         if (result == null) {
             throw new UnexpectedException("Initial extract result failure!");
         }
 
         result.setUniqueMd5(UniqueKeyGenUtil.uniqueKeyGen(result.getUniqueSign()));
-        result.setTaskId(extractMessage.getTaskLogId());
+        result.setTaskId(extractMessage.getProcessId());
         result.setWebsiteId(extractMessage.getWebsiteId());
         result.setStoragePath(StoragePathUtil.genStoragePath(extractMessage, result.getUniqueMd5()));
         return result;

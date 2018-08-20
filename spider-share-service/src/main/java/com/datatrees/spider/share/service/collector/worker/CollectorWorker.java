@@ -347,8 +347,8 @@ public class CollectorWorker {
         return seedUrl;
     }
 
-    public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
-        List<Map> results = subTaskManager.getSyncedSubTaskResults(taskid);
+    private Map<String, Object> mergeSubTaskResult(Integer taskLogId, Map<String, Object> resultMap) {
+        List<Map> results = subTaskManager.getSyncedSubTaskResults(taskLogId);
         if (CollectionUtils.isNotEmpty(results)) {
             LOGGER.info("try to merge subTaskResult: {}", results);
             List<Map> errorSubTasks = new ArrayList<>();

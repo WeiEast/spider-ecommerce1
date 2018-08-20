@@ -23,11 +23,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.spider.share.service.domain.SpiderTask;
 import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
-import com.datatrees.spider.share.service.domain.ParentTask;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -78,7 +78,7 @@ public class DefaultProcessorContextBuilder {
                 break;
         }
 
-        ParentTask task = extractMessage.getTask();
+        SpiderTask task = extractMessage.getTask();
         if (context == null) {
             return null;
         }

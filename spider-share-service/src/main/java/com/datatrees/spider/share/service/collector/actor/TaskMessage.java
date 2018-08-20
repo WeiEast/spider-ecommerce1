@@ -17,13 +17,18 @@
 package com.datatrees.spider.share.service.collector.actor;
 
 import java.util.Map;
+import java.util.Objects;
 
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.domain.CollectorMessage;
-import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.domain.website.WebsiteType;
+import com.datatrees.spider.share.service.domain.SubTaskAble;
+import com.datatrees.spider.share.service.domain.TaskRelated;
+import com.datatrees.spider.share.service.domain.TemplteAble;
+import com.datatrees.spider.share.service.util.UnifiedSysTime;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -32,142 +37,108 @@ import com.datatrees.spider.share.domain.http.HttpResult;
  */
 public class TaskMessage {
 
-    private final Task                   task;
+    private final Task task;
 
     private final SearchProcessorContext context;
 
-    private       Boolean                messageSend;
+    private Boolean messageSend;
 
-    private       int                    parentTaskID;
+    private Integer parentTaskId;
 
-    private       CollectorMessage       collectorMessage;
+    private CollectorMessage collectorMessage;
 
-    private       String                 templateId;
+    private String templateId;
 
-    private       String                 uniqueSuffix;
+    private String uniqueSuffix;
 
-    private       Boolean                statusSend;
+    private Boolean statusSend;
 
     public TaskMessage(final Task task, final SearchProcessorContext context) {
-        this.task = task;
-        this.context = context;
+        this.task = Objects.requireNonNull(task);
+        this.context = Objects.requireNonNull(context);
         this.messageSend = true;
         this.statusSend = true;
     }
 
-    /**
-     * @return the task
-     */
     public Task getTask() {
         return task;
     }
 
-    /**
-     * @return the context
-     */
+    public Integer getProcessId() {
+        return task.getId();
+    }
+
     public SearchProcessorContext getContext() {
         return context;
     }
 
-    /**
-     * @return the websiteName
-     */
+    public Long getTaskId() {
+        return context.getTaskId();
+    }
+
     public String getWebsiteName() {
-        return collectorMessage.getWebsiteName();
+        return context.getWebsiteName();
     }
 
-    /**
-     * @return the templateId
-     */
-    public String getTemplateId() {
-        return templateId;
+    public WebsiteType getWebsiteType() {
+        return WebsiteType.getWebsiteType(context.getWebsiteType());
     }
 
-    /**
-     * @param templateId the templateId to set
-     */
-    public void setTemplateId(String templateId) {
-        this.templateId = templateId;
-    }
-
-    /**
-     * @return the messageSend
-     */
-    public Boolean getMessageSend() {
-        return messageSend;
-    }
-
-    /**
-     * @param messageSend the messageSend to set
-     */
-    public void setMessageSend(Boolean messageSend) {
-        this.messageSend = messageSend;
-    }
-
-    /**
-     * @return the parentTaskID
-     */
-    public int getParentTaskID() {
-        return parentTaskID;
-    }
-
-    /**
-     * @param parentTaskID the parentTaskID to set
-     */
-    public void setParentTaskID(int parentTaskID) {
-        this.parentTaskID = parentTaskID;
-    }
-
-    /**
-     * @return the collectorMessage
-     */
     public CollectorMessage getCollectorMessage() {
         return collectorMessage;
     }
 
-    /**
-     * @param collectorMessage the collectorMessage to set
-     */
-    public void setCollectorMessage(CollectorMessage collectorMessage) {
-        this.collectorMessage = collectorMessage;
+    public void setCollectorMessage(CollectorMessage message) {
+        this.collectorMessage = message;
+
+        if (message instanceof TemplteAble) {
+            this.templateId = ((TemplteAble) message).getTemplateId();
+        }
+        if (message instanceof TaskRelated) {
+            this.parentTaskId = ((TaskRelated) message).getParentTaskId();
+            context.setAttribute("parentTaskLogId", this.parentTaskId);
+        }
+        // set subtask parameter
+        if (message instanceof SubTaskAble) {
+            //标记子任务
+            markSubtask(!((SubTaskAble) message).isSynced(), !((SubTaskAble) message).noStatus());
+
+            if (((SubTaskAble) message).getSubSeed() != null) {
+                this.uniqueSuffix = ((SubTaskAble) message).getSubSeed().getUniqueSuffix();
+            }
+        }
     }
 
-    /**
-     * @return the uniqueSuffix
-     */
-    public String getUniqueSuffix() {
-        return uniqueSuffix;
+    private void markSubtask(boolean messageSend, boolean statusSend) {
+        task.setSubTask(true);
+        this.messageSend = messageSend;
+        this.statusSend = statusSend;
     }
 
-    /**
-     * @param uniqueSuffix the uniqueSuffix to set
-     */
-    public void setUniqueSuffix(String uniqueSuffix) {
-        this.uniqueSuffix = uniqueSuffix;
+    public String getTemplateId() {
+        return templateId;
     }
 
-    /**
-     * @return the statusSend
-     */
+    public int getParentTaskId() {
+        return parentTaskId;
+    }
+
+    public Boolean getMessageSend() {
+        return messageSend;
+    }
+
     public Boolean getStatusSend() {
         return statusSend;
     }
 
-    /**
-     * @param statusSend the statusSend to set
-     */
-    public void setStatusSend(Boolean statusSend) {
-        this.statusSend = statusSend;
+    public String getUniqueSuffix() {
+        return uniqueSuffix;
     }
 
-    public Long getTaskId() {
-        return collectorMessage.getTaskId();
-    }
 
     @Override
     public String toString() {
-        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" +
-                parentTaskID + "]";
+        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskId + "]";
     }
 
     public void setErrorCode(ErrorCode errorCode) {
@@ -187,4 +158,5 @@ public class TaskMessage {
             getContext().release();
         }
     }
+
 }

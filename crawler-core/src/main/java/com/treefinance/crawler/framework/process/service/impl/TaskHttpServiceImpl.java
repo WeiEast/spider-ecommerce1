@@ -18,21 +18,20 @@ package com.treefinance.crawler.framework.process.service.impl;
 
 import javax.annotation.Nonnull;
 
-import com.treefinance.crawler.framework.config.xml.properties.Properties;
-import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.function.LinkNode;
-import com.treefinance.crawler.framework.consts.Status;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.treefinance.crawler.framework.context.RequestUtil;
-import com.treefinance.crawler.framework.process.service.ServiceBase;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.RequestType;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
+import com.treefinance.crawler.framework.consts.Status;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.RequestUtil;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.service.ServiceBase;
 import org.apache.commons.lang3.StringUtils;
 
 public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
@@ -44,7 +43,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
     @Override
     public void process(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
         SearchProcessorContext context = (SearchProcessorContext) request.getProcessorContext();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
+        Long taskId = context.getTaskId();
         String websiteName = context.getWebsiteName();
         Properties properties = context.getSearchConfig().getProperties();
         String encoding = null;

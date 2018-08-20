@@ -41,10 +41,10 @@ public class ProcessorContextUtil {
         if (StringUtils.isBlank(cookieString)) {
             return;
         }
-        context.addAttribute(Constants.COOKIE_STRING, cookieString);
+        context.setAttribute(Constants.COOKIE_STRING, cookieString);
         boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookieString, retainQuote);
-        context.addAttribute(Constants.COOKIE, cookieMap);
+        context.setAttribute(Constants.COOKIE, cookieMap);
     }
 
     public static Map<String, String> getCookieMap(AbstractProcessorContext context) {
@@ -57,12 +57,12 @@ public class ProcessorContextUtil {
     }
 
     public static void setCookieObject(AbstractProcessorContext context, Cookie cookie) {
-        context.addAttribute(Constants.USERNAME, cookie.getUserName());
+        context.setAttribute(Constants.USERNAME, cookie.getUserName());
         ProcessorContextUtil.setCookieString(context, cookie.getCookie());
     }
 
     public static void setAccountKey(AbstractProcessorContext context, String accountKey) {
-        context.addAttribute(Constants.ACCOUNT_KEY, accountKey);
+        context.setAttribute(Constants.ACCOUNT_KEY, accountKey);
     }
 
     public static String getAccountKey(AbstractProcessorContext context) {
@@ -70,12 +70,12 @@ public class ProcessorContextUtil {
     }
 
     public static void setAccount(AbstractProcessorContext context, WebsiteAccount account) {
-        context.addAttribute(Constants.USERNAME, account.getUserName());
-        context.addAttribute(Constants.PASSWORD, account.getPassword());
+        context.setAttribute(Constants.USERNAME, account.getUserName());
+        context.setAttribute(Constants.PASSWORD, account.getPassword());
     }
 
     public static void setValue(AbstractProcessorContext context, String key, Object value) {
-        context.addAttribute(key, value);
+        context.setAttribute(key, value);
     }
 
     public static void addValues(AbstractProcessorContext context, Map<String, Object> values) {
@@ -87,12 +87,12 @@ public class ProcessorContextUtil {
     }
 
     public static void setKeyword(AbstractProcessorContext context, String keyword) {
-        context.addAttribute(Constants.PAGE_REQUEST_CONTEXT_KEYWORD, keyword);
-        context.addAttribute(Constants.PAGE_REQUEST_CONTEXT_ORIGINAL_KEYWORD, keyword);
+        context.setAttribute(Constants.PAGE_REQUEST_CONTEXT_KEYWORD, keyword);
+        context.setAttribute(Constants.PAGE_REQUEST_CONTEXT_ORIGINAL_KEYWORD, keyword);
     }
 
     public static void setTaskUnique(AbstractProcessorContext context, Object obj) {
-        context.addAttribute(Constants.TASK_UNIQUE_SIGN, obj);
+        context.setAttribute(Constants.TASK_UNIQUE_SIGN, obj);
     }
 
     public static Object getTaskUnique(AbstractProcessorContext context) {
@@ -126,7 +126,7 @@ public class ProcessorContextUtil {
     }
 
     public static void setHttpState(AbstractProcessorContext context, HttpState state) {
-        context.addAttribute(Constants.HTTP_STATE, state);
+        context.setAttribute(Constants.HTTP_STATE, state);
     }
 
     public static HttpState getHttpState(AbstractProcessorContext context) {

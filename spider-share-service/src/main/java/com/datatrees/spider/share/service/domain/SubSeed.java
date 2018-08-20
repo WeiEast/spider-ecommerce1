@@ -17,6 +17,7 @@
 package com.datatrees.spider.share.service.domain;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import com.treefinance.crawler.framework.proxy.Proxy;
 
@@ -48,6 +49,13 @@ public class SubSeed extends HashMap<String, Object> {
     public final static String PROXY_SHARED       = "proxyShared";// 代理共享，父子任务持续使用代理
 
     public final static String PROXY              = "proxy";// 代理共享，父子任务持续使用代理
+
+    public SubSeed() {
+    }
+
+    public SubSeed(Map<? extends String, ?> m) {
+        super(m);
+    }
 
     public Proxy getProxy() {
         return (Proxy) this.get(PROXY);

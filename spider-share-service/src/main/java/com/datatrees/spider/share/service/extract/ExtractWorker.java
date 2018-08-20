@@ -88,7 +88,7 @@ public class ExtractWorker {
         if (context != null) {
             try {
                 // set StoragePath to context
-                context.addAttribute("StoragePath", result.getStoragePath());
+                context.setAttribute("StoragePath", result.getStoragePath());
 
                 ExtractRequest request = ExtractRequest.newBuilder().setInput(extractMessage.getMessageObject()).setExtractContext(context).build();
 
@@ -144,17 +144,12 @@ public class ExtractWorker {
             if (obj instanceof Map && MapUtils.isNotEmpty((Map) obj)) {
                 Object messageObject = extractMessage.getMessageObject();
                 if (messageObject instanceof Map) {
-                    ExtractMessage subExtractMessage = new ExtractMessage();
                     Map map = (Map) BeanUtils.instantiate(messageObject.getClass());
                     map.putAll((Map) messageObject);
                     map.putAll((Map) obj);
-                    subExtractMessage.setMessageObject(map);
-                    subExtractMessage.setTask(extractMessage.getTask());
+                    ExtractMessage subExtractMessage = new ExtractMessage(extractMessage.getTask(), map);
                     subExtractMessage.setResultType(extractMessage.getResultType());
-                    subExtractMessage.setTaskLogId(extractMessage.getTaskLogId());
-                    subExtractMessage.setTaskId(extractMessage.getTaskId());
                     subExtractMessage.setTypeId(extractMessage.getTypeId());
-                    subExtractMessage.setWebsiteId(extractMessage.getWebsiteId());
                     subExtractMessage.setMessageIndex(messageIndex);
                     this.process(subExtractMessage);
                     // extractMessage.getSubmitkeyResult().putAll(subExtractMessage.getSubmitkeyResult());

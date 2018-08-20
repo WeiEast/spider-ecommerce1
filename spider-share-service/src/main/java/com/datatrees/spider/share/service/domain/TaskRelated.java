@@ -23,5 +23,5 @@ package com.datatrees.spider.share.service.domain;
  */
 public interface TaskRelated {
 
-    public int getParentTaskID();
+    Integer getParentTaskId();
 }

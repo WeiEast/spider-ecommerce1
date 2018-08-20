@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.datatrees.spider.share.domain.MessageInfo;
-
 /**
  * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
@@ -33,7 +31,7 @@ public class CollectorMessage extends MessageInfo {
 
     private           String              websiteName;
 
-    private           long                taskId;
+    private           Long                taskId;
 
     private           String              accountNo;
 
@@ -213,11 +211,11 @@ public class CollectorMessage extends MessageInfo {
         this.sendBack = sendBack;
     }
 
-    public long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(long taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 

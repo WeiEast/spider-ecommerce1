@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.proxy.Proxy;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.BackRedisUtils;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
@@ -36,6 +35,7 @@ import com.datatrees.spider.share.service.extra.SubTaskManager;
 import com.datatrees.spider.share.service.normalizers.SubmitNormalizerFactory;
 import com.datatrees.spider.share.service.util.RedisKeyUtils;
 import com.treefinance.crawler.framework.process.domain.PageExtractObject;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import org.apache.commons.lang.BooleanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,7 +88,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     private String saveExtractedObject(ExtractMessage extractMessage, Entry<String, Object> entry) {
         Long taskId = extractMessage.getTaskId();
 
-        String redisKey = RedisKeyUtils.genRedisKey(taskId, extractMessage.getTaskLogId(), entry.getKey());
+        String redisKey = RedisKeyUtils.genRedisKey(taskId, extractMessage.getProcessId(), entry.getKey());
 
         doMonitor(taskId, redisKey, entry, value -> {
             if (value instanceof Collection) {
@@ -148,27 +148,26 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
     }
 
     private void startSubTask(ExtractMessage extractMessage, Entry<String, Object> entry) {
-        ParentTask parentTask = extractMessage.getTask();
-        Long taskId = extractMessage.getTaskId();
+        SpiderTask task = extractMessage.getTask();
+
         if (entry.getValue() instanceof Collection) {
             for (Object obj : (Collection) entry.getValue()) {
-                this.doSubTask(taskId, parentTask, obj);
+                this.doSubTask(task, obj);
             }
         } else {
-            this.doSubTask(taskId, parentTask, entry.getValue());
+            this.doSubTask(task, entry.getValue());
         }
     }
 
-    private void doSubTask(long taskId, ParentTask parentTask, Object seed) {
+    private void doSubTask(SpiderTask task, Object seed) {
         if (seed instanceof Map) {
-            SubSeed subSeed = new SubSeed();
-            subSeed.putAll((Map) seed);
+            SubSeed subSeed = new SubSeed((Map) seed);
 
             logger.info("submit sub-seed {}", subSeed);
-            subTaskManager.submitSubTask(new SubTask(taskId, parentTask, subSeed));
+            subTaskManager.submitSubTask(new SubTask(task, subSeed));
             if (BooleanUtils.isTrue(subSeed.getProxyShared())) {
                 try {
-                    Proxy parentProxy = parentTask.getProcessorContext().getProxy();
+                    Proxy parentProxy = task.getProcessorContext().getProxy();
                     if (parentProxy != null) {
                         subSeed.setProxy(parentProxy);
                         parentProxy.getShareCount().incrementAndGet();

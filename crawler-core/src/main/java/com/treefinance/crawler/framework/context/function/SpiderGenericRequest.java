@@ -194,7 +194,7 @@ public class SpiderGenericRequest extends AtomicAttributes implements SpiderRequ
     @Override
     public void addContextScope(String name, Object value) {
         if (context != null) {
-            context.addAttribute(name, value);
+            context.setAttribute(name, value);
         }
         addVisibleScope(name, value);
     }

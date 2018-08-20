@@ -28,7 +28,7 @@ import com.datatrees.spider.share.service.domain.SubTask;
  */
 public interface SubTaskManager {
 
-    List<Map> getSyncedSubTaskResults(int taskid);
+    List<Map> getSyncedSubTaskResults(Integer taskLogId);
 
     void submitSubTask(SubTask task);
 

@@ -34,13 +34,13 @@ public interface SpiderContext {
      * register plugins's metadata
      * @param pluginMetadataList a list of plugin metadata {@link AbstractPlugin}
      */
-    void registerPlugins(@Nonnull final List<AbstractPlugin> pluginMetadataList);
+    void registerPlugins(final List<AbstractPlugin> pluginMetadataList);
 
     /**
      * register plugin's metadata
      * @param pluginMetadata plugin metadata {@link AbstractPlugin}
      */
-    void registerPlugin(@Nonnull final AbstractPlugin pluginMetadata);
+    void registerPlugin(final AbstractPlugin pluginMetadata);
 
     AbstractPlugin getPluginMetadataById(@Nonnull final String pluginId);
 

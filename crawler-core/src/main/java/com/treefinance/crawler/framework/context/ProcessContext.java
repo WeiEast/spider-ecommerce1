@@ -19,7 +19,6 @@ package com.treefinance.crawler.framework.context;
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
@@ -58,6 +57,10 @@ public abstract class ProcessContext implements SpiderContext {
         return website;
     }
 
+    public Integer getWebsiteId() {
+        return website.getId();
+    }
+
     public String getWebsiteName() {
         return website.getWebsiteName();
     }
@@ -72,19 +75,18 @@ public abstract class ProcessContext implements SpiderContext {
     }
 
     @Override
-    public void registerPlugins(@Nonnull List<AbstractPlugin> pluginMetadataList) {
+    public void registerPlugins(List<AbstractPlugin> pluginMetadataList) {
         if (CollectionUtils.isNotEmpty(pluginMetadataList)) {
-            for (AbstractPlugin pluginMetadata : pluginMetadataList) {
-                if (pluginMetadata != null) {
-                    registerPlugin(pluginMetadata);
-                }
-            }
+            pluginMetadataList.forEach(this::registerPlugin);
         }
     }
 
     @Override
-    public void registerPlugin(@Nonnull AbstractPlugin pluginMetadata) {
-        Objects.requireNonNull(pluginMetadata);
+    public void registerPlugin(AbstractPlugin pluginMetadata) {
+        if (pluginMetadata == null) {
+            return;
+        }
+
         if (StringUtils.isEmpty(pluginMetadata.getId())) {
             logger.warn("Failed to register plugin metadata >>> The plugin id is missing!");
             return;

@@ -314,8 +314,7 @@ public class TaskUtils {
      */
     public static Map<String, String> getTaskShares(Long taskId) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        Map<String, String> map = RedisUtils.hgetAll(redisKey);
-        return map;
+        return RedisUtils.hgetAll(redisKey);
     }
 
     /**

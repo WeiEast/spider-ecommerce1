@@ -99,12 +99,12 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         logger.debug("访问安全页2：{}", pageContent);
         String identity = PatternUtils.group(pageContent, "identity:\\s*'([^']+)'", 1);
         String sessionid = PatternUtils.group(pageContent, "sessionid:\\s*'([^']+)'", 1);
-        context.addAttribute("identity", identity);
-        context.addAttribute("sessionid", sessionid);
-        context.addAttribute("smTag", smTag);
-        context.addAttribute("smReturn", smReturn);
-        context.addAttribute("smSign", smSign);
-        context.addAttribute("smPolicy", smPolicy);
+        context.setAttribute("identity", identity);
+        context.setAttribute("sessionid", sessionid);
+        context.setAttribute("smTag", smTag);
+        context.setAttribute("smReturn", smReturn);
+        context.setAttribute("smSign", smSign);
+        context.setAttribute("smPolicy", smPolicy);
         url = "https://pin.aliyun.com/get_img?identity=" + identity + "&sessionid=" + sessionid + "&type=150_40&t=" + System.currentTimeMillis();
         checkNode = new LinkNode(url);
         checkNode.setReferer(url);

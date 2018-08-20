@@ -32,7 +32,7 @@ public class LoginMessage implements Serializable {
     /**
      * 任务ID
      */
-    private long   taskId;
+    private Long   taskId;
 
     /**
      * 结束url
@@ -68,11 +68,11 @@ public class LoginMessage implements Serializable {
         this.websiteName = websiteName;
     }
 
-    public long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(long taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 
