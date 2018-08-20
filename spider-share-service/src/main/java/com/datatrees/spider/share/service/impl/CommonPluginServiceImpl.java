@@ -127,6 +127,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
             logger.info("{}-->初始化-->成功", param.getActionName());
             return result;
         } catch (Throwable e) {
+            logger.error("init error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -136,6 +137,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return classLoaderService.getCommonPluginService(param).refeshPicCode(param);
         } catch (Throwable e) {
+            logger.error("refeshPicCode error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -145,6 +147,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return classLoaderService.getCommonPluginService(param).refeshSmsCode(param);
         } catch (Throwable e) {
+            logger.error("refeshSmsCode error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -199,6 +202,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
             monitorService.sendTaskLog(taskId, param.getWebsiteName(), log, result);
             return result;
         } catch (Throwable e) {
+            logger.error("submit error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         } finally {
             monitorService.sendMethodUseTime(param.getTaskId(), param.getWebsiteName(), param.getFormType(), this.getClass().getName(), "submit",
@@ -211,6 +215,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return classLoaderService.getCommonPluginService(param).validatePicCode(param);
         } catch (Throwable e) {
+            logger.error("validatePicCode error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -220,6 +225,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return classLoaderService.getCommonPluginService(param).defineProcess(param);
         } catch (Throwable e) {
+            logger.error("defineProcess error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -256,6 +262,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).refeshQRCode(param);
         } catch (Throwable e) {
+            logger.error("refeshQRCode error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
@@ -265,6 +272,7 @@ public class CommonPluginServiceImpl implements CommonPluginService {
         try {
             return ((QRPlugin) (classLoaderService.getCommonPluginService(param))).queryQRStatus(param);
         } catch (Throwable e) {
+            logger.error("queryQRStatus error,param={}", JSON.toJSONString(param), e);
             return new HttpResult<>().failure(ErrorCode.SYS_ERROR);
         }
     }
