@@ -167,7 +167,7 @@ public class Collector {
         context.setAttribute(AttributeKey.ACCOUNT_KEY, message.getTaskId() + "");
         //context.set(AttributeKey.ACCOUNT_NO, message.getAccountNo());
         // init cookie
-        ProcessorContextUtil.setCookieString(context, message.getCookie());
+        context.setCookies(message.getCookie());
         context.setAttribute(AttributeKey.END_URL, message.getEndURL());
 
         Map<String, String> shares = TaskUtils.getTaskShares(message.getTaskId());
@@ -347,9 +347,7 @@ public class Collector {
                 taskMessage.getTask().setResultMessage(GsonUtils.toJson(taskMessage.getContext().getProcessorResult()));
             }
             // reset message result cookie
-            if (StringUtils.isNotBlank(ProcessorContextUtil.getCookieString(taskMessage.getContext()))) {
-                message.setCookie(ProcessorContextUtil.getCookieString(taskMessage.getContext()));
-            }
+            message.setCookie(taskMessage.getContext().getCookiesAsString());
             Map<String, Object> map = new HashMap<>();
             map.put("resultMsg", RedisUtils.hgetAll(RedisKeyPrefixEnum.TASK_RESULT.getRedisKey(taskMessage.getTaskId())));
             map.put("startMsg", message);

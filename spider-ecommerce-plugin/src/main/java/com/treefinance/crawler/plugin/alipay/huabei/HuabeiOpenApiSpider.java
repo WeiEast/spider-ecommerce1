@@ -25,7 +25,6 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
@@ -109,7 +108,7 @@ public class HuabeiOpenApiSpider extends AbstractClientPlugin {
         String appKey = "12574478";
         String data = "{\"redirectUrl\":\"https://huabei.alipay.com/wap/moonlight/sign.htm\",\"to\":\"alipay\"}";
         CloseableHttpClient httpClient = HttpHelper.customClient();
-        Map<String, String> cookieMap = ProcessorContextUtil.getCookieMap(PluginFactory.getProcessorContext());
+        Map<String, String> cookieMap = PluginFactory.getProcessorContext().getCookiesAsMap();
         logger.info("cookieMap{}", cookieMap);
         cookieStore = HttpHelper.createCookieStore(cookieMap, "taobao.com");
         try {

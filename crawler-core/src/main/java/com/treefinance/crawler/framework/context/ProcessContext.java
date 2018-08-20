@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public abstract class ProcessContext implements SpiderContext {
+public abstract class ProcessContext extends DefaultCookieStore implements SpiderContext {
 
     protected final Logger                      logger = LoggerFactory.getLogger(getClass());
 

@@ -37,20 +37,19 @@ public class Cookie implements Serializable {
     @SerializedName("username")
     private              String userName;
 
-    private              String cookie;
+    private              String cookies;
 
     public Cookie() {
         super();
     }
 
-    public Cookie(String cookie) {
-        this.cookie = cookie;
+    public Cookie(String cookies) {
+        this(null, cookies);
     }
 
-    public Cookie(String userName, String cookie) {
-        super();
+    public Cookie(String userName, String cookies) {
         this.userName = userName;
-        this.cookie = cookie;
+        this.cookies = cookies;
     }
 
     public String getUserName() {
@@ -61,22 +60,17 @@ public class Cookie implements Serializable {
         this.userName = userName;
     }
 
-    public String getCookie() {
-        return cookie;
+    public String getCookies() {
+        return cookies;
     }
 
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
+    public void setCookies(String cookies) {
+        this.cookies = cookies;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "Cookie [cookie=" + cookie + ", userName=" + userName + "]";
+        return "Cookie [cookies=" + cookies + ", userName=" + userName + "]";
     }
 
 }

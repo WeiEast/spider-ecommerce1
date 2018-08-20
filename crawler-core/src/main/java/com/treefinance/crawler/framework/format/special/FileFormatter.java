@@ -44,7 +44,7 @@ public class FileFormatter extends CommonFormatter<WrappedFile> {
         wrappedFile.setName(result != null ? result.toString() : file.getName());
 
         if (UrlUtils.isUrl(value)) {
-            String cookie = ProcessorContextUtil.getCookieString(processorContext);
+            String cookie = processorContext.getCookiesAsString();
             ProtocolInput input = new ProtocolInput().setUrl(value).setFollowRedirect(true).setCookie(cookie);
             wrappedFile.setInput(input);
             // set input async to get file while needed

@@ -24,12 +24,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.http.HttpHeadKey;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.StepEnum;
 import com.datatrees.spider.share.domain.http.Cookie;
+import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.http.Request;
-import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -370,8 +370,8 @@ public class TaskUtils {
     }
 
     public static void updateCookies(Long taskId, Map<String, String> newCookieMap) {
-        List<Cookie> cookies = TaskUtils.getCookies(taskId);
-        if (CollectionUtils.isNotEmpty(newCookieMap) && CollectionUtils.isNotEmpty(cookies)) {
+        List<Cookie> cookies;
+        if (CollectionUtils.isNotEmpty(newCookieMap) && CollectionUtils.isNotEmpty(cookies = TaskUtils.getCookies(taskId))) {
             for (Map.Entry<String, String> entry : newCookieMap.entrySet()) {
                 Cookie find = null;
                 for (Cookie cookie : cookies) {
@@ -389,8 +389,8 @@ public class TaskUtils {
                     find.setValue(entry.getValue());
                 }
             }
+            TaskUtils.saveCookie(taskId, cookies);
         }
-        TaskUtils.saveCookie(taskId, cookies);
     }
 
     /**

@@ -93,7 +93,7 @@ public class TaskHttpServiceImpl extends ServiceBase<TaskHttpService> {
         ProcessorContextUtil.addThreadLocalResponse(context, response);
 
         String cookieString = TaskUtils.getCookieString(taskId);
-        ProcessorContextUtil.setCookieString(context, cookieString);
+        context.setCookies(cookieString);
 
     }
 

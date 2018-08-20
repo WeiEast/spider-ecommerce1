@@ -20,11 +20,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.AlipayRecordPage;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -41,7 +40,7 @@ public class TransactionSpider extends BaseSpider {
         Objects.requireNonNull(getContext());
         Objects.requireNonNull(getPageProcessor());
 
-        String cookies = ProcessorContextUtil.getCookieString(getContext());
+        String cookies = getContext().getCookiesAsString();
         if (StringUtils.isEmpty(cookies)) {
             throw new UnexpectedException("Can not find the available cookie string when calling transaction spider!");
         }

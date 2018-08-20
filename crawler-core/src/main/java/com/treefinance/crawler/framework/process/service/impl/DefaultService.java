@@ -18,35 +18,35 @@ package com.treefinance.crawler.framework.process.service.impl;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.Map;
+import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.treefinance.crawler.framework.protocol.*;
-import com.treefinance.crawler.framework.protocol.ProtocolInput.CookieScope;
-import com.treefinance.crawler.framework.protocol.http.HttpResponse;
-import com.treefinance.crawler.framework.protocol.metadata.Metadata;
-import com.treefinance.crawler.framework.util.CookieFormater;
-import com.treefinance.crawler.framework.util.CookieParser;
-import com.treefinance.crawler.framework.config.xml.page.Page;
+import com.google.common.net.HttpHeaders;
 import com.treefinance.crawler.framework.config.enums.page.RetryMode;
+import com.treefinance.crawler.framework.config.xml.page.Page;
 import com.treefinance.crawler.framework.config.xml.properties.Properties;
 import com.treefinance.crawler.framework.config.xml.properties.cookie.AbstractCookie;
 import com.treefinance.crawler.framework.config.xml.properties.cookie.BaseCookie;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.consts.Status;
 import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.proxy.ProxyManager;
-import com.treefinance.crawler.framework.proxy.Proxy;
-import com.treefinance.crawler.framework.proxy.ProxyStatus;
-import com.treefinance.crawler.framework.process.service.ServiceBase;
-import com.google.common.net.HttpHeaders;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.service.ServiceBase;
+import com.treefinance.crawler.framework.protocol.*;
+import com.treefinance.crawler.framework.protocol.ProtocolInput.CookieScope;
+import com.treefinance.crawler.framework.protocol.http.HttpResponse;
+import com.treefinance.crawler.framework.protocol.metadata.Metadata;
+import com.treefinance.crawler.framework.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
+import com.treefinance.crawler.framework.proxy.ProxyStatus;
+import com.treefinance.crawler.framework.util.CookieParser;
 import com.treefinance.toolkit.util.Assert;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.lang3.ArrayUtils;
@@ -89,7 +89,7 @@ public class DefaultService extends ServiceBase {
         AbstractCookie cookie = context.getCookieConf();
         CookieScope scope = getCookieScope(cookie);
         input.setCookieScope(scope);
-        input.setCookie(ProcessorContextUtil.getCookieString(context));
+        input.setCookie(context.getCookiesAsString());
 
         Boolean coexist = cookie instanceof BaseCookie ? ((BaseCookie) cookie).getCoexist() : null;
         if (coexist != null) {
@@ -209,20 +209,20 @@ public class DefaultService extends ServiceBase {
             if (ArrayUtils.isNotEmpty(setCookies)) {
                 com.treefinance.crawler.framework.protocol.Response response = output.getResponse();
 
-                String cookieString = "";
                 if (response instanceof HttpResponse && BooleanUtils.isTrue(coexist)) {
+                    String cookieString = StringUtils.EMPTY;
                     HttpResponse httpResponse = (HttpResponse) response;
                     ProcessorContextUtil.setHttpState(context, httpResponse.getState());
                     if (httpResponse.getState() != null) {
                         cookieString = CookieParser.formatCookies(httpResponse.getState().getCookies());
                     }
+                    logger.info("Reset cookies: {}", cookieString);
+                    context.setCookies(cookieString);
                 } else {
-                    Map<String, String> cookieMap = ProcessorContextUtil.getCookieMap(context);
-                    cookieMap.putAll(CookieFormater.INSTANCE.parserCookietToMap(setCookies, scope.isRetainQuote()));
-                    cookieString = CookieFormater.INSTANCE.listToString(cookieMap);
+                    logger.info("Add set-cookies into store: {}", Arrays.stream(setCookies).collect(Collectors.joining(";")));
+                    context.addCookies(setCookies, scope.isRetainQuote());
                 }
-                logger.info("Reset cookies: {}", cookieString);
-                ProcessorContextUtil.setCookieString(context, cookieString);
+
             }
         }
     }

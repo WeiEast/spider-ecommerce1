@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
@@ -31,7 +30,7 @@ public class GetCTokenPlugin extends AbstractClientPlugin {
     @Override
     public String process(String... args) throws Exception {
         logger.info("获取ctoken插件--启动--成功");
-        String cookieString = ProcessorContextUtil.getCookieString(ProcessContextHolder.getProcessorContext());
+        String cookieString = ProcessContextHolder.getProcessorContext().getCookiesAsString();
         String ctoken = RegExp.group(cookieString,"ctoken=([^;]+);",1);
 
         logger.info("获取ctoken结果：{}", ctoken);

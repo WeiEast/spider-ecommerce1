@@ -21,16 +21,15 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.util.GsonUtils;
+import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.domain.directive.DirectiveEnum;
+import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveType;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.treefinance.crawler.framework.context.AbstractProcessorContext;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
-import com.datatrees.spider.share.domain.directive.DirectiveType;
-import com.datatrees.spider.share.domain.directive.DirectiveEnum;
-import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +85,7 @@ public abstract class AbstractGrabPlugin extends AbstractRawdataPlugin {
         }
         String cookeString = receiveDirective.getData().get("cookes");
         logger.info("get cookie success,taskId={},websiteName={},cookes={}", taskId, websiteName, cookeString);
-        ProcessorContextUtil.setCookieString(context, cookeString);
+        context.setCookies(cookeString);
         resultMap.put(PluginConstants.FIELD, receiveDirective.getData().get("html"));
         logger.info("get result success,taskId={},websiteName={},resultKey={}", taskId, websiteName, resultKey);
         return resultMap;

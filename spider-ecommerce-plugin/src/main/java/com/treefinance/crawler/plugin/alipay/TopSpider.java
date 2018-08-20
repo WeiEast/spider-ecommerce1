@@ -30,12 +30,11 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.treefinance.crawler.framework.proxy.ProxyManager;
-import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.SimplePage;
+import com.treefinance.crawler.framework.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
 import com.treefinance.crawler.plugin.util.HttpHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHeaders;
@@ -88,7 +87,7 @@ public abstract class TopSpider extends BaseSpider {
                 String cookieString = cookies.stream().map(cookie -> cookie.getName() + "=" + cookie.getValue()).collect(Collectors.joining(";"));
 
                 logger.info("Set new cookies >> {}", cookieString);
-                ProcessorContextUtil.setCookieString(getContext(), cookieString);
+                getContext().setCookies(cookieString);
             }
         }
     }
@@ -102,7 +101,7 @@ public abstract class TopSpider extends BaseSpider {
     }
 
     protected void init() {
-        Map<String, String> cookieMap = ProcessorContextUtil.getCookieMap(getContext());
+        Map<String, String> cookieMap = getContext().getCookiesAsMap();
         logger.info("cookieMap {}", cookieMap);
 
         this.cookieStore = HttpHelper.createCookieStore(cookieMap, "taobao.com");

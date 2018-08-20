@@ -426,14 +426,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return properties != null && (properties.getAllowCircularRedirects() == null || properties.getAllowCircularRedirects());
     }
 
-    public Integer getCaptchaCode() {
-        Properties properties = this.getSearchProperties();
-        if (properties != null) {
-            return properties.getCaptchaCode();
-        }
-        return null;
-    }
-
     public String getHttpClientType() {
         Properties properties = this.getSearchProperties();
         if (properties != null) {
@@ -470,9 +462,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
         return loginResource.getCookie(getLoginAccountKey());
     }
 
-    public void storeCookies() {
-        loginResource.putCookie(getLoginAccountKey(), ProcessorContextUtil.getCookieString(this));
-    }
 
     public Decoder getUnicodeDecoder() {
         UnicodeMode unicodeMode = this.getUnicodeMode();
@@ -480,5 +469,14 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             return DecoderFactory.getDecoder(unicodeMode);
         }
         return null;
+    }
+
+    @Override
+    public void setCookies(String cookies) {
+        if (getCookieConf() != null) {
+            super.setCookies(cookies, getCookieConf().getRetainQuote());
+        } else {
+            super.setCookies(cookies);
+        }
     }
 }

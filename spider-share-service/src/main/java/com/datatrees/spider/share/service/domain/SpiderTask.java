@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.datatrees.spider.share.domain.CollectorMessage;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.context.SearchProcessorContext;
 
 /**
@@ -63,10 +62,10 @@ public class SpiderTask {
     }
 
     /**
-     * @return the cookie
+     * @return the cookies
      */
-    public String getCookie() {
-        return ProcessorContextUtil.getCookieString(processorContext);
+    public String getCookies() {
+        return processorContext.getCookiesAsString();
     }
 
     /**

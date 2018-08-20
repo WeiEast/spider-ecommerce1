@@ -120,7 +120,7 @@ public class LoginUtil {
     @SuppressWarnings("unchecked")
     public boolean doLoginByCookies(LoginConfig config, SearchProcessorContext context) throws ResultEmptyException {
         try {
-            String cookie = ProcessorContextUtil.getCookieString(context);
+            String cookie = context.getCookiesAsString();
 
             if (StringUtils.isEmpty(cookie)) {
                 logger.warn("Empty cookies!");
@@ -197,7 +197,7 @@ public class LoginUtil {
                 return true;
             }
 
-            String cookie = ProcessorContextUtil.getCookieString(context);
+            String cookie = context.getCookiesAsString();
 
             return cookie != null && RegExp.find(cookie, successPattern);
         }

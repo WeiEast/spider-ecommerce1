@@ -26,7 +26,7 @@ import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public interface SpiderContext {
+public interface SpiderContext extends CookieStore {
 
     Map<String, AbstractPlugin> getPluginMetadataMap();
 

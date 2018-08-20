@@ -19,10 +19,9 @@ package com.treefinance.crawler.plugin.alipay;
 import java.io.IOException;
 import java.util.Map;
 
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.SimplePage;
+import com.treefinance.crawler.framework.proxy.Proxy;
 import com.treefinance.crawler.plugin.util.HttpHelper;
 import com.treefinance.crawler.plugin.util.HttpSender;
 import com.treefinance.toolkit.util.Preconditions;
@@ -51,7 +50,7 @@ public abstract class AppSpider extends BaseSpider {
     @Override
     public void run() throws InterruptedException {
         Preconditions.notNull("context", getContext());
-        Map<String, String> cookies = ProcessorContextUtil.getCookieMap(getContext());
+        Map<String, String> cookies = getContext().getCookiesAsMap();
         if (MapUtils.isEmpty(cookies)) {
             logger.warn("Warn! Warn! Warn! Cookies must not be empty!");
             return;

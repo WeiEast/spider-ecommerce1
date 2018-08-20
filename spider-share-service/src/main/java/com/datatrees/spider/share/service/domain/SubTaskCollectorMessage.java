@@ -33,7 +33,7 @@ public class SubTaskCollectorMessage extends CollectorMessage implements SubTask
     public SubTaskCollectorMessage(SpiderTask parentTask) {
         this.parentTaskId = parentTask.getProcessId();//taskLogId
         setTaskId(parentTask.getTaskId());
-        setCookie(parentTask.getCookie());
+        setCookie(parentTask.getCookies());
         CollectorMessage collectorMessage = parentTask.getCollectorMessage();
         setEndURL(collectorMessage.getEndURL());
         setNeedDuplicate(collectorMessage.isNeedDuplicate());

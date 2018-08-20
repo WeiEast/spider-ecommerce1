@@ -47,7 +47,7 @@ public enum Login {
                 if (result) {
                     logger.info("Cookie checking is pass ");
                     context.setLoginStatus(Status.SUCCEED);
-                    context.getLoginResource().putCookie(context.getLoginAccountKey(), ProcessorContextUtil.getCookieString(context));
+                    context.getLoginResource().putCookie(context.getLoginAccountKey(), context.getCookiesAsString());
                 } else {
                     logger.warn("Cookie checking is not pass ");
                     context.setLoginStatus(Status.FAILED);

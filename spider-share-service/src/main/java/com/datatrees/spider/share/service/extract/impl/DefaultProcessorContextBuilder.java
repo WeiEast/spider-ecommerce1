@@ -23,12 +23,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.spider.share.service.domain.SpiderTask;
-import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.WebsiteConfigService;
+import com.datatrees.spider.share.service.domain.ExtractMessage;
+import com.datatrees.spider.share.service.domain.SpiderTask;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,14 +77,10 @@ public class DefaultProcessorContextBuilder {
                 break;
         }
 
-        SpiderTask task = extractMessage.getTask();
-        if (context == null) {
-            return null;
-        }
-
-        ProcessorContextUtil.setCookieString(context, task.getCookie());
-        if (logger.isDebugEnabled()) {
-            logger.debug("Add cookies into extract context: {}", task.getCookie());
+        if (context != null) {
+            SpiderTask task = extractMessage.getTask();
+            context.copyCookies(task.getProcessorContext());
+            logger.debug("Copy cookies into extract context from search context: {}", task.getCookies());
         }
 
         return context;

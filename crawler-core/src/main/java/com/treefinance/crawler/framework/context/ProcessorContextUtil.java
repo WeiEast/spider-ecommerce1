@@ -17,18 +17,15 @@
 package com.treefinance.crawler.framework.context;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.treefinance.crawler.framework.util.CookieFormater;
-import com.treefinance.crawler.framework.login.Cookie;
-import com.treefinance.crawler.framework.login.WebsiteAccount;
 import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.login.Cookie;
+import com.treefinance.crawler.framework.login.WebsiteAccount;
 import org.apache.commons.httpclient.HttpState;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -38,27 +35,20 @@ import org.apache.commons.lang.StringUtils;
 public class ProcessorContextUtil {
 
     public static void setCookieString(AbstractProcessorContext context, String cookieString) {
-        if (StringUtils.isBlank(cookieString)) {
-            return;
-        }
-        context.setAttribute(Constants.COOKIE_STRING, cookieString);
-        boolean retainQuote = context instanceof SearchProcessorContext && ((SearchProcessorContext) context).getCookieConf() != null ? ((SearchProcessorContext) context).getCookieConf().getRetainQuote() : false;
-        Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookieString, retainQuote);
-        context.setAttribute(Constants.COOKIE, cookieMap);
+        context.setCookies(cookieString);
     }
 
     public static Map<String, String> getCookieMap(AbstractProcessorContext context) {
-        Map<String, String> cookieMap = (Map<String, String>) context.getAttribute(Constants.COOKIE);
-        return cookieMap == null ? new HashMap<String, String>() : cookieMap;
+        return context.getCookiesAsMap();
     }
 
     public static String getCookieString(AbstractProcessorContext context) {
-        return (String) context.getAttribute(Constants.COOKIE_STRING);
+        return context.getCookiesAsString();
     }
 
     public static void setCookieObject(AbstractProcessorContext context, Cookie cookie) {
         context.setAttribute(Constants.USERNAME, cookie.getUserName());
-        ProcessorContextUtil.setCookieString(context, cookie.getCookie());
+        context.setCookies(cookie.getCookies());
     }
 
     public static void setAccountKey(AbstractProcessorContext context, String accountKey) {
