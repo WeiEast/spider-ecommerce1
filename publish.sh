@@ -5,7 +5,7 @@ server_application="/dashu/application/$app_name"
 server_log_path="/dashu/log/$app_name"
 
 app_name="$app_name-share-main"
-server_ip="192.168.5.25"
+server_ip="192.168.5.12"
 server_port=22
 
 
