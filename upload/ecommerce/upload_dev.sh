@@ -1,5 +1,5 @@
 #!/bin/sh
-host="192.168.5.25:6789"
+host="192.168.5.12:6789"
 
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
