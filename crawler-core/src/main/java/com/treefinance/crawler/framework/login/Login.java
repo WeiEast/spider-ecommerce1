@@ -16,10 +16,9 @@
 
 package com.treefinance.crawler.framework.login;
 
-import com.treefinance.crawler.framework.config.xml.login.LoginConfig;
 import com.treefinance.crawler.framework.config.enums.LoginType;
+import com.treefinance.crawler.framework.config.xml.login.LoginConfig;
 import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,37 +31,35 @@ public enum Login {
     INSTANCE;
     private static final Logger logger = LoggerFactory.getLogger(Login.class);
 
-    public void doLogin(SearchProcessorContext context) throws Exception {
+    public Status doLogin(SearchProcessorContext context) throws Exception {
         if (context.needLogin()) {
             LoginConfig loginConfig = context.getLoginConfig();
             LoginType loginType = loginConfig.getType();
 
-            boolean result = LoginHandler.get(loginType).login(context);
+            boolean isSuccess = LoginHandler.get(loginType).login(context);
 
-            if (result) {
+            if (isSuccess) {
                 logger.info("Cookie checking is pass ");
-                context.setLoginStatus(Status.SUCCEED);
+                return Status.SUCCEED;
             } else if (loginType == LoginType.SERVER) {
-                result = LoginHandler.CLIENT_LOGIN.login(context);
-                if (result) {
+                isSuccess = LoginHandler.CLIENT_LOGIN.login(context);
+                if (isSuccess) {
                     logger.info("Cookie checking is pass ");
-                    context.setLoginStatus(Status.SUCCEED);
                     context.getLoginResource().putCookie(context.getLoginAccountKey(), context.getCookiesAsString());
-                } else {
-                    logger.warn("Cookie checking is not pass ");
-                    context.setLoginStatus(Status.FAILED);
+                    return Status.SUCCEED;
                 }
-            } else {
-                logger.warn("Cookie checking is not pass ");
-                context.setLoginStatus(Status.FAILED);
             }
-
+            logger.warn("Cookie checking is not pass ");
+            return Status.FAILED;
         }
+
+        return Status.NONE;
     }
 
     public enum Status {
         SUCCEED,
-        FAILED
+        FAILED,
+        NONE
     }
 
 }

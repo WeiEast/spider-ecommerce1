@@ -37,7 +37,6 @@ import com.treefinance.crawler.framework.decode.Decoder;
 import com.treefinance.crawler.framework.decode.DecoderFactory;
 import com.treefinance.crawler.framework.exception.NoProxyException;
 import com.treefinance.crawler.framework.login.Cookie;
-import com.treefinance.crawler.framework.login.Login;
 import com.treefinance.crawler.framework.login.LoginResource;
 import com.treefinance.crawler.framework.login.WebsiteAccount;
 import com.treefinance.crawler.framework.proxy.ProxyManager;
@@ -72,8 +71,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     private       Proxy                                                             proxyConf;
 
     private       AbstractCookie                                                    cookieConf;
-
-    private       Login.Status                                                      status;
 
     private       Map<String, String>                                               defaultHeader               = new HashMap<>();
 
@@ -156,20 +153,6 @@ public class SearchProcessorContext extends AbstractProcessorContext {
             //init proxy
             proxyConf = searchProperties.getProxy();
         }
-    }
-
-    /**
-     * @return the status
-     */
-    public Login.Status getLoginStatus() {
-        return status;
-    }
-
-    /**
-     * @param status the status to set
-     */
-    public void setLoginStatus(Login.Status status) {
-        this.status = status;
     }
 
     public AbstractCookie getCookieConf() {
@@ -353,7 +336,7 @@ public class SearchProcessorContext extends AbstractProcessorContext {
     }
 
     public boolean needLogin() {
-        return getLoginConfig() != null && getLoginConfig().getType() != LoginType.NONE && !loginCheckIgnore;
+        return !isLoginCheckIgnore() && getLoginConfig() != null && getLoginConfig().getType() != LoginType.NONE;
     }
 
     /**

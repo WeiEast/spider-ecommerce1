@@ -24,34 +24,34 @@ import akka.dispatch.Future;
 import akka.util.Timeout;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
-import com.treefinance.crawler.framework.config.xml.search.Request;
-import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
-import com.treefinance.crawler.framework.exception.ResponseCheckException;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.login.Login;
+import com.datatrees.spider.share.common.utils.DateUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.ExtractCode;
+import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
+import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.collector.search.CrawlExecutor;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.spider.share.service.collector.worker.filter.TemplateFilter;
-import com.datatrees.spider.share.common.utils.DateUtils;
 import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.extra.SubTaskManager;
-import com.datatrees.spider.share.domain.ExtractCode;
-import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
-import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.util.RedisKeyUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.search.Request;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.exception.ConfigException;
+import com.treefinance.crawler.framework.exception.ResponseCheckException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.spider.Spiders;
+import com.treefinance.crawler.framework.login.Login;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -115,8 +115,8 @@ public class CollectorWorker {
                 }
                 redisDao.pushMessage(keyString, keyString, interactiveTimeoutSeconds);
             }
-            Login.INSTANCE.doLogin(context);
-            if (!context.getLoginStatus().equals(Login.Status.SUCCEED)) {
+            Login.Status status = Login.INSTANCE.doLogin(context);
+            if (Login.Status.FAILED.equals(status)) {
                 LOGGER.warn("login fail taskId={},websiteName={} ", task.getTaskId(), task.getWebsiteName());
                 return loginResult.failure(ErrorCode.COOKIE_INVALID);
             }
