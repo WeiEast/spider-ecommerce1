@@ -77,8 +77,11 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         String sourceId = segment.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
-            logger.info("reset processing input with the given source for segment processor. segment: {}, sourceId: {}", segment.getName(), sourceId);
-            request.setInput(result != null ? result.toString() : null);
+            logger.info("reset processing input with the given source for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, result);
+            // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
+            if (result != null) {
+                request.setInput(result.toString());
+            }
         }
     }
 
