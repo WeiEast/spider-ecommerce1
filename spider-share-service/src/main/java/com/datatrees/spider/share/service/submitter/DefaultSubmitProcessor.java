@@ -57,7 +57,7 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
 
     @Override
     public boolean process(@Nonnull SubmitMessage submitMessage) {
-        logger.debug("start process submit task: {}", submitMessage);
+        logger.info("start submit task processing: {}", submitMessage);
         try {
             PageExtractObject pageExtractObject = submitMessage.getPageExtractObject();
             if (pageExtractObject == null || pageExtractObject.isEmpty()) {
@@ -69,13 +69,16 @@ public class DefaultSubmitProcessor implements SubmitProcessor {
 
             ExtractMessage extractMessage = submitMessage.getExtractMessage();
             for (Entry<String, Object> entry : pageExtractObject.entrySet()) {
-                if ("subSeed".equals(entry.getKey())) {
+                String key = entry.getKey();
+                if ("subSeed".equals(key)) {
                     startSubTask(extractMessage, entry);
                     continue;
                 }
 
                 String redisKey = saveExtractedObject(extractMessage, entry);
-                submitMessage.addSubmitKey(entry.getKey() + "Key", redisKey);
+
+                logger.info("add storage path: {}, key: {}", redisKey, key);
+                submitMessage.addSubmitKey(key + "Key", redisKey);
             }
 
             return true;

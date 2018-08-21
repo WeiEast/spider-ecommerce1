@@ -276,7 +276,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     do {
                         String pNumber = matcher.group(1);
                         try {
-                            int pNum = Integer.valueOf(pNumber);
+                            int pNum = Integer.parseInt(pNumber);
                             logger.info("add paging number: {},  match-text: {}", pNum, matcher.group());
                             String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, request.getGlobalScopeAsMap());
                             if (StringUtils.isNotEmpty(pageUrl)) {
@@ -406,7 +406,7 @@ public class PageImpl extends ProcessorInvokerAdapter {
             if (StringUtils.isNotEmpty(pageRegex)) {
                 String pidS = RegExp.group(current.getUrl(), pageRegex, 1);
 
-                int pNum = Integer.valueOf(pidS);
+                int pNum = Integer.parseInt(pidS);
 
                 logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
                 current.setpNum(pNum);

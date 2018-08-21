@@ -27,7 +27,6 @@ import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.spider.share.service.FileStoreService;
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.service.domain.SubmitMessage;
 import com.datatrees.spider.share.service.extra.UploadTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class FileStoreServiceImpl implements FileStoreService {
     @Override
     public void storeEviFile(String storePath, ExtractMessage extractMessage) {
         try {
-            LOGGER.info("store evidence file to oss by key: {}", storePath);
+            LOGGER.info("trigger upload task : {}", storePath);
             UploadTask task = new UploadTask(extractMessage, needUploadList, storePath);
 
             threadPool.submit(task);

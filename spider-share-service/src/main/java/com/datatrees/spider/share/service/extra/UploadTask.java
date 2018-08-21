@@ -56,7 +56,7 @@ public class UploadTask implements Runnable {
                 byte[] data = ZipCompressUtils.compress(uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, data);
-                LOGGER.debug("upload task completed! pid: {}, ossKey: {}", extractMessage.getProcessId(), ossKey);
+                LOGGER.info("upload task completed! pid: {}, ossKey: {}", extractMessage.getProcessId(), ossKey);
             } else {
                 LOGGER.info("no need to upload file for message: {}", extractMessage);
             }
