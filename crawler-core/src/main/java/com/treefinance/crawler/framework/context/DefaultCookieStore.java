@@ -77,7 +77,8 @@ public class DefaultCookieStore implements CookieStore {
 
     @Override
     public void setCookies(@Nullable String cookies, boolean retainQuote) {
-        setCookies(cookies);
+        this.cookies = StringUtils.trimToEmpty(cookies);
+        this.store = null;
         this.retainQuote = retainQuote;
     }
 
