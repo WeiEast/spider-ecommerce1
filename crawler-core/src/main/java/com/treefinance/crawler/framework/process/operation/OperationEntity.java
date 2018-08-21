@@ -93,7 +93,7 @@ public class OperationEntity implements Serializable {
 
     @Override
     public String toString() {
-        String msg = "Source: " + source + "\nLastData: " + lastData + "\nData: " + data + "\nLast operation: " + lastOperation;
+        String msg = "Source: " + source + "\nLastData: " + lastData + "\nData: " + data + "\nLast operation: " + JSON.toJSONString(lastOperation);
 
         if (CollectionUtils.isNotEmpty(undoOperations)) {
             return msg + "\nSkipped operations: " + JSON.toJSONString(undoOperations);

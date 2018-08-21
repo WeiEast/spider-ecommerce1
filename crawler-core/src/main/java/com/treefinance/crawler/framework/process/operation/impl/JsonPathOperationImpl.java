@@ -18,17 +18,17 @@ package com.treefinance.crawler.framework.process.operation.impl;
 
 import javax.annotation.Nonnull;
 
-import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
-import com.treefinance.crawler.framework.config.xml.operation.JsonPathOperation;
-import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.treefinance.crawler.framework.config.xml.operation.JsonPathOperation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidDataException;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.process.operation.Operation;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -69,9 +69,9 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
         try {
             result = JsonPathUtil.readAsString(input, jsonpath);
         } catch (InvalidJsonException e) {
-            throw new InvalidDataException("Invalid operating data! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
+            throw new InvalidDataException("Invalid operating json string! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
         } catch (InvalidPathException e) {
-            throw new InvalidOperationException("Incorrect jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath, e);
+            throw new InvalidOperationException("Incorrect jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
         } catch (Exception e) {
             throw new InvalidOperationException("Error parsing with jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
         }

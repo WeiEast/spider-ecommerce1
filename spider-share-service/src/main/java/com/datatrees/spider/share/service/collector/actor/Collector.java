@@ -65,6 +65,7 @@ import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.context.ProcessorResult;
 import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.toolkit.util.Preconditions;
+import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -172,6 +173,7 @@ public class Collector {
 
         Map<String, String> shares = TaskUtils.getTaskShares(message.getTaskId());
         if (null != shares && !shares.isEmpty()) {
+            logger.info("Add shared fields into context attributes: {}", Jackson.toJSONString(shares));
             shares.forEach(context::setAttribute);
         }
 

@@ -91,6 +91,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
     }
 
     public void setAttribute(String name, Object value) {
+        logger.debug("add context attribute >> {} : {}", name, value);
         if (value == null) {
             getContext().remove(name);
         } else {
