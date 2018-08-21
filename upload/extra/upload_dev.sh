@@ -3,14 +3,14 @@ host="192.168.5.12:60666"
 
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
-list=`find spider-bank-plugin/build/libs/spider-bank-plugin.jar -name '*.jar' | grep -v 'sources'`
+list=`find spider-extra-plugin/build/libs/spider-extra-plugin.jar -name '*.jar' | grep -v 'sources'`
 for file in $list
 do
     curl  -F "file=@$file" $url
-    curl  -F "file=@$file;fileName=spider-bank-plugin-$HOSTNAME.jar" $url
+    curl  -F "file=@$file;fileName=spider-extra-plugin-$HOSTNAME.jar" $url
 done
 
-list=`find spider-bank-plugin/src/main/resources -name '*.js'`
+list=`find spider-extra-plugin/src/main/resources -name '*.js'`
 for file in $list
 do
    parent_name=`dirname $file`

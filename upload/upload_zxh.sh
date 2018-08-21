@@ -1,5 +1,5 @@
 #!/bin/sh
-host="192.168.5.15:6789"
+host="192.168.5.15:60666"
 
 
 url="http://$host/website/uploadPluginJar"

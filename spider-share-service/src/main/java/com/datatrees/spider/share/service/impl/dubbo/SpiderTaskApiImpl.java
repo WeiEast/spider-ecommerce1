@@ -18,7 +18,9 @@ package com.datatrees.spider.share.service.impl.dubbo;
 
 import javax.annotation.Resource;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.zookeeper.ZooKeeperClient;
@@ -34,8 +36,10 @@ import com.datatrees.spider.share.domain.directive.DirectiveResult;
 import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.TaskService;
+import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -45,22 +49,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class SpiderTaskApiImpl implements SpiderTaskApi {
 
-    private static final Logger          logger = LoggerFactory.getLogger(SpiderTaskApiImpl.class);
+    private static final Logger               logger = LoggerFactory.getLogger(SpiderTaskApiImpl.class);
 
     @Resource
-    private              TaskService     taskService;
+    private              TaskService          taskService;
 
     @Resource
-    private              RedisService    redisService;
+    private              RedisService         redisService;
 
     @Resource
-    private              ProxyService    proxyService;
+    private              ProxyService         proxyService;
 
     @Resource
-    private              ZooKeeperClient zooKeeperClient;
+    private              ZooKeeperClient      zooKeeperClient;
 
     @Resource
-    private              MonitorService  monitorService;
+    private              MonitorService       monitorService;
+
+    @Resource
+    private              WebsiteConfigService websiteConfigService;
 
     @Override
     public Task getByTaskId(Long taskId) {
@@ -182,4 +189,32 @@ public class SpiderTaskApiImpl implements SpiderTaskApi {
     public ProcessResult queryProcessResult(long processId) {
         return ProcessResultUtils.queryProcessResult(processId);
     }
+
+    @Override
+    public HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra) {
+        HttpResult<String> result = new HttpResult<>();
+        try {
+            if (taskId <= 0 || StringUtils.isBlank(directiveId)) {
+                logger.warn("verifyQr invalid param taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            DirectiveResult<String> directiveResult = redisService.getDirectiveResult(directiveId, 2, TimeUnit.SECONDS);
+            if (null == directiveResult) {
+                logger.warn("verifyQr timeout taskId={},directiveId={}", taskId, directiveId);
+                return result.success(DirectiveRedisCode.FAILED);
+            }
+            TimeUnit.MILLISECONDS.sleep(500);//不能让前端一直轮询
+            logger.info("verifyQr result taskId={},directiveId={},qrStatus={}", taskId, directiveId, directiveResult.getStatus());
+            return result.success(directiveResult.getStatus());
+        } catch (Exception e) {
+            logger.error("verifyQr error taskId={},directiveId={}", taskId, directiveId);
+            return result.success(DirectiveRedisCode.FAILED);
+        }
+    }
+
+    @Override
+    public List<WebsiteConf> getWebsiteConf(List<String> websiteNameList) {
+        return websiteConfigService.getWebsiteConf(websiteNameList);
+    }
+
 }

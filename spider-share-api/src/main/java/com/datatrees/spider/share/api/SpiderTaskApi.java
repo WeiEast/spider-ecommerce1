@@ -16,11 +16,13 @@
 
 package com.datatrees.spider.share.api;
 
+import java.util.List;
 import java.util.Map;
 
 import com.datatrees.spider.share.domain.ProcessResult;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
+import com.datatrees.spider.share.domain.model.WebsiteConf;
 
 /**
  * 对外Task服务
@@ -77,11 +79,29 @@ public interface SpiderTaskApi {
      */
     HttpResult<Boolean> cancel(long taskId, Map<String, String> extra);
 
-
     /**
      * 查询处理结果
      * @param processId 处理号
      * @return
      */
     ProcessResult queryProcessResult(long processId);
+
+    /**
+     * 爬取过程中,向APP端弹出二维码,前端扫描和确认,将这个动作告诉插件,后端调用相关接口校验是否是一件扫描或者确认
+     * 这个一般支付宝或者淘宝用
+     * APP弹出二维码后就不断verifyQr,APP是不知道用户是否扫码过,所以要不断轮询
+     * 二维码状态:
+     * WAITTING:继续verifyQr
+     * SCANNED:已经扫码,继续verifyQr
+     * FAILED:验证失败,结束verifyQr,等待任务结束或者下一条指令
+     * SUCCESS:验证失败,结束verifyQr,等待任务结束或者下一条指令
+     * @param directiveId 指令ID
+     * @param taskId      网关任务id
+     * @param extra       附加信息,目前null
+     * @return
+     */
+    HttpResult<String> verifyQr(String directiveId, long taskId, Map<String, String> extra);
+
+    List<WebsiteConf> getWebsiteConf(List<String> websiteNameList);
+
 }

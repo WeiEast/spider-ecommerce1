@@ -1,3 +1,4 @@
+version=""
 dependencies {
     compile project(':spider-extra-service')
 }
