@@ -37,8 +37,12 @@ public class EducationApiImpl implements EducationApi {
     @Resource
     private              MessageService      messageService;
 
+
+    private static final String WEBSITE_NAME = "chsi.com.cn";
+
     @Override
     public HttpResult<Object> loginInit(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -60,6 +64,7 @@ public class EducationApiImpl implements EducationApi {
 
     @Override
     public HttpResult<Object> loginSubmit(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getUsername() == null || param.getPassword() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -86,6 +91,7 @@ public class EducationApiImpl implements EducationApi {
 
     @Override
     public HttpResult<Object> registerInit(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -103,6 +109,7 @@ public class EducationApiImpl implements EducationApi {
 
     @Override
     public HttpResult<Object> registerRefeshPicCode(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -120,6 +127,7 @@ public class EducationApiImpl implements EducationApi {
 
     @Override
     public HttpResult<Object> registerValidatePicCodeAndSendSmsCode(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getPicCode() == null || param.getMobile() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
         }
@@ -137,6 +145,7 @@ public class EducationApiImpl implements EducationApi {
 
     @Override
     public HttpResult<Object> registerSubmit(CommonPluginParam param) {
+        param.setWebsiteName(WEBSITE_NAME);
         if (param.getTaskId() == null || param.getWebsiteName() == null || param.getMobile() == null || param.getSmsCode() == null ||
                 param.getPassword() == null || param.getRealName() == null || param.getIdCard() == null || param.getIdCardType() == null) {
             throw new RuntimeException(ErrorCode.PARAM_ERROR.getErrorMsg());
