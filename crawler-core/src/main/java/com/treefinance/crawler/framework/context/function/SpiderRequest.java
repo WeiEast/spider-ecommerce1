@@ -49,8 +49,8 @@ public interface SpiderRequest extends Attributes, RequestMetadata, FieldScopeAc
             req.addAttributes(this.getAttributes());
             req.setProcessorContext(this.getProcessorContext());
             req.setConfiguration(this.getConfiguration());
-            req.setExtra(this.getExtra());
-            req.setVisibleScope(this.getVisibleScope());
+            req.addExtra(this.getExtra());
+            req.addVisibleScope(this.getVisibleScope());
             req.setInput(input);
             return req;
         } catch (InstantiationException | IllegalAccessException e) {

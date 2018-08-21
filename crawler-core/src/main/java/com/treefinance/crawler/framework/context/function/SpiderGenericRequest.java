@@ -24,7 +24,6 @@ import java.util.function.Function;
 
 import com.datatrees.common.conf.Configuration;
 import com.treefinance.crawler.framework.context.AbstractProcessorContext;
-import com.google.common.collect.ImmutableMap;
 import com.treefinance.crawler.lang.AtomicAttributes;
 import org.apache.commons.collections4.MapUtils;
 
@@ -94,18 +93,13 @@ public class SpiderGenericRequest extends AtomicAttributes implements SpiderRequ
 
     @Override
     public void setExtra(Map<String, Object> extra) {
-        if (extra instanceof ImmutableMap || extra != null && extra.getClass().getSimpleName().equals("UnmodifiableMap")) {
-            if (extra.isEmpty()) {
-                if (MapUtils.isNotEmpty(this.extra)) {
-                    this.extra.clear();
-                }
-            } else {
-                this.extra = new HashMap<>(extra);
+        if (MapUtils.isEmpty(extra)) {
+            if (MapUtils.isNotEmpty(this.extra)) {
+                this.extra.clear();
             }
-            return;
+        } else {
+            this.extra = new HashMap<>(extra);
         }
-
-        this.extra = extra;
     }
 
     @Override
@@ -168,18 +162,13 @@ public class SpiderGenericRequest extends AtomicAttributes implements SpiderRequ
 
     @Override
     public void setVisibleScope(Map<String, Object> visibleScope) {
-        if (visibleScope instanceof ImmutableMap || visibleScope != null && visibleScope.getClass().getSimpleName().equals("UnmodifiableMap")) {
-            if (visibleScope.isEmpty()) {
-                if (MapUtils.isNotEmpty(this.visibleScope)) {
-                    this.visibleScope.clear();
-                }
-            } else {
-                this.visibleScope = new HashMap<>(visibleScope);
+        if (MapUtils.isEmpty(visibleScope)) {
+            if (MapUtils.isNotEmpty(this.visibleScope)) {
+                this.visibleScope.clear();
             }
-            return;
+        } else {
+            this.visibleScope = new HashMap<>(visibleScope);
         }
-
-        this.visibleScope = visibleScope;
     }
 
     @Override
