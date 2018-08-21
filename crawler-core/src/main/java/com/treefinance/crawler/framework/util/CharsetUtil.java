@@ -65,10 +65,6 @@ public final class CharsetUtil {
             }
         }
 
-        if (charset == null) {
-            LOGGER.warn("Can not find charset '{}' or default '{}'.", charsetName, defaultCharset);
-        }
-
         return charset;
     }
 

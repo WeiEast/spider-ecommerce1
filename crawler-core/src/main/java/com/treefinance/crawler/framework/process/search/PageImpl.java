@@ -26,32 +26,33 @@ import com.datatrees.common.conf.Configuration;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.URLUtil;
-import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.google.common.base.Preconditions;
 import com.treefinance.crawler.framework.config.enums.url.FilterType;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
 import com.treefinance.crawler.framework.config.xml.filter.UrlFilter;
+import com.treefinance.crawler.framework.config.xml.page.Page;
 import com.treefinance.crawler.framework.config.xml.page.Regexp;
 import com.treefinance.crawler.framework.config.xml.page.Replacement;
-import com.treefinance.crawler.framework.config.xml.page.Page;
 import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
 import com.treefinance.crawler.framework.config.xml.segment.AbstractSegment;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.consts.Status;
 import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
-import com.google.common.base.Preconditions;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorInvokerAdapter;
 import com.treefinance.crawler.framework.decode.DecodeUtil;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.parser.HTMLParser;
 import com.treefinance.crawler.framework.process.PageHelper;
 import com.treefinance.crawler.framework.process.ProcessorFactory;
 import com.treefinance.crawler.framework.process.SpiderRequestHelper;
 import com.treefinance.crawler.framework.process.SpiderResponseHelper;
+import com.treefinance.crawler.framework.process.domain.ClassifiedExtractResult;
 import com.treefinance.crawler.framework.process.domain.PageExtractObject;
 import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.util.URLSplitter;
@@ -339,16 +340,10 @@ public class PageImpl extends ProcessorInvokerAdapter {
             }
         }
 
-        Map<String, LinkNode> linkNodes = new HashMap<>();
-        List<Object> instanceList = new ArrayList<>();
-        Collection<Object> segmentResult = extractObject.values();
-        for (Object obj : segmentResult) {
-            if (obj instanceof LinkNode) {
-                linkNodes.put(((LinkNode) obj).getUrl(), (LinkNode) obj);
-            } else {
-                instanceList.add(obj);
-            }
-        }
+        ClassifiedExtractResult extractResult = new ClassifiedExtractResult(extractObject);
+
+        Map<String, LinkNode> linkNodes = extractResult.getLinkNodes();
+        List<Object> instanceList = extractResult.getSegments();
 
         if (mergedContent != null && mergedContent.length() > 0) {
             String content = mergedContent.toString();

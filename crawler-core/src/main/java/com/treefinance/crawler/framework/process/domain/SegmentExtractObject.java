@@ -95,7 +95,7 @@ public class SegmentExtractObject extends HashMap<String, Object> implements Ext
     @Override
     public void setFieldExtractValue(String fieldName, Object fieldValue) {
         Object value;
-        if (fieldValue instanceof ExtractObject && ((ExtractObject) fieldValue).isFlatField()) {
+        if (isFlatExtractObject(fieldValue)) {
             value = ((ExtractObject) fieldValue).getFlatFieldValue();
         } else {
             value = fieldValue;
@@ -110,23 +110,36 @@ public class SegmentExtractObject extends HashMap<String, Object> implements Ext
             if (oldValue == null) {
                 return value;
             } else if (oldValue instanceof Collection) {
-                if (value instanceof Collection) {
-                    ((Collection) oldValue).addAll((Collection) value);
-                } else {
-                    ((Collection) oldValue).add(value);
-                }
+                merge((Collection) oldValue, value);
+
                 return oldValue;
             } else {
                 List<Object> newValue = new ArrayList<>();
                 newValue.add(oldValue);
-                if (value instanceof Collection) {
-                    newValue.addAll((Collection) value);
-                } else {
-                    newValue.add(value);
-                }
+
+                merge(newValue, value);
+
                 return newValue;
             }
         });
+    }
+
+    private boolean isFlatExtractObject(Object obj) {
+        return obj instanceof ExtractObject && ((ExtractObject) obj).isFlatField();
+    }
+
+    private void merge(Collection<Object> newValue, Object value) {
+        if (value instanceof Collection) {
+            for (Object obj : (Collection) value) {
+                if (isFlatExtractObject(obj)) {
+                    newValue.add(((ExtractObject) obj).getFlatFieldValue());
+                } else {
+                    newValue.add(obj);
+                }
+            }
+        } else {
+            newValue.add(value);
+        }
     }
 
     @Override

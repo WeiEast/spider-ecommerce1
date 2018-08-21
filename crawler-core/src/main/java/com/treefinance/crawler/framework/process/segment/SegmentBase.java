@@ -266,7 +266,8 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                                 addLinkNodes(resultList, object, baseURL, current.getUrl());
                             }
                         }
-                    } else {
+                        return;
+                    } else if (resultClass.contains(".")) {
                         Class<?> clazz = Class.forName(resultClass);
                         Object instance = clazz.newInstance();
 
@@ -284,10 +285,10 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
                             }
                         }
                         resultList.add(object.withFlatField(instance));
+                        return;
                     }
-                    return;
                 } catch (ClassNotFoundException e) {
-                    logger.warn("Invalid segment result class: {}", resultClass, e);
+                    logger.warn("Can not recognize segment result class: {}", resultClass);
                 } catch (Exception e) {
                     logger.error("{} convert to {} error.", extractObject, resultClass, e);
                 }
