@@ -19,29 +19,24 @@ package com.treefinance.crawler.framework.login;
 import java.util.List;
 import java.util.Map;
 
-import com.treefinance.crawler.framework.protocol.ProtocolOutput;
-import com.treefinance.crawler.framework.protocol.metadata.Metadata;
-import com.treefinance.crawler.framework.util.CookieFormater;
 import com.datatrees.common.util.GsonUtils;
+import com.google.common.net.HttpHeaders;
 import com.treefinance.crawler.framework.config.xml.login.LoginCheckConfig;
 import com.treefinance.crawler.framework.config.xml.login.LoginConfig;
 import com.treefinance.crawler.framework.config.xml.segment.AbstractSegment;
 import com.treefinance.crawler.framework.config.xml.service.AbstractService;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.function.LinkNode;
-import com.treefinance.crawler.framework.context.ProcessorContextUtil;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
-import com.google.common.net.HttpHeaders;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderRequestFactory;
-import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.*;
 import com.treefinance.crawler.framework.context.pipeline.InvokeException;
 import com.treefinance.crawler.framework.decode.DecodeUtil;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.process.ProcessorFactory;
 import com.treefinance.crawler.framework.process.segment.SegmentBase;
+import com.treefinance.crawler.framework.protocol.ProtocolOutput;
+import com.treefinance.crawler.framework.protocol.metadata.Metadata;
+import com.treefinance.crawler.framework.util.CookieFormater;
 import com.treefinance.crawler.framework.util.ServiceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections.CollectionUtils;
@@ -111,7 +106,7 @@ public class LoginUtil {
     /**
      * do login action with the given cookie.
      * <p>
-     * Note: The cookie string is contained in {@link SearchProcessorContext#getContext()}
+     * Note: The cookie string is contained in {@link SearchProcessorContext}
      * </p>
      * @param config  the login config
      * @param context the search context

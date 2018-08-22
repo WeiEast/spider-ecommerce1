@@ -39,8 +39,6 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     protected final Long                            taskId;
 
-    protected       Map<String, Object>             context;
-
     private final   Map<String, Object>             statusContext;
 
     private final   Map<Thread, Object>             threadContext;
@@ -50,7 +48,6 @@ public abstract class AbstractProcessorContext extends ProcessContext {
     public AbstractProcessorContext(Website website, Long taskId) {
         super(website);
         this.taskId = taskId;
-        this.context = new SynchronizedMap<>();
         this.statusContext = new SynchronizedMap<>();
         this.threadContext = new SynchronizedMap<>();
         this.processorResult = new ProcessorResult<>();
@@ -60,49 +57,6 @@ public abstract class AbstractProcessorContext extends ProcessContext {
 
     public Long getTaskId() {
         return taskId;
-    }
-
-    /**
-     * @return the context
-     */
-    public Map<String, Object> getContext() {
-        return context;
-    }
-
-    public void setContext(Map<String, Object> context) {
-        if (context == null) {
-            getContext().clear();
-        } else {
-            this.context = new SynchronizedMap<>(context);
-        }
-    }
-
-    /**
-     * the shared fields map with the global context scope.
-     * @return the unmodifiable map.
-     * @see #getContext()
-     */
-    public Map<String, Object> getVisibleScope() {
-        return Collections.unmodifiableMap(context);
-    }
-
-    public Object getAttribute(String name) {
-        return getContext().get(name);
-    }
-
-    public void setAttribute(String name, Object value) {
-        logger.debug("add context attribute >> {} : {}", name, value);
-        if (value == null) {
-            getContext().remove(name);
-        } else {
-            getContext().put(name, value);
-        }
-    }
-
-    public void addAttributes(Map<String, Object> attributes) {
-        if (attributes != null) {
-            getContext().putAll(attributes);
-        }
     }
 
     /**

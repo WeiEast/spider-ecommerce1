@@ -17,6 +17,8 @@
 package com.treefinance.crawler.framework.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,7 +27,9 @@ import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
 import com.treefinance.crawler.framework.config.xml.properties.Properties;
 import com.treefinance.crawler.framework.config.xml.service.AbstractService;
 import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
+import com.treefinance.crawler.lang.SynchronizedMap;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -43,13 +47,16 @@ public abstract class ProcessContext extends DefaultCookieStore implements Spide
 
     private final   Website                     website;
 
-    private final   Map<String, AbstractPlugin> pluginMetadataMap;
+    private final Map<String, AbstractPlugin> pluginMetadataMap;
 
-    private         PluginManager               pluginManager;
+    private Map<String, Object> attributes;
+
+    private PluginManager pluginManager;
 
     public ProcessContext(@Nonnull final Website website) {
         Preconditions.notNull("website", website);
         this.website = website;
+        this.attributes = new SynchronizedMap<>();
         this.pluginMetadataMap = new ConcurrentHashMap<>();
     }
 
@@ -98,6 +105,89 @@ public abstract class ProcessContext extends DefaultCookieStore implements Spide
     @Override
     public AbstractPlugin getPluginMetadataById(@Nonnull String pluginId) {
         return pluginMetadataMap.get(pluginId);
+    }
+
+    @Override
+    public void setCookies(String cookies) {
+        super.setCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void setCookies(@Nullable String cookies, boolean retainQuote) {
+        super.setCookies(cookies, retainQuote);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void setCookies(Map<String, String> cookies) {
+        super.setCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void addCookies(Map<String, String> cookies) {
+        super.addCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void addCookies(@Nullable String[] cookies, boolean retainQuote) {
+        super.addCookies(cookies, retainQuote);
+        updateCookiesInAttributes();
+    }
+
+    private void updateCookiesInAttributes() {
+        setAttribute(Constants.COOKIE, this.getCookiesAsMap());
+        setAttribute(Constants.COOKIE_STRING, this.getCookiesAsString());
+    }
+
+    /**
+     * @return the context
+     */
+    @Deprecated
+    public Map<String, Object> getContext() {
+        return getAttributes();
+    }
+
+    /**
+     * the shared fields map with the global context scope.
+     * @return the unmodifiable map.
+     * @see #getAttributes()
+     */
+    public Map<String, Object> getVisibleScope() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    protected Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        if (attributes == null) {
+            getAttributes().clear();
+        } else {
+            this.attributes = new SynchronizedMap<>(attributes);
+        }
+    }
+
+    public Object getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
+    public void setAttribute(String name, Object value) {
+        logger.debug("add context attribute >> {} : {}", name, value);
+        if (value == null) {
+            getAttributes().remove(name);
+        } else {
+            getAttributes().put(name, value);
+        }
+    }
+
+    public void addAttributes(Map<String, Object> attributes) {
+        if (attributes != null) {
+            getAttributes().putAll(attributes);
+        }
     }
 
     public PluginManager getPluginManager() {
