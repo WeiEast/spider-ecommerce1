@@ -109,42 +109,46 @@ public class SegmentExtractObject extends HashMap<String, Object> implements Ext
         compute(fieldName, (key, oldValue) -> {
             if (oldValue == null) {
                 if (value instanceof Collection) {
-                    Collection<Object> newValue = new ArrayList<>();
-                    merge(newValue, value);
+                    Collection<Object> newValue = new ArrayList<>(((Collection) value).size());
+                    add(newValue, (Collection) value);
                     return newValue;
                 }
                 return value;
             } else if (oldValue instanceof Collection) {
-                merge((Collection) oldValue, value);
+                if (value instanceof Collection) {
+                    add((Collection) oldValue, (Collection) value);
+                } else {
+                    ((Collection) oldValue).add(value);
+                }
 
                 return oldValue;
-            } else {
-                Collection<Object> newValue = new ArrayList<>();
+            } else if (value instanceof Collection) {
+                Collection<Object> newValue = new ArrayList<>(((Collection) value).size()+1);
                 newValue.add(oldValue);
+                add(newValue, (Collection) value);
 
-                merge(newValue, value);
-
+                return newValue;
+            } else {
+                Collection<Object> newValue = new ArrayList<>(2);
+                newValue.add(oldValue);
+                newValue.add(value);
                 return newValue;
             }
         });
     }
 
-    private boolean isFlatExtractObject(Object obj) {
-        return obj instanceof ExtractObject && ((ExtractObject) obj).isFlatField();
+    public void add(Collection<Object> container, Collection value) {
+        for (Object obj : value) {
+            if (isFlatExtractObject(obj)) {
+                container.add(((ExtractObject) obj).getFlatFieldValue());
+            } else {
+                container.add(obj);
+            }
+        }
     }
 
-    private void merge(Collection<Object> newValue, Object value) {
-        if (value instanceof Collection) {
-            for (Object obj : (Collection) value) {
-                if (isFlatExtractObject(obj)) {
-                    newValue.add(((ExtractObject) obj).getFlatFieldValue());
-                } else {
-                    newValue.add(obj);
-                }
-            }
-        } else {
-            newValue.add(value);
-        }
+    private boolean isFlatExtractObject(Object obj) {
+        return obj instanceof ExtractObject && ((ExtractObject) obj).isFlatField();
     }
 
     @Override
