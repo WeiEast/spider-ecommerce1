@@ -108,13 +108,18 @@ public class SegmentExtractObject extends HashMap<String, Object> implements Ext
 
         compute(fieldName, (key, oldValue) -> {
             if (oldValue == null) {
+                if (value instanceof Collection) {
+                    Collection<Object> newValue = new ArrayList<>();
+                    merge(newValue, value);
+                    return newValue;
+                }
                 return value;
             } else if (oldValue instanceof Collection) {
                 merge((Collection) oldValue, value);
 
                 return oldValue;
             } else {
-                List<Object> newValue = new ArrayList<>();
+                Collection<Object> newValue = new ArrayList<>();
                 newValue.add(oldValue);
 
                 merge(newValue, value);
