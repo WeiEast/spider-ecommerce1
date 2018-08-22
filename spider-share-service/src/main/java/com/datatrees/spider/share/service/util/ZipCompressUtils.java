@@ -27,7 +27,7 @@ public class ZipCompressUtils {
 
         File zipFile = new File(zipPathName);
 
-        try (OutputStream output = new FileOutputStream(zipFile); CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
+        try (ZipOutputStream out = new ZipOutputStream(new CheckedOutputStream(new FileOutputStream(zipFile), new CRC32()))) {
             compress(file, out, StringUtils.EMPTY);
         } catch (IOException e) {
             throw new UncheckedIOException("Error compressing file with zip.", e);
@@ -63,22 +63,18 @@ public class ZipCompressUtils {
 
     public static byte[] compress(Map<String, SubmitFile> compressFileMap) {
         logger.debug("start compressing file: {}", compressFileMap.keySet());
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
 
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream(); CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
-            for (Entry<String, SubmitFile> entry : compressFileMap.entrySet()) {
-                compress(out, entry);
-            }
-            return output.toByteArray();
-        } catch (IOException e) {
-            throw new UncheckedIOException("Error compressing file with zip.", e);
-        }
+        compress(output, compressFileMap);
+
+        return output.toByteArray();
     }
 
 
     public static void compress(OutputStream output, Map<String, SubmitFile> compressFileMap) {
         logger.debug("start compressing file: {}", compressFileMap.keySet());
 
-        try (CheckedOutputStream cos = new CheckedOutputStream(output, new CRC32()); ZipOutputStream out = new ZipOutputStream(cos)) {
+        try (ZipOutputStream out = new ZipOutputStream(new CheckedOutputStream(output, new CRC32()))) {
             for (Entry<String, SubmitFile> entry : compressFileMap.entrySet()) {
                 compress(out, entry);
             }
@@ -103,4 +99,5 @@ public class ZipCompressUtils {
             Streams.write(bis, out);
         }
     }
+
 }
