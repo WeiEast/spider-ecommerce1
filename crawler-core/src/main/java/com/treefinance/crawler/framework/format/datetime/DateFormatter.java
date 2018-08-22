@@ -17,6 +17,7 @@
 package com.treefinance.crawler.framework.format.datetime;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +58,10 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
 
         String separator = getConf().get("DEFAULT_DATE_PATTERN_SEPARATOR", ";");
         String[] patterns = actualPattern.split(separator);
+        if (patterns.length > 1) {
+            patterns = Arrays.stream(patterns).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).toArray(String[]::new);
+        }
+
         DateTimeFormats dateTimeFormats = config.getDateTimeFormats();
         DateTime dateTime;
         for (String pattern : patterns) {
