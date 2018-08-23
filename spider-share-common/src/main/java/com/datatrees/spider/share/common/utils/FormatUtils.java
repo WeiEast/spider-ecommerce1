@@ -95,7 +95,7 @@ public class FormatUtils {
                 continue;
             }
 
-            template = template.replaceAll(replace, value.toString());
+            template = template.replaceAll(replace, Matcher.quoteReplacement(value.toString()));
         }
         return template;
     }

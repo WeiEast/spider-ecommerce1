@@ -17,6 +17,7 @@
 package com.treefinance.crawler.framework.process;
 
 import java.util.List;
+import java.util.regex.Matcher;
 
 import com.treefinance.crawler.framework.config.xml.page.Regexp;
 import com.treefinance.crawler.framework.config.xml.page.Replacement;
@@ -42,7 +43,7 @@ public final class PageHelper {
 
         if (CollectionUtils.isNotEmpty(replacements)) {
             for (Replacement rm : replacements) {
-                result = result.replaceAll(rm.getFrom(), rm.getTo());
+                result = result.replaceAll(rm.getFrom(), Matcher.quoteReplacement(rm.getTo()));
             }
         }
 

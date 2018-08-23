@@ -17,6 +17,7 @@
 package com.treefinance.crawler.framework.process.operation.impl;
 
 import javax.annotation.Nonnull;
+import java.util.regex.Matcher;
 
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.ReplaceOperation;
@@ -70,6 +71,6 @@ public class ReplaceOperationImpl extends Operation<ReplaceOperation> {
 
         String input = (String) operatingData;
 
-        return input.replaceAll(from, to);
+        return input.replaceAll(from, Matcher.quoteReplacement(to));
     }
 }
