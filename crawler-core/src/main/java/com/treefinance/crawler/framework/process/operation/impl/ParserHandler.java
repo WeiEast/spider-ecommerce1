@@ -86,7 +86,7 @@ class ParserHandler {
 
         List<String> results = evalExp(complexSource, request, response, content);
 
-        logger.info("after template combine: {}", results.size());
+        logger.info("after template combine: {}", results);
         if (isNeedRequest()) {
             if (parser.getSleepSecond() != null && parser.getSleepSecond() > 0) {
                 logger.info("sleep {}s before parser request.", parser.getSleepSecond());

@@ -20,14 +20,13 @@ import javax.annotation.Nonnull;
 import java.util.List;
 
 import com.treefinance.crawler.framework.config.xml.page.PageExtractor;
-import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
-import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.treefinance.crawler.framework.consts.Status;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
-import com.treefinance.crawler.exception.UnexpectedException;
+import com.treefinance.crawler.framework.context.function.ExtractRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.process.domain.PageExtractObject;
 import com.treefinance.crawler.framework.process.extract.ExtractorSelectorHandler;
 import com.treefinance.crawler.framework.process.extract.PageExtractorImpl;
@@ -61,28 +60,28 @@ public class Extractor {
             ExtractorSelectorHandler selectorHandler = new ExtractorSelectorHandler(context.getExtractorSelectors(), context.getPageExtractorMap());
             List<PageExtractor> pageExtractors = selectorHandler.select(request);
 
-            if (CollectionUtils.isEmpty(pageExtractors)) {
-                throw new UnexpectedException("Empty page extractors!");
-            }
-
-            for (int i = 0, length = pageExtractors.size(); i < length; i++) {
-                PageExtractor pageExtractor = pageExtractors.get(i);
-                try {
-                    PageExtractorImpl pageExtractorImpl = new PageExtractorImpl(pageExtractor);
-                    pageExtractorImpl.invoke(request.copy(), response);
-                } catch (Exception e) {
-                    if (i >= length - 1) {
-                        throw e;
+            if (CollectionUtils.isNotEmpty(pageExtractors)) {
+                for (int i = 0, length = pageExtractors.size(); i < length; i++) {
+                    PageExtractor pageExtractor = pageExtractors.get(i);
+                    try {
+                        PageExtractorImpl pageExtractorImpl = new PageExtractorImpl(pageExtractor);
+                        pageExtractorImpl.invoke(request.copy(), response);
+                    } catch (Exception e) {
+                        if (i >= length - 1) {
+                            throw e;
+                        }
+                        log.warn("Error invoking page extractor[{}], error: {}", pageExtractor.getId(), e.getMessage());
+                        continue;
                     }
-                    log.warn("Error invoking page extractor[{}], error: {}", pageExtractor.getId(), e.getMessage());
-                    continue;
-                }
 
-                PageExtractObject extractObject = (PageExtractObject) response.getOutPut();
-                if (extractObject != null && extractObject.isNotEmpty()) {
-                    ResponseUtil.setPageExtractor(response, pageExtractor);
-                    break;
+                    PageExtractObject extractObject = (PageExtractObject) response.getOutPut();
+                    if (extractObject != null && extractObject.isNotEmpty()) {
+                        ResponseUtil.setPageExtractor(response, pageExtractor);
+                        break;
+                    }
                 }
+            } else {
+                log.warn("Empty page extractors!");
             }
         } catch (Exception e) {
             if (e instanceof ResultEmptyException) {

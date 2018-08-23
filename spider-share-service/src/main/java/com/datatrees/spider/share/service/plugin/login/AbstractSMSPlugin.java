@@ -56,7 +56,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
         paramMap.put("taskId", taskId.toString());
 
-        if (null == taskId || StringUtils.isBlank(websiteName)) {
+        if (StringUtils.isBlank(websiteName)) {
             logger.error("sms plugin's taskId or websitename is empty! taskId={},websiteName={}", taskId, websiteName);
             resultMap.put(AttributeKey.ERROR_CODE, "-1");
             //貌似没用

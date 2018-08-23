@@ -41,7 +41,7 @@ public abstract class ProcessorInvokerAdapter implements Processor, Invoker {
         } catch (ResultEmptyException | InvokeException e) {
             throw e;
         } catch (Exception e) {
-            throw new ProcessingException("Error invoking processor.", e);
+            throw new ProcessingException("Error invoking processor[" + getClass().getName() + "].", e);
         }
     }
 

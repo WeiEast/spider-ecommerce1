@@ -27,15 +27,12 @@ public class LinkNodeComparator implements Comparator<byte[]> {
 
     public LinkNodeComparator() {}
 
-    public static long byte2long(byte[] b) {
-        long value = 0;
-        String strValue = "";
-        int len = b.length;
-        for (int i = 0; i < len; i++) {
-            strValue += (b[i] - 48);
+    private static long byte2long(byte[] b) {
+        StringBuilder strValue = new StringBuilder();
+        for (byte aB : b) {
+            strValue.append(aB - 48);
         }
-        value = Long.parseLong(strValue);
-        return value;
+        return Long.parseLong(strValue.toString());
     }
 
     public int compare(byte[] o1, byte[] o2) {

@@ -25,6 +25,8 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.ProcessingException;
 import com.treefinance.crawler.framework.context.pipeline.ProcessorValve;
+import com.treefinance.crawler.framework.exception.InvalidDataException;
+import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.toolkit.util.json.GsonUtils;
 import com.treefinance.toolkit.util.json.Jackson;
 
@@ -110,6 +112,10 @@ public abstract class Operation<T extends AbstractOperation> extends ProcessorVa
             } else {
                 entity.update(operation);
             }
+        } catch (InvalidDataException e) {
+            throw new InvalidDataException("Error doing operation[" + Jackson.toJSONString(operation) + "]. >> " + e.getMessage() + e.getCause());
+        } catch (InvalidOperationException e) {
+            throw new InvalidOperationException("Error doing operation[" + Jackson.toJSONString(operation) + "]. >> " + e.getMessage() + e.getCause());
         } catch (Exception e) {
             if (logger.isDebugEnabled()) {
                 logger.debug("Error doing operation[{}]\nOperating data:\n{}", Jackson.toJSONString(operation), data);

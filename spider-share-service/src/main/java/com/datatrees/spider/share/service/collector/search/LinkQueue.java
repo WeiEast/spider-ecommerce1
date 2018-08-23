@@ -160,6 +160,7 @@ public class LinkQueue {
         synchronized (bdbOperator) {
             if (null != bdbOperator) {
                 bdbOperator.closeDatabase();
+                bdbOperator = null;
             }
         }
     }

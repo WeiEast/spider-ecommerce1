@@ -331,7 +331,7 @@ public class Collector {
                     messageService.sendDirective(task.getTaskId(), DirectiveEnum.TASK_FAIL.getCode(), StringUtils.defaultString(newRemark));
                 }
             }
-            logger.info("task complete taskId={},isSubTask={},taskId={},remark={},websiteName={},status={}", task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName(), task.getStatus());
+            logger.info("task complete pid={}, taskId={},isSubTask={},status={},remark={},websiteName={}", task.getId(), task.getTaskId(), task.isSubTask(), task.getStatus(), task.getRemark(), task.getWebsiteName());
         }
         message.setFinish(true);
         this.messageComplement(taskMessage, message);

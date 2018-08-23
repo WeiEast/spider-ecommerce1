@@ -40,7 +40,7 @@ public abstract class CommonFormatter<R> extends AbstractFormatter<R> {
         } catch (FormatException e) {
             throw e;
         } catch (Exception e) {
-            throw new FormatException("Error formatting field value.", e);
+            throw new FormatException("Error formatting field value. - value: " + value, e);
         }
     }
 

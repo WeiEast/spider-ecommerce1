@@ -40,7 +40,7 @@ public class PageExpParser {
     }
 
     public static String eval(String text, int page) {
-        LOGGER.debug("Eval page expression. input: {}", text);
+        LOGGER.debug("Eval page expression. input: {}, page: {}", text, page);
         if (StringUtils.isEmpty(text)) return text;
 
         Matcher matcher = PATTERN.matcher(text);
@@ -68,18 +68,24 @@ public class PageExpParser {
     }
 
     private static int calculate(Matcher matcher, int page) {
-        int start = SpelExpParser.parse(matcher.group(1), Integer.TYPE);
+        int start = Math.max(SpelExpParser.parse(matcher.group(1), Integer.TYPE), 0);
+
+        if (page <= 0) {
+            return start;
+        }
+
         int end = SpelExpParser.parse(matcher.group(2), Integer.TYPE);
+        if (end <= 0) {
+            return start;
+        }
+
         int offset = SpelExpParser.parse(matcher.group(3), Integer.TYPE);
         String offsetSign = matcher.group(4);
         if ("-".equals(offsetSign)) {
             offset = 0 - offset;
         }
 
-        int pageNum = page;
-        if (pageNum > end) {
-            pageNum = end;
-        }
+        int pageNum = page <= end ? page : end;
 
         return start + offset * (pageNum - 1);
     }

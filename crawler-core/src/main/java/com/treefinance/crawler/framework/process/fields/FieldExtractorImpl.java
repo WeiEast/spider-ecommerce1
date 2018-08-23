@@ -199,7 +199,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         } catch (ResultEmptyException e) {
             throw e;
         } catch (Exception e) {
-            logger.warn("Error processing field extractor: {}", fieldExtractor, e);
+            logger.warn("Something wrong when processing field extractor: {}", fieldExtractor, e);
         }
         return null;
     }

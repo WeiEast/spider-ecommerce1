@@ -67,14 +67,14 @@ public class OperationPipeline extends ProcessPipeline {
                     logger.warn("Unexpected operation result! No operations processed for {}", fieldExtractor);
                 }
             } catch (InvalidDataException e) {
-                logger.warn("Error processing {} with operations! >> {}", fieldExtractor, e.getMessage());
+                logger.warn("Unexpected operating data when invoking operation! >> {}, field-extractor: {}", e.getMessage(), fieldExtractor);
                 return null;
             } catch (InvalidOperationException e) {
-                throw new OperationException("Unexpected exception with operations!", e);
+                throw new OperationException("Unexpected exception when invoking operation! >> " + e.getMessage(), e.getCause());
             } catch (ResultEmptyException e) {
                 throw e;
             } catch (Exception e) {
-                throw new OperationException("Error invoking operations!", e);
+                throw new OperationException("Something wrong when invoking operation! >> " + e.getMessage(), e.getCause());
             }
         } else {
             logger.warn("Not found available operations for {}", fieldExtractor);

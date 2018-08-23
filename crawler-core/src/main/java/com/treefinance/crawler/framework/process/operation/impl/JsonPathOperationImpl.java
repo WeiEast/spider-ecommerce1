@@ -20,6 +20,7 @@ import javax.annotation.Nonnull;
 
 import com.jayway.jsonpath.InvalidJsonException;
 import com.jayway.jsonpath.InvalidPathException;
+import com.jayway.jsonpath.PathNotFoundException;
 import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.operation.JsonPathOperation;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
@@ -68,12 +69,12 @@ public class JsonPathOperationImpl extends Operation<JsonPathOperation> {
         String result;
         try {
             result = JsonPathUtil.readAsString(input, jsonpath);
-        } catch (InvalidJsonException e) {
-            throw new InvalidDataException("Invalid operating json string! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
+        } catch (InvalidJsonException | PathNotFoundException e) {
+            throw new InvalidDataException("Incorrect json data! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input);
         } catch (InvalidPathException e) {
-            throw new InvalidOperationException("Incorrect jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
+            throw new InvalidOperationException("Incorrect jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath);
         } catch (Exception e) {
-            throw new InvalidOperationException("Error parsing with jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input, e);
+            throw new InvalidOperationException("Error parsing with jsonpath! >> " + e.getMessage() + "\nOriginal Jsonpath: " + operation.getJsonpath() + "\nActual Jsonpath: " + jsonpath + "\nInput:\n" + input);
         }
 
         if (result.isEmpty() && BooleanUtils.isTrue(operation.getEmptyToNull())) {

@@ -154,10 +154,10 @@ public abstract class AbstractProcessorContext extends ProcessContext {
      */
     public void setString(String key, Object value) {
         if (null == value) {
-            getContext().put(key, null);
+            getAttributes().put(key, null);
             return;
         }
-        getContext().put(key, value.toString());
+        getAttributes().put(key, value.toString());
     }
 
     /**
@@ -169,7 +169,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = getContext().get(key);
+        Object v = getAttribute(key);
         if (null == v) {
             return null;
         }
@@ -185,7 +185,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = getContext().get(key);
+        Object v = getAttribute(key);
         if (null == v) {
             return null;
         } else if (v instanceof Long) {
@@ -205,7 +205,7 @@ public abstract class AbstractProcessorContext extends ProcessContext {
         if (StringUtils.isEmpty(key)) {
             return null;
         }
-        Object v = getContext().get(key);
+        Object v = getAttribute(key);
         if (null == v) {
             return null;
         } else if (v instanceof Boolean) {

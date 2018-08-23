@@ -25,6 +25,7 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.RegExp;
+import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,10 @@ public class ExtractorSelectorHandler {
         Object input = request.getInput();
         Preconditions.notNull("input", input);
 
+        if (logger.isTraceEnabled()) {
+            logger.trace("Extract input: {}", Jackson.toJSONString(input));
+        }
+
         List<PageExtractor> selected = new ArrayList<>();
 
         Map<String, PageExtractor> total = new HashMap<>(pageExtractors);
@@ -57,16 +62,16 @@ public class ExtractorSelectorHandler {
             for (ExtractorSelector selector : extractorSelectors) {
                 String value = fields.computeIfAbsent(selector.getField(), fieldName -> FieldUtils.getFieldValueAsString(input, fieldName));
 
-                logger.debug("extractor selector >>> field: {}, value: {}", selector.getField(), value);
+                logger.trace("extractor selector >>> field: {}, value: {}, contains: {}, dis-contains: {}", selector.getField(), value, selector.getContainRegex(), selector.getDisContainRegex());
 
                 if (value == null) continue;
 
                 PageExtractor pageExtractor = selector.getPageExtractor();
                 if (match(value, selector.getDisContainRegex())) {
-                    logger.debug("matched dis-contain pattern: {}", selector.getDisContainRegex());
+                    logger.debug("matched dis-contain pattern: {}, value: {}, field: {}", selector.getDisContainRegex(), value, selector.getField());
                     selected.remove(pageExtractor);
                 } else if (match(value, selector.getContainRegex())) {
-                    logger.debug("matched contain pattern: {}", selector.getContainRegex());
+                    logger.debug("matched contain pattern: {}, value: {}, field: {}", selector.getContainRegex(), value, selector.getField());
                     selected.add(pageExtractor);
                 } else if (!Boolean.TRUE.equals(pageExtractor.getDisAlternative())) {
                     alternative.add(pageExtractor);
