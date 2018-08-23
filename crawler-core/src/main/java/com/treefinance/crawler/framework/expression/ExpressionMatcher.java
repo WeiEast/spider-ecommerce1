@@ -167,7 +167,7 @@ class ExpressionMatcher {
                         replacement = newValue;
                     }
                 }
-                matcher.appendReplacement(sb, prefix + replacement + suffix);
+                matcher.appendReplacement(sb, Matcher.quoteReplacement(prefix + replacement + suffix));
             }
         } while (matcher.find());
         matcher.appendTail(sb);

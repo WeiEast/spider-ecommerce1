@@ -113,13 +113,15 @@ public class LoginUtil {
      * @return true if it is login successfully, otherwise false.
      */
     @SuppressWarnings("unchecked")
-    public boolean doLoginByCookies(LoginConfig config, SearchProcessorContext context) throws ResultEmptyException {
+    public boolean doLoginByCookies(LoginConfig config, SearchProcessorContext context, boolean checkCookies) throws ResultEmptyException {
         try {
-            String cookie = context.getCookiesAsString();
+            if (checkCookies) {
+                String cookie = context.getCookiesAsString();
 
-            if (StringUtils.isEmpty(cookie)) {
-                logger.warn("Empty cookies!");
-                return false;
+                if (StringUtils.isEmpty(cookie)) {
+                    logger.warn("Empty cookies!");
+                    return false;
+                }
             }
 
             LoginCheckConfig loginCheckConfig = config.getLoginCheckConfig();

@@ -43,6 +43,11 @@ public enum LoginHandler {
         Cookie applyCookies(LoginConfig loginConfig, SearchProcessorContext context) {
             return null;
         }
+
+        @Override
+        boolean checkCookies() {
+            return true;
+        }
     },
     PLUGIN_LOGIN(LoginType.PLUGIN) {
         @Override
@@ -154,7 +159,11 @@ public enum LoginHandler {
             logger.info("Set cookies: {}", cookie);
         }
 
-        return LoginUtil.getInstance().doLoginByCookies(loginConfig, context);
+        return LoginUtil.getInstance().doLoginByCookies(loginConfig, context, checkCookies());
+    }
+
+    boolean checkCookies() {
+        return false;
     }
 
     abstract Cookie applyCookies(LoginConfig loginConfig, SearchProcessorContext context) throws LoginException;

@@ -58,10 +58,10 @@ import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.crawler.framework.util.URLSplitter;
 import com.treefinance.crawler.framework.util.UrlExtractor;
 import com.treefinance.toolkit.util.RegExp;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.MapUtils;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -275,18 +275,22 @@ public class PageImpl extends ProcessorInvokerAdapter {
                     String charset = RequestUtil.getContentCharset(request);
                     do {
                         String pNumber = matcher.group(1);
-                        try {
-                            int pNum = Integer.parseInt(pNumber);
-                            logger.info("add paging number: {},  match-text: {}", pNum, matcher.group());
-                            String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, request.getGlobalScopeAsMap());
-                            if (StringUtils.isNotEmpty(pageUrl)) {
-                                logger.info("add page url: {}", pageUrl);
-                                LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
-                                tmp.setpNum(pNum);
-                                urlLists.put(pageUrl, tmp);
-                            }
+                        if (StringUtils.isNotEmpty(pNumber)) {
+                            try {
+                                int pNum = Integer.parseInt(pNumber);
+                                logger.info("add paging number: {},  match-text: {}", pNum, matcher.group());
+                                String pageUrl = SearchTemplateCombine.constructSearchURL(searchTemplate, keyword, charset, pNum, false, request.getGlobalScopeAsMap());
+                                if (StringUtils.isNotEmpty(pageUrl)) {
+                                    logger.info("add page url: {}", pageUrl);
+                                    LinkNode tmp = new LinkNode(pageUrl).setReferer(current.getUrl());
+                                    tmp.setpNum(pNum);
+                                    urlLists.put(pageUrl, tmp);
+                                }
 
-                        } catch (Exception e) {}
+                            } catch (Exception e) {
+                                logger.warn(e.getMessage());
+                            }
+                        }
                     } while (matcher.find());
                 }
             }
@@ -406,10 +410,12 @@ public class PageImpl extends ProcessorInvokerAdapter {
             if (StringUtils.isNotEmpty(pageRegex)) {
                 String pidS = RegExp.group(current.getUrl(), pageRegex, 1);
 
-                int pNum = Integer.parseInt(pidS);
+                if (StringUtils.isNotEmpty(pidS)) {
+                    int pNum = Integer.parseInt(pidS);
 
-                logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
-                current.setpNum(pNum);
+                    logger.info("find page number from url: {}, num: {}", current.getUrl(), pNum);
+                    current.setpNum(pNum);
+                }
             }
         } catch (Exception e) {
             logger.error("set page num error!", e);
