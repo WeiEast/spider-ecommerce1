@@ -8,18 +8,18 @@ import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.crawler.core.util.xpath.XPathUtil;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -144,14 +144,25 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
-            String templateUrl = "https://sx.ac.10086.cn/SMSCodeSend?mobileNum={}&errorurl=https://sx.ac.10086.cn/4login/errorPage" +
-                    ".jsp&name=menhu&validCode=%B5%E3%BB%F7%BB%F1%C8%A1" + "&isCheckImage=false&displayPic=0&spid={}";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl, param.getMobile(), spid).invoke();
-            if (StringUtils.contains(response.getPageContent(), "短信验证码已发送到您的手机")) {
-                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
-                return result.success();
+            String templateUrl = "https://login.10086.cn/chkNumberAction.action";
+            String templateData = "userName=" + param.getMobile();
+            String referer = "https://login.10086.cn/login.html";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
+                    .setRequestBody(templateData).invoke();
+            String pageContent = response.getPageContent();
+            if (StringUtils.contains(pageContent, "true")) {
+                templateUrl = "https://login.10086.cn/sendRandomCodeAction.action";
+                templateData = "userName=" + param.getMobile() + "&type=01&channelID=12003";
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                        .setReferer(referer).setRequestBody(templateData).invoke();
+                pageContent = response.getPageContent();
+                if (StringUtils.contains(pageContent, "0")) {
+                    logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                    return result.success();
+                } else {
+                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+                }
             } else {
                 logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
@@ -160,6 +171,23 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
             logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
+        //try {
+        //    String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
+        //    String templateUrl = "https://sx.ac.10086.cn/SMSCodeSend?mobileNum={}&errorurl=https://sx.ac.10086.cn/4login/errorPage" +
+        //            ".jsp&name=menhu&validCode=%B5%E3%BB%F7%BB%F1%C8%A1" + "&isCheckImage=false&displayPic=0&spid={}";
+        //    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+        //            .setFullUrl(templateUrl, param.getMobile(), spid).invoke();
+        //    if (StringUtils.contains(response.getPageContent(), "短信验证码已发送到您的手机")) {
+        //        logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+        //        return result.success();
+        //    } else {
+        //        logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
+        //        return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
+        //    }
+        //} catch (Exception e) {
+        //    logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
+        //    return result.failure(ErrorCode.REFESH_SMS_ERROR);
+        //}
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
