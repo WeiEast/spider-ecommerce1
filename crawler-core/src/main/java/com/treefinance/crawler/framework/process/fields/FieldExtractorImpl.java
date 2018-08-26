@@ -247,6 +247,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
                 String val = type != null ? StringUtils.trim(defaultValue) : defaultValue;
                 result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
             }
+            logger.info("Default filed extract value: {}", result);
             try {
                 return this.format(result, type, fieldExtractor.getFormat(), request, response);
             } catch (Exception e) {

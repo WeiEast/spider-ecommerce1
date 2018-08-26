@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.expression;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -112,14 +112,17 @@ class PlaceholderResolver {
         }
 
         if (value instanceof Collection) {
-            Collection collection = (Collection) value;
+            Collection<Object> collection = (Collection<Object>) value;
             if (collection.isEmpty()) {
                 return null;
-            } else if (value instanceof List) {
-                return ((List) value).get(0);
-            } else {
-                return ((Collection) value).iterator().next();
             }
+
+            value = collection.stream().filter(Objects::nonNull).findFirst().orElse(null);
+            if (value instanceof Map) {
+                return findValue((Map) value, next);
+            }
+
+            return value;
         }
 
         if (value.getClass().isArray()) {

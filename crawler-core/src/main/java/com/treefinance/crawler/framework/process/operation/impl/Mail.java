@@ -22,7 +22,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.treefinance.crawler.framework.download.WrappedFile;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.james.mime4j.MimeIOException;
+import org.apache.james.mime4j.field.address.MailboxList;
 import org.apache.james.mime4j.message.Message;
 import org.apache.james.mime4j.parser.MimeEntityConfig;
 import org.apache.james.mime4j.storage.StorageProvider;
@@ -34,109 +37,77 @@ import org.apache.james.mime4j.storage.StorageProvider;
  */
 class Mail extends Message {
 
-    private StringBuffer      txtBody     = new StringBuffer();
-    private StringBuffer      htmlBody    = new StringBuffer();
-    private List<WrappedFile> attachments = new ArrayList<WrappedFile>();
+    private StringBuilder txtBody = new StringBuilder();
+
+    private StringBuilder htmlBody = new StringBuilder();
+
+    private List<WrappedFile> attachments = new ArrayList<>();
     private String            websiteName;
 
-    /**
-     *
-     */
     public Mail() {
         super();
     }
 
-    /**
-     * @param is
-     * @param config
-     * @param storageProvider
-     * @exception IOException
-     * @exception MimeIOException
-     */
     public Mail(InputStream is, MimeEntityConfig config, StorageProvider storageProvider) throws IOException, MimeIOException {
         super(is, config, storageProvider);
     }
 
-    /**
-     * @param is
-     * @param config
-     * @exception IOException
-     * @exception MimeIOException
-     */
-    public Mail(InputStream is, MimeEntityConfig config) throws IOException, MimeIOException {
+
+    public Mail(InputStream is, MimeEntityConfig config) throws IOException {
         super(is, config);
     }
 
-    /**
-     * @param is
-     * @exception IOException
-     * @exception MimeIOException
-     */
-    public Mail(InputStream is) throws IOException, MimeIOException {
+    public Mail(InputStream is) throws IOException {
         super(is);
     }
 
-    /**
-     * @param other
-     */
     public Mail(Message other) {
         super(other);
     }
 
-    /**
-     * @return the txtBody
-     */
-    public StringBuffer getTxtBody() {
-        return txtBody;
+    public String getTxtBody() {
+        return txtBody.toString();
     }
 
-    /**
-     * @param txtBody the txtBody to set
-     */
-    public void setTxtBody(StringBuffer txtBody) {
-        this.txtBody = txtBody;
+    public void appendText(String text) {
+        if (StringUtils.isNotEmpty(text)) {
+            txtBody.append(text);
+        }
     }
 
-    /**
-     * @return the htmlBody
-     */
-    public StringBuffer getHtmlBody() {
-        return htmlBody;
+    public String getHtmlBody() {
+        return htmlBody.toString();
     }
 
-    /**
-     * @param htmlBody the htmlBody to set
-     */
-    public void setHtmlBody(StringBuffer htmlBody) {
-        this.htmlBody = htmlBody;
+    public void appendHtml(String html) {
+        if (StringUtils.isNotEmpty(html)) {
+            htmlBody.append(html);
+        }
     }
 
-    /**
-     * @return the attachments
-     */
     public List<WrappedFile> getAttachments() {
         return attachments;
     }
 
-    /**
-     * @param attachments the attachments to set
-     */
-    public void setAttachments(List<WrappedFile> attachments) {
-        this.attachments = attachments;
+    public void addAttachment(WrappedFile attachment) {
+        if (attachment != null) {
+            attachments.add(attachment);
+        }
     }
 
-    /**
-     * @return the websiteName
-     */
     public String getWebsiteName() {
         return websiteName;
     }
 
-    /**
-     * @param websiteName the websiteName to set
-     */
     public void setWebsiteName(String websiteName) {
         this.websiteName = websiteName;
     }
 
+    public String getFromAddress() {
+        MailboxList from = getFrom();
+
+        return CollectionUtils.isNotEmpty(from) ? from.get(0).getAddress() : StringUtils.EMPTY;
+    }
+
 }
+

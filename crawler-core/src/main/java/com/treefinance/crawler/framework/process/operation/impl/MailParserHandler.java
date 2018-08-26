@@ -23,14 +23,15 @@ import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.treefinance.crawler.framework.protocol.Content;
-import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.datatrees.common.util.GsonUtils;
 import com.treefinance.crawler.framework.consts.Constants;
+import com.treefinance.crawler.framework.download.WrappedFile;
+import com.treefinance.crawler.framework.protocol.Content;
+import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.treefinance.crawler.framework.util.FileUtils;
 import com.treefinance.crawler.framework.util.IPAddressUtil;
-import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.toolkit.util.RegExp;
+import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -63,7 +64,7 @@ final class MailParserHandler {
                     } else {
                         // If it's single part message, just get text body
                         String text = getTxtPart(mimeMsg);
-                        mimeMsg.getTxtBody().append(text);
+                        mimeMsg.appendText(text);
                     }
                 }
                 return mailTransform(mimeMsg);
@@ -79,20 +80,23 @@ final class MailParserHandler {
             List<Field> values = (List<Field>) map.computeIfAbsent(field.getName().toLowerCase(), k -> new LinkedList<>());
             values.add(field);
         }
+
+        logger.info("Mail headers: {}", Jackson.toJSONString(map));
+
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.DATE, mimeMsg.getDate());
-        try {
-            map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.FROM, mimeMsg.getFrom().get(0).getAddress());
-        } catch (Exception e) {
-            logger.warn("Error reading mail's from address.", e);
-        }
+        map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.FROM, mimeMsg.getFromAddress());
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.TO, mimeMsg.getTo());
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.SUBJECT, mimeMsg.getSubject());
-        map.put(Constants.PAGE_TEXT, mimeMsg.getTxtBody().toString());
-        if (StringUtils.isNotBlank(mimeMsg.getHtmlBody().toString())) {
-            map.put(Constants.PAGE_CONTENT, mimeMsg.getHtmlBody().toString());
-        } else {
-            map.put(Constants.PAGE_CONTENT, mimeMsg.getTxtBody().toString());
+
+        String txtBody = mimeMsg.getTxtBody();
+        map.put(Constants.PAGE_TEXT, txtBody);
+
+        String htmlBody = mimeMsg.getHtmlBody();
+        if (StringUtils.isBlank(htmlBody)) {
+            htmlBody = txtBody;
         }
+        map.put(Constants.PAGE_CONTENT, htmlBody);
+
         map.put(Constants.ATTACHMENT, mimeMsg.getAttachments());
         Map<String, String> mailHeader = new HashMap<>();
         for (Field field : mimeMsg.getHeader().getFields()) {
@@ -109,7 +113,7 @@ final class MailParserHandler {
             if (CollectionUtils.isNotEmpty(receivedList)) {
                 List<String> ipList = RegExp.findAll(receivedList.toString(), MAIL_SERVER_IP_REGEX, 1);
                 for (String ip : ipList) {
-                    if (StringUtils.isNotBlank(ip)) {
+                    if (StringUtils.isNotEmpty(ip)) {
                         logger.debug("extract mail server ip: {}", ip);
 
                         if (IPAddressUtil.internalIp(ip)) {
@@ -141,10 +145,10 @@ final class MailParserHandler {
                 saveAttachment(mimeMsg, part);
             } else if (part.isMimeType("text/plain")) {
                 String txt = getTxtPart(part);
-                mimeMsg.getTxtBody().append(txt);
+                mimeMsg.appendText(txt);
             } else if (part.isMimeType("text/html")) {
                 String html = getTxtPart(part);
-                mimeMsg.getHtmlBody().append(html);
+                mimeMsg.appendHtml(html);
             } else {
                 logger.warn("unsupport part Type: {}, {}, {}, {}", part.getFilename(), part.getMimeType(), part.getCharset(), part.getHeader());
             }
@@ -189,7 +193,7 @@ final class MailParserHandler {
             body.dispose();
         }
 
-        mimeMsg.getAttachments().add(wrappedFile);
+        mimeMsg.addAttachment(wrappedFile);
     }
 
     private static String getTxtPart(Entity part) throws IOException {
