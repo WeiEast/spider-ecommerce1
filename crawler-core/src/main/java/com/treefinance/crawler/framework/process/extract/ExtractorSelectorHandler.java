@@ -68,10 +68,18 @@ public class ExtractorSelectorHandler {
 
                 PageExtractor pageExtractor = selector.getPageExtractor();
                 if (match(value, selector.getDisContainRegex())) {
-                    logger.debug("matched dis-contain pattern: {}, value: {}, field: {}", selector.getDisContainRegex(), value, selector.getField());
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("matched dis-contain pattern: {}, value: {}, field: {}", selector.getDisContainRegex(), value, selector.getField());
+                    } else {
+                        logger.debug("matched dis-contain pattern: {}, field: {}", selector.getDisContainRegex(), selector.getField());
+                    }
                     selected.remove(pageExtractor);
                 } else if (match(value, selector.getContainRegex())) {
-                    logger.debug("matched contain pattern: {}, value: {}, field: {}", selector.getContainRegex(), value, selector.getField());
+                    if (logger.isTraceEnabled()) {
+                        logger.trace("matched contain pattern: {}, value: {}, field: {}", selector.getContainRegex(), value, selector.getField());
+                    } else {
+                        logger.debug("matched contain pattern: {}, field: {}", selector.getContainRegex(), selector.getField());
+                    }
                     selected.add(pageExtractor);
                 } else if (!Boolean.TRUE.equals(pageExtractor.getDisAlternative())) {
                     alternative.add(pageExtractor);

@@ -76,6 +76,13 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
+    public static Object evalWithObject(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failover) {
+        if(failover){
+            return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response), false, true);
+        }
+        return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response));
+    }
+
     public static Object evalWithObject(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExpWithObject(value, fieldStack);
     }
@@ -85,6 +92,13 @@ public final class StandardExpression {
     }
 
     public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
+        return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
+    }
+
+    public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failover) {
+        if (failover) {
+            return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response), false, true);
+        }
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 

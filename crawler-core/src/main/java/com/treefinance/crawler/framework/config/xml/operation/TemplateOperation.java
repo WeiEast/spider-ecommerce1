@@ -16,7 +16,6 @@
 
 package com.treefinance.crawler.framework.config.xml.operation;
 
-import com.treefinance.crawler.framework.config.xml.operation.AbstractOperation;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.Node;
 import com.treefinance.crawler.framework.config.annotation.Path;
@@ -34,11 +33,13 @@ public class TemplateOperation extends AbstractOperation {
     /**
      *
      */
-    private static final long    serialVersionUID = 2782067152892732984L;
+    private static final long serialVersionUID = 2782067152892732984L;
 
-    private              String  template;
+    private String template;
 
-    private              Boolean returnObject;
+    private Boolean returnObject;
+
+    private Boolean failover;
 
     @Tag
     public String getTemplate() {
@@ -60,4 +61,13 @@ public class TemplateOperation extends AbstractOperation {
         this.returnObject = returnObject;
     }
 
+    @Attr("failover")
+    public Boolean getFailover() {
+        return failover;
+    }
+
+    @Node("@failover")
+    public void setFailover(Boolean failover) {
+        this.failover = failover;
+    }
 }

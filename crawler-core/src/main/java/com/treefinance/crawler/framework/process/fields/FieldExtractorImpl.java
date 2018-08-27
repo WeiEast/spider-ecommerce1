@@ -73,7 +73,11 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         String sourceId = fieldExtractor.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
-            logger.info("reset processing input with the given source for field extractor. field: {}, sourceId: {}, input: {}", fieldExtractor.getId(), sourceId, result);
+            if(logger.isDebugEnabled()){
+                logger.debug("reset processing input with the given source for field extractor. field: {}, sourceId: {}, input: {}", fieldExtractor.getId(), sourceId, result);
+            } else {
+                logger.info("reset processing input with the given source for field extractor. field: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
+            }
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
                 request.setInput(result.toString());

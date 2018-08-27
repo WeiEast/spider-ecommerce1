@@ -68,8 +68,16 @@ final class ExpressionExecutor {
         return ExpressionMatcher.match(value).evalExpWithObject(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
     }
 
+    public static Object evalExpWithObject(@Nullable String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier, boolean failOnKnown, boolean allowNull) {
+        return ExpressionMatcher.match(value).evalExpWithObject(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get(), failOnKnown, allowNull));
+    }
+
     public static String evalExpSpecial(@Nullable String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier) {
         return ExpressionMatcher.match(value).evalExpSpecial(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get()));
+    }
+
+    public static String evalExpSpecial(@Nullable String value, @Nullable Supplier<Map<String, Object>> placeholderSupplier, boolean failOnUnknown, boolean allowNull) {
+        return ExpressionMatcher.match(value).evalExpSpecial(() -> new ExpEvalContext(placeholderSupplier == null ? null : placeholderSupplier.get(), failOnUnknown, allowNull));
     }
 
     public static String evalExp(@Nullable String value, @Nonnull ExpEvalContext context) {

@@ -31,7 +31,6 @@ import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.treefinance.crawler.framework.util.FileUtils;
 import com.treefinance.crawler.framework.util.IPAddressUtil;
 import com.treefinance.toolkit.util.RegExp;
-import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -81,7 +80,7 @@ final class MailParserHandler {
             values.add(field);
         }
 
-        logger.info("Mail headers: {}", Jackson.toJSONString(map));
+        logger.info("Mail headers: {}", map);
 
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.DATE, mimeMsg.getDate());
         map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.FROM, mimeMsg.getFromAddress());

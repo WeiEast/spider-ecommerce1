@@ -43,10 +43,10 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
         String template = operation.getTemplate();
 
         Object output;
-        if (BooleanUtils.isTrue(operation.getReturnObject())) {
-            output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response);
+        if (Boolean.TRUE.equals(operation.getReturnObject())) {
+            output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response, Boolean.TRUE.equals(operation.getFailover()));
         } else {
-            output = StandardExpression.evalSpecial(template, request, response);
+            output = StandardExpression.evalSpecial(template, request, response, Boolean.TRUE.equals(operation.getFailover()));
         }
 
         return output;
