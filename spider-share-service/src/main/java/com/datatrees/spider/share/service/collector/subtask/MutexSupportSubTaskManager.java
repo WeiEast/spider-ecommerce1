@@ -142,7 +142,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
 
     private void submitMutexSubTask(SubTask task, Queue<SubTaskFuture> queue) {
         String mutexKey = task.getUniqueKey();
-        logger.info("submit mutex sync subtask " + mutexKey + "queue:" + queue.hashCode() + " ,task:" + task);
+        logger.info("submit mutex sync subtask " + mutexKey + " queue:" + queue.hashCode() + " ,task:" + task);
 
         SubTaskFuture mutexSubTaskFuture = mutexSubTaskFutureMap.computeIfAbsent(mutexKey, k -> {
             Container container = new MutexSubTaskContainer();

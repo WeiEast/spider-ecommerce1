@@ -20,6 +20,7 @@ package com.datatrees.spider.share.service.domain.data;
 import java.util.Date;
 
 import com.datatrees.spider.share.domain.AbstractData;
+import com.treefinance.crawler.framework.consts.MailConsts;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -35,8 +36,6 @@ public class MailBillData extends AbstractData {
     public static final String RECEIVED   = "receiveAt";
 
     public static final String RECEIVER   = "receiver";
-
-    public static final String MAILHEADER = "mailHeader";
 
     public static final String FIRSTHAND  = "firstHand";
 
@@ -69,11 +68,11 @@ public class MailBillData extends AbstractData {
     }
 
     public String getMailHeader() {
-        return (String) this.get(MAILHEADER);
+        return (String) this.get(MailConsts.MAIL_HEADER);
     }
 
     public void setMailHeader(String mailHeader) {
-        this.put(MAILHEADER, mailHeader);
+        this.put(MailConsts.MAIL_HEADER, mailHeader);
     }
 
     public String getSender() {

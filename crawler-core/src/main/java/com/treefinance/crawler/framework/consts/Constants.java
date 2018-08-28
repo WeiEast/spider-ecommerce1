@@ -114,16 +114,6 @@ public final class Constants {
 
     public static final String TASK_UNIQUE_SIGN                      = "TASK_UNIQUE_SIGN";
 
-    public static final String PAGE_CONTENT                          = "pageContent";
-
-    public static final String PAGE_TEXT                             = "pageText";
-
-    public static final String ATTACHMENT                            = "attachment";
-
-    public static final String MAIL_DEFAULT_PREFIX                   = "Mail_";
-
-    public static final String MAIL_SERVER_IP                        = "mailServerIp";
-
     public static final String THREAD_LOCAL_RESPONSE                 = "THREAD_LOCAL_RESPONSE";
 
     public static final String THREAD_LOCAL_LINKNODE                 = "THREAD_LOCAL_LINKNODE";

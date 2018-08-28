@@ -54,7 +54,7 @@ class PlaceholderResolver {
         LOGGER.debug("placeholder: {}, Fields context: {}", placeholder, placeholderMapping);
         Object value = findValue(placeholderMapping, placeholder);
 
-        LOGGER.debug("placeholder: {}, result: {}", placeholder, value);
+        LOGGER.info("placeholder: {}, result: {}", placeholder, value);
 
         if (value == null) {
             if (!allowNull) {

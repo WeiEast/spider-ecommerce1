@@ -24,7 +24,7 @@ import java.util.Map;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.consts.Constants;
+import com.treefinance.crawler.framework.consts.MailConsts;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import com.treefinance.crawler.framework.protocol.Content;
 import com.treefinance.crawler.framework.util.CharsetUtil;
@@ -46,8 +46,11 @@ import org.slf4j.LoggerFactory;
  * @since 2015年10月8日 下午3:07:06
  */
 final class MailParserHandler {
+
     private static final Logger logger                = LoggerFactory.getLogger(MailParserHandler.class);
+
     private static final String MAIL_SERVER_IP_REGEX  = PropertiesConfiguration.getInstance().get("mail.server.ip.regex", "\\([^\\]]*\\[([\\d\\.]+)(:\\d+)?\\]\\)");
+
     private static final String attachmentTypePattern = PropertiesConfiguration.getInstance().get("mail.attachmentType", "attachment");
 
     public static Map parseMessage(String websiteName, String contentString, boolean bodyParser) throws IOException {
@@ -82,27 +85,29 @@ final class MailParserHandler {
 
         logger.info("Mail headers: {}", map);
 
-        map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.DATE, mimeMsg.getDate());
-        map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.FROM, mimeMsg.getFromAddress());
-        map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.TO, mimeMsg.getTo());
-        map.put(Constants.MAIL_DEFAULT_PREFIX + FieldName.SUBJECT, mimeMsg.getSubject());
+        receivedFormat(map);
+
+        map.put(MailConsts.PARAM_PREFIX + FieldName.DATE, mimeMsg.getDate());
+        map.put(MailConsts.PARAM_PREFIX + FieldName.FROM, mimeMsg.getFromAddress());
+        map.put(MailConsts.PARAM_PREFIX + FieldName.TO, mimeMsg.getTo());
+        map.put(MailConsts.PARAM_PREFIX + FieldName.SUBJECT, mimeMsg.getSubject());
 
         String txtBody = mimeMsg.getTxtBody();
-        map.put(Constants.PAGE_TEXT, txtBody);
+        map.put(MailConsts.PAGE_TEXT, txtBody);
 
         String htmlBody = mimeMsg.getHtmlBody();
         if (StringUtils.isBlank(htmlBody)) {
             htmlBody = txtBody;
         }
-        map.put(Constants.PAGE_CONTENT, htmlBody);
+        map.put(MailConsts.PAGE_CONTENT, htmlBody);
 
-        map.put(Constants.ATTACHMENT, mimeMsg.getAttachments());
+        map.put(MailConsts.ATTACHMENT, mimeMsg.getAttachments());
         Map<String, String> mailHeader = new HashMap<>();
         for (Field field : mimeMsg.getHeader().getFields()) {
             mailHeader.put(field.getName(), field.getBody());
         }
-        map.put("mailHeader", GsonUtils.toJson(mailHeader));
-        receivedFormat(map);
+        map.put(MailConsts.MAIL_HEADER, GsonUtils.toJson(mailHeader));
+
         return map;
     }
 
@@ -112,17 +117,11 @@ final class MailParserHandler {
             if (CollectionUtils.isNotEmpty(receivedList)) {
                 List<String> ipList = RegExp.findAll(receivedList.toString(), MAIL_SERVER_IP_REGEX, 1);
                 for (String ip : ipList) {
-                    if (StringUtils.isNotEmpty(ip)) {
-                        logger.debug("extract mail server ip: {}", ip);
-
-                        if (IPAddressUtil.internalIp(ip)) {
-                            logger.debug("drop internalIp : {}", ip);
-                        } else {
-                            result.put(Constants.MAIL_SERVER_IP, ip);
-                            break;
-                        }
+                    if (IPAddressUtil.internalIp(ip)) {
+                        logger.debug("drop internalIp : {}", ip);
                     } else {
-                        logger.warn("extract mail server ip error with receivedList[{}], MAIL_SERVER_IP_REGEX: {}", receivedList, MAIL_SERVER_IP_REGEX);
+                        result.put(MailConsts.SERVER_IP, ip);
+                        break;
                     }
                 }
             }
