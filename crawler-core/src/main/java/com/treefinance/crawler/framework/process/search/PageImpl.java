@@ -314,6 +314,11 @@ public class PageImpl extends ProcessorInvokerAdapter {
 
         PageExtractObject extractObject = new PageExtractObject();
         for (AbstractSegment segment : segments) {
+            if (BooleanUtils.isTrue(segment.getStandBy()) && extractObject.isValid(segment.getName())) {
+                logger.info("Skip segment processor with flag 'stand-by'. segment: {}", segment);
+                continue;
+            }
+
             try {
                 request.setInput(pageContent);
 

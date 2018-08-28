@@ -20,24 +20,22 @@ import javax.annotation.Nonnull;
 import java.lang.reflect.Field;
 import java.util.*;
 
-import com.treefinance.crawler.framework.protocol.util.HeaderParser;
-import com.treefinance.crawler.framework.protocol.util.UrlUtils;
-import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.enums.fields.ResultType;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.segment.AbstractSegment;
-import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.treefinance.crawler.framework.context.SearchProcessorContext;
-import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.exception.FormatException;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.context.control.BusinessTypeDecider;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.function.SpiderResponseFactory;
 import com.treefinance.crawler.framework.context.pipeline.FailureSkipProcessorValve;
+import com.treefinance.crawler.framework.exception.FormatException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.crawler.framework.process.ProcessorFactory;
@@ -48,12 +46,14 @@ import com.treefinance.crawler.framework.process.domain.SegmentExtractObject;
 import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import com.treefinance.crawler.framework.process.fields.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.process.operation.impl.ParserURLCombiner;
+import com.treefinance.crawler.framework.protocol.util.HeaderParser;
+import com.treefinance.crawler.framework.protocol.util.UrlUtils;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import com.treefinance.toolkit.util.RegExp;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.collections.functors.UniquePredicate;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.collections4.functors.UniquePredicate;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * @param <>
@@ -78,12 +78,13 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
             if(logger.isDebugEnabled()){
-                logger.debug("reset processing input with the given source for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, result);
+                logger.debug("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, result);
             } else {
-                logger.info("reset processing input with the given source for segment processor. segment: {}, sourceId: {}", segment.getName(), sourceId);
+                logger.info("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}", segment.getName(), sourceId);
             }
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
+                logger.info("Segment source input is available! segment: {}, sourceId: {}", segment.getName(), sourceId);
                 request.setInput(result.toString());
             }
         }
@@ -208,13 +209,13 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         }
         List<AbstractSegment> segments = segment.getSegmentList();
         for (AbstractSegment childSegment : segments) {
+            if (BooleanUtils.isTrue(childSegment.getStandBy()) && extractObject.isValid(childSegment.getName())) {
+                logger.info("Skip segment processor with flag 'stand-by'. segment: {}", childSegment);
+                continue;
+            }
+
             Object segResultList;
             try {
-                if (BooleanUtils.isTrue(childSegment.getStandBy()) && extractObject.isValid(childSegment.getName())) {
-                    logger.info("no need to execute the stand by segment: {}", segment);
-                    continue;
-                }
-
                 request.setInput(split);
                 request.addLocalScope(fieldExtractResultMap);
 

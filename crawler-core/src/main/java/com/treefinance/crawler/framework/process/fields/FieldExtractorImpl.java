@@ -74,12 +74,13 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
             if(logger.isDebugEnabled()){
-                logger.debug("reset processing input with the given source for field extractor. field: {}, sourceId: {}, input: {}", fieldExtractor.getId(), sourceId, result);
+                logger.debug("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}, " + "input: {}", fieldExtractor.getId(), sourceId, result);
             } else {
-                logger.info("reset processing input with the given source for field extractor. field: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
+                logger.info("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
             }
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
+                logger.info("Field source input is available! fieldId: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
                 request.setInput(result.toString());
             }
         }
@@ -105,7 +106,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
             FieldExtractResultSet fieldExtractResultSet;
             // if to skip with the stand-by field.
             if (Boolean.TRUE.equals(fieldExtractor.getStandBy()) && (fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response)) != null && fieldExtractResultSet.isNotEmptyResult(fieldExtractor.getId())) {
-                logger.debug("Skip field extractor with matching the stand-by flag. Field-Extractor: {}", fieldExtractor);
+                logger.info("Skip field extractor with flag 'stand-by'. fieldId: {} field: {}", fieldExtractor.getId(), fieldExtractor.getField());
                 return true;
             }
         }

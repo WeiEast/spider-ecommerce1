@@ -79,7 +79,7 @@ public class GlobalScope {
             value = localScope.get(name);
         }
 
-        if (MapUtils.isNotEmpty(requestScope)) {
+        if (value == null && MapUtils.isNotEmpty(requestScope)) {
             value = requestScope.get(name);
         }
 

@@ -31,7 +31,8 @@ import com.treefinance.crawler.framework.process.ProcessorFactory;
 import com.treefinance.crawler.framework.process.domain.PageExtractObject;
 import com.treefinance.crawler.framework.process.segment.SegmentBase;
 import com.treefinance.toolkit.util.Preconditions;
-import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -65,6 +66,11 @@ public class PageExtractorImpl extends ProcessorInvokerAdapter {
         logger.info("processing segment for page-extractor: {}, segment-size: {}", pageExtractor.getId(), segments.size());
         PageExtractObject extractObject = new PageExtractObject();
         for (AbstractSegment segment : segments) {
+            if (BooleanUtils.isTrue(segment.getStandBy()) && extractObject.isValid(segment.getName())) {
+                logger.info("Skip segment processor with flag 'stand-by'. segment: {}", segment);
+                continue;
+            }
+
             try {
                 request.setInput(pageContent);
 
