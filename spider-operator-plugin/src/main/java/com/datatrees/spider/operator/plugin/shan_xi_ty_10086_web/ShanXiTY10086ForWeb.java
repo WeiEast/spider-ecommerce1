@@ -1,6 +1,7 @@
 package com.datatrees.spider.operator.plugin.shan_xi_ty_10086_web;
 
 import javax.script.Invocable;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.List;
@@ -13,6 +14,7 @@ import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -20,7 +22,7 @@ import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -144,25 +146,19 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
         try {
-            String templateUrl = "https://login.10086.cn/chkNumberAction.action";
-            String templateData = "userName=" + param.getMobile();
+            String errorurl = TaskUtils.getTaskShare(param.getTaskId(), "errorurl");
+            String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
+
             String referer = "https://login.10086.cn/login.html";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setReferer(referer)
-                    .setRequestBody(templateData).invoke();
+            String templateUrl = "https://sx.ac.10086.cn/SMSCodeSend";
+            String templateData = "mobileNum={}&errorurl={}&name=menhu&validCode=0000&isCheckImage=false&spid={}";
+            String data = TemplateUtils.format(templateData, param.getMobile(), URLEncoder.encode(errorurl, "UTF-8"), spid);
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
+                    .setReferer(referer).setRequestBody(data).invoke();
             String pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "true")) {
-                templateUrl = "https://login.10086.cn/sendRandomCodeAction.action";
-                templateData = "userName=" + param.getMobile() + "&type=01&channelID=12003";
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
-                        .setReferer(referer).setRequestBody(templateData).invoke();
-                pageContent = response.getPageContent();
-                if (StringUtils.contains(pageContent, "0")) {
-                    logger.info("登录-->短信验证码-->刷新成功,param={}", param);
-                    return result.success();
-                } else {
-                    logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
-                    return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-                }
+            if (StringUtils.contains(pageContent, "短信验证码已发送到您的手机")) {
+                logger.info("登录-->短信验证码-->刷新成功,param={}", param);
+                return result.success();
             } else {
                 logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
                 return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
@@ -171,23 +167,6 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
             logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.REFESH_SMS_ERROR);
         }
-        //try {
-        //    String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
-        //    String templateUrl = "https://sx.ac.10086.cn/SMSCodeSend?mobileNum={}&errorurl=https://sx.ac.10086.cn/4login/errorPage" +
-        //            ".jsp&name=menhu&validCode=%B5%E3%BB%F7%BB%F1%C8%A1" + "&isCheckImage=false&displayPic=0&spid={}";
-        //    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-        //            .setFullUrl(templateUrl, param.getMobile(), spid).invoke();
-        //    if (StringUtils.contains(response.getPageContent(), "短信验证码已发送到您的手机")) {
-        //        logger.info("登录-->短信验证码-->刷新成功,param={}", param);
-        //        return result.success();
-        //    } else {
-        //        logger.error("登录-->短信验证码-->刷新失败,param={},pageContent={}", param, response.getPageContent());
-        //        return result.failure(ErrorCode.REFESH_SMS_UNEXPECTED_RESULT);
-        //    }
-        //} catch (Exception e) {
-        //    logger.error("登录-->短信验证码-->刷新失败,param={},response={}", param, response, e);
-        //    return result.failure(ErrorCode.REFESH_SMS_ERROR);
-        //}
     }
 
     private HttpResult<Map<String, Object>> submitForLogin(OperatorParam param) {
@@ -202,19 +181,19 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
             String spid = TaskUtils.getTaskShare(param.getTaskId(), "spid");
             String relayStateId = TaskUtils.getTaskShare(param.getTaskId(), "relayStateId");
 
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
-            String encyptPassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
+            //Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            //String encyptPassword = invocable.invokeFunction("enString", param.getPassword().toString()).toString();
 
             if (StringUtils.isNotEmpty(relayStateId)) {
                 relayStateId = URLEncoder.encode(relayStateId, "UTF-8");
             }
 
             String templateUrl = "https://sx.ac.10086.cn/Login";
-            String templateData = "type={}&backurl={}&errorurl={}&spid={}&RelayState={}&webPassword=&mobileNum={}&displayPic=&isValidateCode" +
-                    "=&isCheckImage=false&mobileNum_temp={}&servicePassword={}&smsValidCode={}&validCode=%B5%E3%BB%F7%BB%F1%C8%A1";
+            String templateData = "type=A&backurl={}&errorurl={}&spid={}&RelayState={}&webPassword=&mobileNum={}&isCheckImage=false&servicePassword" +
+                    "=&smsValidCode={}";
             String data = TemplateUtils
-                    .format(templateData, loginType, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid, relayStateId,
-                            param.getMobile(), param.getMobile(), encyptPassword, param.getSmsCode());
+                    .format(templateData, URLEncoder.encode(backUrl, "UTF-8"), URLEncoder.encode(errorurl, "UTF-8"), spid, relayStateId,
+                            param.getMobile(), param.getSmsCode());
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
                     .invoke();
             String pageContent = response.getPageContent();
@@ -233,21 +212,10 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
                 }
             }
 
-            if (StringUtils.contains(pageContent, "location.replace")) {
-                templateUrl = PatternUtils.group(pageContent, "location.replace\\('([^']+)'\\)", 1);
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
-
+            if (StringUtils.contains(pageContent, "postartifact")) {
+                pageContent = executeScriptSubmit(param.getTaskId(), param.getWebsiteName(), "", pageContent);
             }
-            //String samLart = PatternUtils.group(pageContent, "name=\"SAMLart\" value=\"([^\"]+)\"", 1);
-            //String relay = PatternUtils.group(pageContent, "name=\"RelayState\" value=\"([^\"]+)\"", 1);
-            //
-            //templateUrl = "https://sx.ac.10086.cn/4login/backPage.jsp";
-            //templateData = "SAMLart={}&isEncodePassword=2&displayPic=1&RelayState={}&isEncodeMobile=1&displayPics=mobile_sms_login%3A0%3D%3D" +
-            //        "%3DsendSMS%3A0%3D%3D%3Dmobile_servicepasswd_login%3A0";
-            //data = TemplateUtils.format(templateData, samLart, URLEncoder.encode(relay, "UTF-8"));
-            //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl).setRequestBody(data)
-            //        .invoke();
-            pageContent = response.getPageContent();
+
             String samLart = PatternUtils.group(pageContent, "'([^']+)'", 1);
             templateUrl = "http://service.sx.10086.cn/my/";
             templateData = "SAMLart={}&RelayState={}";
@@ -362,5 +330,39 @@ public class ShanXiTY10086ForWeb implements OperatorPlugin {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
+    }
+
+    /**
+     * 处理跳转服务
+     * @param pageContent
+     * @return
+     */
+    private String executeScriptSubmit(Long taskId, String websiteName, String remark, String pageContent) {
+        String action = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
+        String method = JsoupXpathUtils.selectFirst(pageContent, "//form/@method");
+        List<Map<String, String>> list = JsoupXpathUtils.selectAttributes(pageContent, "//input");
+        StringBuilder fullUrl = new StringBuilder(action);
+        if (StringUtils.contains(fullUrl, "?")) {
+            if (!StringUtils.endsWith(fullUrl, "?")) {
+                fullUrl.append("&");
+            }
+        } else {
+            fullUrl.append("?");
+        }
+        if (null != list && !list.isEmpty()) {
+            for (Map<String, String> map : list) {
+                if (map.containsKey("name") && map.containsKey("value")) {
+                    try {
+                        fullUrl.append(map.get("name")).append("=").append(URLEncoder.encode(map.get("value"), "UTF-8")).append("&");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        String url = fullUrl.substring(0, fullUrl.length() - 1);
+        RequestType requestType = StringUtils.equalsIgnoreCase("post", method) ? RequestType.POST : RequestType.GET;
+        Response response = TaskHttpClient.create(taskId, websiteName, requestType).setFullUrl(url).invoke();
+        return response.getPageContent();
     }
 }
