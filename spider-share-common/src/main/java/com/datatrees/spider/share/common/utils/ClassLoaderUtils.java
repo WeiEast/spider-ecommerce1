@@ -30,8 +30,7 @@ public class ClassLoaderUtils {
             if (!jarFile.exists()) {
                 logger.error("jar file not found,fileName={}", jarFile.getAbsolutePath());
             }
-            URL url = new URL("file", null, jarFile.getAbsolutePath());
-            URLClassLoader loader = new URLClassLoader(new URL[]{url}, Thread.currentThread().getContextClassLoader());
+            URLClassLoader loader = URLClassLoader.newInstance(new URL[]{jarFile.toURI().toURL()}, Thread.currentThread().getContextClassLoader());
             logger.info("createClassLoader success jarFile={}", jarFile.getAbsolutePath());
             return loader;
         } catch (Throwable e) {
