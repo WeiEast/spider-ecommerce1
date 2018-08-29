@@ -39,16 +39,17 @@ public class JavaPluginHandler extends PluginHandler<JavaPlugin> {
 
     @Override
     protected Object invokePlugin(JavaPlugin metadata, String args, SpiderRequest request) throws Exception {
-        AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
-        if (getContext() instanceof SearchProcessorContext) {
-            // add proxy if necessary
-            clientPlugin.setProxyManager(((SearchProcessorContext) getContext()).getProxyManager());
-        }
-        // add http client
-        clientPlugin.setWebClient(WebClientUtil.getWebClient());
-
         ProcessContextHolder.setProcessorContext(getContext());
+
         try {
+            AbstractClientPlugin clientPlugin = getContext().loadPlugin(metadata);
+            if (getContext() instanceof SearchProcessorContext) {
+                // add proxy if necessary
+                clientPlugin.setProxyManager(((SearchProcessorContext) getContext()).getProxyManager());
+            }
+            // add http client
+            clientPlugin.setWebClient(WebClientUtil.getWebClient());
+
             //插件自定义参数
             return clientPlugin.process(args, metadata.getParams());
         } finally {
