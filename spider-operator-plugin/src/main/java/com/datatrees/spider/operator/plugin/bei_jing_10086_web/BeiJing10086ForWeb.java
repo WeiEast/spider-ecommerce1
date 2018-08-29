@@ -333,6 +333,17 @@ public class BeiJing10086ForWeb implements OperatorLoginPostPlugin {
                 logger.info("详单校验成功,param={}", param);
                 TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl("https://login.10086.cn/SSOCheck.action?channelID=12003&backUrl=http://shop.10086.cn/i/?f=custinfoqry").invoke();
+
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setFullUrl("http://shop.10086.cn/i/v1/fee/billinfo/{}?_=", param.getMobile())
+                        .setReferer("https://shop.10086.cn/i/?f=billqry&welcome=").addHeader("Content-Type", "*")
+                        .addHeader("X-Requested-With", "XMLHttpRequest").setAutoRedirect(false).invoke();
+                String redirectUrl = response.getRedirectUrl();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl)
+                        .setReferer("https://shop.10086.cn/i/?f=billqry&welcome=").addHeader("Content-Type", "*")
+                        .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+                TaskUtils.addTaskShare(param.getTaskId(), "billInfoPage", response.getPageContent());
+                TaskUtils.addTaskShare(param.getTaskId(), "billInfoUrl", redirectUrl);
                 return result.success();
             } else {
                 logger.warn("详单校验失败,param={}", param);
