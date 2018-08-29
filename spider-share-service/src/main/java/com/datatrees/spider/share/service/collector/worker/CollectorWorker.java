@@ -150,11 +150,11 @@ public class CollectorWorker {
 
             Map<String, Object> resultMap = this.awaitDone(futureList, taskMessage);
 
-            Map<String, Object> extractResult = mergeSubTaskResult(task.getId(), resultMap);
+            appendSubTaskResult(resultMap, task.getId());
 
             LOGGER.info("doSearch success taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
 
-            return searchResult.success(extractResult);
+            return searchResult.success(resultMap);
         } catch (ConfigException e) {
             LOGGER.error("Search config is incorrect! taskId={}, websiteName= {}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure(ErrorCode.CONFIG_ERROR);
@@ -347,7 +347,7 @@ public class CollectorWorker {
         return seedUrl;
     }
 
-    private Map<String, Object> mergeSubTaskResult(Integer taskLogId, Map<String, Object> resultMap) {
+    private void appendSubTaskResult(Map<String, Object> resultMap, Integer taskLogId) {
         List<Map> results = subTaskManager.getSyncedSubTaskResults(taskLogId);
         if (CollectionUtils.isNotEmpty(results)) {
             LOGGER.info("try to merge subTaskResult: {}", results);
@@ -367,7 +367,6 @@ public class CollectorWorker {
                 resultMap.put("errorSubTasks", errorSubTasks);
             }
         }
-        return resultMap;
     }
 
     /**

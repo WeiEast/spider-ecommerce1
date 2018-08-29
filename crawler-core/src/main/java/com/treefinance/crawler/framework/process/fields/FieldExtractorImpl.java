@@ -24,31 +24,32 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.datatrees.common.conf.Configuration;
-import com.treefinance.crawler.framework.util.CharsetUtil;
-import com.treefinance.crawler.framework.protocol.util.UrlUtils;
-import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
+import com.google.common.collect.ImmutableList;
 import com.treefinance.crawler.framework.config.enums.fields.FieldVisibleType;
 import com.treefinance.crawler.framework.config.enums.fields.ResultType;
+import com.treefinance.crawler.framework.config.xml.extractor.FieldExtractor;
 import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
-import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.consts.Constants;
-import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.RequestUtil;
 import com.treefinance.crawler.framework.context.ResponseUtil;
-import com.treefinance.crawler.framework.exception.FormatException;
-import com.treefinance.crawler.framework.exception.ResultEmptyException;
-import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
-import com.google.common.collect.ImmutableList;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.context.pipeline.SingletonProcessorValve;
+import com.treefinance.crawler.framework.exception.FormatException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.plugin.PluginCaller;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.PluginUtil;
 import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.crawler.framework.process.ProcessorFactory;
 import com.treefinance.crawler.framework.process.operation.OperationPipeline;
+import com.treefinance.crawler.framework.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.util.CharsetUtil;
 import com.treefinance.crawler.framework.util.FieldUtils;
+import com.treefinance.crawler.framework.util.LogUtils;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
@@ -73,11 +74,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         String sourceId = fieldExtractor.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
-            if(logger.isDebugEnabled()){
-                logger.debug("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}, " + "input: {}", fieldExtractor.getId(), sourceId, result);
-            } else {
-                logger.info("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
-            }
+            logger.info("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}, input: {}", fieldExtractor.getId(), sourceId, LogUtils.abbreviate(result));
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
                 logger.info("Field source input is available! fieldId: {}, sourceId: {}", fieldExtractor.getId(), sourceId);
@@ -106,7 +103,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
             FieldExtractResultSet fieldExtractResultSet;
             // if to skip with the stand-by field.
             if (Boolean.TRUE.equals(fieldExtractor.getStandBy()) && (fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response)) != null && fieldExtractResultSet.isNotEmptyResult(fieldExtractor.getId())) {
-                logger.info("Skip field extractor with flag 'stand-by'. fieldId: {} field: {}", fieldExtractor.getId(), fieldExtractor.getField());
+                logger.debug("Skip field extractor with flag 'stand-by'. fieldId: {} field: {}", fieldExtractor.getId(), fieldExtractor.getField());
                 return true;
             }
         }
@@ -252,7 +249,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
                 String val = type != null ? StringUtils.trim(defaultValue) : defaultValue;
                 result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
             }
-            logger.info("Default filed extract value: {}", result);
+            logger.info("Field: {}, default value: {}", fieldExtractor.getField(), LogUtils.abbreviate(result));
             try {
                 return this.format(result, type, fieldExtractor.getFormat(), request, response);
             } catch (Exception e) {

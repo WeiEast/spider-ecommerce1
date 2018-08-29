@@ -54,16 +54,18 @@ class PlaceholderResolver {
         LOGGER.debug("placeholder: {}, Fields context: {}", placeholder, placeholderMapping);
         Object value = findValue(placeholderMapping, placeholder);
 
-        LOGGER.info("placeholder: {}, result: {}", placeholder, value);
-
         if (value == null) {
             if (!allowNull) {
                 throw new PlaceholderResolveException("Placeholder[" + placeholder + "] value must not be null.");
             }
+
             LOGGER.warn("Can not resolve placeholder '{}'", placeholder);
 
             return nullToEmpty ? StringUtils.EMPTY : null;
         }
+
+        LOGGER.debug("placeholder: {}, result: {}", placeholder, value);
+
 
         if (value instanceof Map || value.getClass().isArray()) {
             return Jackson.toJSONString(value);
@@ -76,14 +78,14 @@ class PlaceholderResolver {
         LOGGER.debug("placeholder: {}, Fields context: {}", placeholder, placeholderMapping);
         Object value = findValue(placeholderMapping, placeholder);
 
-        LOGGER.info("placeholder: {}, result: {}", placeholder, value);
-
         if (value == null) {
             if (!allowNull) {
                 throw new PlaceholderResolveException("Placeholder[" + placeholder + "] value must not be null.");
             }
 
             LOGGER.warn("Can not resolve placeholder '{}'", placeholder);
+        } else {
+            LOGGER.debug("placeholder: {}, result: {}", placeholder, value);
         }
 
         return value;

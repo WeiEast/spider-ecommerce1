@@ -23,6 +23,8 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import com.treefinance.toolkit.util.json.Jackson;
+
 /**
  * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
  * @version 1.0
@@ -224,4 +226,8 @@ public class SynchronizedMap<K, V> implements Map<K, V> {
         }
     }
 
+    @Override
+    public String toString() {
+        return Jackson.toJSONString(map);
+    }
 }

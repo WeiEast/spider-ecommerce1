@@ -67,9 +67,9 @@ public abstract class ProcessorValve extends ValveBase implements Processor {
             throw e;
         } catch (Exception e) {
             if (ignoreException(e)) {
-                logger.error("Error invoking processor valve!", e);
+                logger.warn("Error invoking processor valve! - input: {}", request.getInput(), e);
             } else {
-                throw new ProcessingException("Error to invoke processor valve!", e);
+                throw new ProcessingException("Error to invoke processor valve! - input: " + request.getInput(), e);
             }
         }
     }

@@ -16,10 +16,12 @@
 
 package com.treefinance.crawler.framework.context.function;
 
-import com.treefinance.crawler.framework.protocol.ProtocolStatusCodes;
 import com.treefinance.crawler.framework.consts.Status;
+import com.treefinance.crawler.framework.protocol.ProtocolStatusCodes;
 import com.treefinance.crawler.lang.AtomicAttributes;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
  * @author Jerry
@@ -85,5 +87,10 @@ public class SpiderGenericResponse extends AtomicAttributes implements SpiderRes
         this.output = null;
         this.exception = null;
         this.errorMsg = null;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("status", status).append("output", output).append("attributes", attributes()).append("exception", exception).append("errorMsg", errorMsg).toString();
     }
 }

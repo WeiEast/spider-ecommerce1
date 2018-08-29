@@ -48,6 +48,7 @@ import com.treefinance.crawler.framework.process.fields.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.process.operation.impl.ParserURLCombiner;
 import com.treefinance.crawler.framework.protocol.util.HeaderParser;
 import com.treefinance.crawler.framework.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.util.LogUtils;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections4.CollectionUtils;
@@ -77,11 +78,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         String sourceId = segment.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
             Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
-            if(logger.isDebugEnabled()){
-                logger.debug("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, result);
-            } else {
-                logger.info("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}", segment.getName(), sourceId);
-            }
+            logger.info("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, LogUtils.abbreviate(result));
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
                 logger.info("Segment source input is available! segment: {}, sourceId: {}", segment.getName(), sourceId);
