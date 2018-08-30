@@ -27,7 +27,6 @@ import java.util.Map;
 public class UrlExpEvalContext extends ExpEvalContext {
 
     private final List<String> urlEncodedKeys;
-
     private final String       charset;
 
     public UrlExpEvalContext(Map<String, Object> placeholderMapping, List<String> urlEncodedKeys, String charset) {

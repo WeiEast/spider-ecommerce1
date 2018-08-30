@@ -105,6 +105,7 @@ public class PlaceholderTest {
             Placeholder.parse(".sid\\");
         } catch (Exception e) {
             Assert.assertTrue(e instanceof IllegalArgumentException);
+            return;
         }
 
         Assert.fail();

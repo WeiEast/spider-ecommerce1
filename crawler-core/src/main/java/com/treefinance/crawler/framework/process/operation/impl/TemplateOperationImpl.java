@@ -24,8 +24,6 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.process.operation.Operation;
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -44,7 +42,7 @@ public class TemplateOperationImpl extends Operation<TemplateOperation> {
 
         Object output;
         if (Boolean.TRUE.equals(operation.getReturnObject())) {
-            output = StandardExpression.evalWithObject(StringUtils.trim(template), request, response, Boolean.TRUE.equals(operation.getFailover()));
+            output = StandardExpression.evalWithObject(template, request, response, Boolean.TRUE.equals(operation.getFailover()));
         } else {
             output = StandardExpression.evalSpecial(template, request, response, Boolean.TRUE.equals(operation.getFailover()));
         }

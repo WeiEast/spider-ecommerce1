@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @author Jerry
  * @since 12:07 2018/5/18
  */
-class ExpressionMatcher {
+public class ExpressionMatcher {
 
     private static final Logger  LOGGER             = LoggerFactory.getLogger(ExpressionMatcher.class);
 
@@ -47,8 +47,6 @@ class ExpressionMatcher {
 
     private              String  text;
 
-    private              boolean empty;
-
     private              Matcher matcher;
 
     private              Boolean find;
@@ -58,8 +56,7 @@ class ExpressionMatcher {
 
     private ExpressionMatcher(@Nullable String text) {
         this.text = StringUtils.defaultString(text);
-        this.empty = this.text.isEmpty();
-        if (!this.empty) {
+        if (!this.text.isEmpty()) {
             this.matcher = makeMatcher(this.text);
             this.find = null;
         } else {
@@ -83,8 +80,7 @@ class ExpressionMatcher {
 
     public void reset(String newText) {
         this.text = StringUtils.defaultString(newText);
-        this.empty = this.text.isEmpty();
-        if (this.empty) {
+        if (this.text.isEmpty()) {
             this.matcher = null;
             this.find = false;
         } else if (matcher == null) {
@@ -113,11 +109,13 @@ class ExpressionMatcher {
         return find;
     }
 
+    // --------------------------------------------- base methods
+
     public String evalExp(@Nonnull ExpEvalContext context) {
         return this.evalExp(context, null);
     }
 
-    public String evalExp(@Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+    public String evalExp(@Nonnull ExpEvalContext context, @Nullable BiFunction<String, String, String> mappingFunction) {
         Objects.requireNonNull(context);
         if (find()) {
             LOGGER.debug("Find expression and eval. input: {}", text);
@@ -132,7 +130,7 @@ class ExpressionMatcher {
         return text;
     }
 
-    private String replace(@Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+    private String replace(@Nonnull ExpEvalContext context, @Nullable BiFunction<String, String, String> mappingFunction) {
         BiFunction<String, String, String> function = mappingFunction;
 
         if (context instanceof UrlExpEvalContext && function == null) {
@@ -149,7 +147,7 @@ class ExpressionMatcher {
         return toReplace(context, function);
     }
 
-    private String toReplace(@Nonnull ExpEvalContext context, BiFunction<String, String, String> mappingFunction) {
+    private String toReplace(@Nonnull ExpEvalContext context, @Nullable BiFunction<String, String, String> mappingFunction) {
         PlaceholderResolver resolver = new PlaceholderResolver(context);
         resolver.validate();
 
@@ -174,13 +172,13 @@ class ExpressionMatcher {
         return sb.toString();
     }
 
-    public String evalExp(Supplier<ExpEvalContext> contextSupplier) {
+    public String evalExp(@Nonnull Supplier<ExpEvalContext> contextSupplier) {
         return this.evalExp(contextSupplier, null);
     }
 
-    public String evalExp(Supplier<ExpEvalContext> contextSupplier, BiFunction<String, String, String> mappingFunction) {
+    public String evalExp(@Nonnull Supplier<ExpEvalContext> contextSupplier, @Nullable BiFunction<String, String, String> mappingFunction) {
         if (find()) {
-            ExpEvalContext context = supplyContext(contextSupplier);
+            ExpEvalContext context = Objects.requireNonNull(contextSupplier.get());
 
             LOGGER.debug("Find expression and eval. input: {}", text);
 
@@ -194,65 +192,48 @@ class ExpressionMatcher {
         return text;
     }
 
-    @Nonnull
-    private ExpEvalContext supplyContext(Supplier<ExpEvalContext> contextSupplier) {
-        ExpEvalContext context = null;
-        if (contextSupplier != null) {
-            context = contextSupplier.get();
-        }
-
-        if (context == null) {
-            context = ExpEvalContext.DEFAULT;
-        }
-        return context;
-    }
-
     public String evalExp(@Nullable Map<String, Object> placeholderMapping) {
         return this.evalExp(placeholderMapping, null);
     }
 
     public String evalExp(@Nullable Map<String, Object> placeholderMapping, @Nullable BiFunction<String, String, String> mappingFunction) {
-        return this.evalExp(new ExpEvalContext(placeholderMapping), mappingFunction);
+        return this.evalExp(() -> new ExpEvalContext(placeholderMapping), mappingFunction);
     }
 
     public String evalExp(@Nullable Map<String, Object> placeholderMapping, @Nullable List<String> urlEncodedKeys, @Nullable String charset) {
-        return this.evalExp(new UrlExpEvalContext(placeholderMapping, urlEncodedKeys, charset));
+        return this.evalExp(() -> new UrlExpEvalContext(placeholderMapping, urlEncodedKeys, charset));
     }
 
-    public Object evalExpWithObject(Supplier<ExpEvalContext> contextSupplier) {
+    public Object evalRefExp(@Nonnull Supplier<RefExpEvalContext> contextSupplier) {
         if (Boolean.FALSE.equals(find)) {
-            return this.empty ? null : text;
+            return text;
         }
 
-        ExpEvalContext context = supplyContext(contextSupplier);
+        RefExpEvalContext context = Objects.requireNonNull(contextSupplier.get());
 
-        return findOrEvalExp(context);
+        return matchOrEvalExp(context);
     }
 
-    public Object evalExpWithObject(Map<String, Object> placeholderMapping) {
-        return this.evalExpWithObject(new ExpEvalContext(placeholderMapping));
-    }
-
-    public Object evalExpWithObject(@Nonnull ExpEvalContext context) {
+    public Object evalRefExp(@Nonnull RefExpEvalContext context) {
         Objects.requireNonNull(context);
         if (Boolean.FALSE.equals(find)) {
-            return this.empty ? null : text;
+            return text;
         }
 
-        return findOrEvalExp(context);
+        return matchOrEvalExp(context);
     }
 
-    private Object findOrEvalExp(@Nonnull ExpEvalContext context) {
+    private Object matchOrEvalExp(@Nonnull RefExpEvalContext context) {
         if (matcher.matches()) {
             find = true;
 
-            LOGGER.debug("Eval expression and return object. input: {}", text);
+            PlaceholderResolver placeholderResolver = new PlaceholderResolver(context.getPlaceholderMapping(), !context.isNullableIfMatch(), context.isNullableIfMatch(), false);
 
-            Object result = new PlaceholderResolver(context).resolve(getPlaceholder());
-
-            LOGGER.debug("Eval expression and return object. result: {}, type: {}", result, result != null ? result.getClass() : "");
-
-            return result;
+            if (context.isFormat()) {
+                return placeholderResolver.resolveAsString(getPlaceholder());
+            } else {
+                return placeholderResolver.resolve(getPlaceholder());
+            }
         }
 
         matcher.reset();
@@ -260,39 +241,31 @@ class ExpressionMatcher {
         return evalExp(context);
     }
 
-    public String evalExpSpecial(Supplier<ExpEvalContext> contextSupplier) {
-        if (Boolean.FALSE.equals(find)) {
-            return this.empty ? null : text;
-        }
+    // --------------------------------------------- extended methods
 
-        ExpEvalContext context = supplyContext(contextSupplier);
+    public Object evalExpWithObject(Map<String, Object> placeholderMapping) {
+        return evalRefExp(() -> new RefExpEvalContext(placeholderMapping));
+    }
 
-        return findOrEvalExpSpecial(context);
+    public Object evalExpWithObject(@Nonnull Supplier<Map<String, Object>> placeholderSupplier) {
+        return evalRefExp(() -> new RefExpEvalContext(placeholderSupplier.get()));
+    }
+
+
+    public Object evalExpWithObject(@Nonnull Supplier<Map<String, Object>> placeholderSupplier, boolean failOnUnknown, boolean allowNull) {
+        return evalRefExp(() -> new RefExpEvalContext(placeholderSupplier.get(), failOnUnknown, allowNull));
     }
 
     public String evalExpSpecial(Map<String, Object> placeholderMapping) {
-        return this.evalExpSpecial(new ExpEvalContext(placeholderMapping));
+        return (String) evalRefExp(() -> new RefExpEvalContext(placeholderMapping, true));
     }
 
-    public String evalExpSpecial(ExpEvalContext context) {
-        Objects.requireNonNull(context);
-        if (Boolean.FALSE.equals(find)) {
-            return this.empty ? null : text;
-        }
-
-        return findOrEvalExpSpecial(context);
+    public String evalExpSpecial(@Nonnull Supplier<Map<String, Object>> placeholderSupplier) {
+        return (String) evalRefExp(() -> new RefExpEvalContext(placeholderSupplier.get(), true));
     }
 
-    private String findOrEvalExpSpecial(ExpEvalContext context) {
-        if (matcher.matches()) {
-            find = true;
-
-            ExpEvalContext ctx = new ExpEvalContext(context.getPlaceholderMapping(), false, true);
-            return new PlaceholderResolver(ctx).resolveAsString(getPlaceholder());
-        }
-
-        matcher.reset();
-
-        return evalExp(context);
+    public String evalExpSpecial(@Nonnull Supplier<Map<String, Object>> placeholderSupplier, boolean failOnUnknown, boolean allowNull) {
+        return (String) evalRefExp(() -> new RefExpEvalContext(placeholderSupplier.get(), failOnUnknown, allowNull, true));
     }
+
 }

@@ -18,9 +18,8 @@ package com.treefinance.crawler.framework.expression;
 
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 
-import com.treefinance.crawler.framework.context.RequestUtil;
+import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.FieldScopes;
 import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
@@ -62,27 +61,19 @@ public final class ExpressionParser {
     }
 
     public String evalExp(Map<String, Object> placeholder) {
-        return matcher.evalExp(new ExpEvalContext(placeholder));
+        return matcher.evalExp(placeholder);
     }
 
     public String evalExp(Map<String, Object> placeholder, boolean failOnUnknown, boolean allowNull) {
         return matcher.evalExp(new ExpEvalContext(placeholder, failOnUnknown, allowNull));
     }
 
-    public String evalExp(Map<String, Object> placeholder, BiFunction<String, String, String> mappingFunction) {
-        return matcher.evalExp(new ExpEvalContext(placeholder), mappingFunction);
-    }
-
     public Object evalExpWithObject(Map<String, Object> placeholder) {
-        return matcher.evalExpWithObject(new ExpEvalContext(placeholder));
-    }
-
-    public String eval(SpiderRequest request, SpiderResponse response) {
-        return matcher.evalExp(() -> new ExpEvalContext(FieldScopes.getVisibleFields(request, response)));
+        return matcher.evalExpWithObject(placeholder);
     }
 
     public Object evalWithObject(SpiderRequest request, SpiderResponse response) {
-        return matcher.evalExpWithObject(() -> new ExpEvalContext(FieldScopes.getVisibleFields(request, response)));
+        return matcher.evalExpWithObject(FieldScopes.getVisibleFields(request, response));
     }
 
     public String evalUrl(SpiderRequest request, SpiderResponse response, boolean failOnUnknown, boolean allowNull) {

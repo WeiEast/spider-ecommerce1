@@ -27,21 +27,17 @@ import com.treefinance.toolkit.util.kryo.KryoUtils;
  * @author Jerry
  * @since 13:34 2018/5/30
  */
-public class ExpEvalContext implements Serializable, Copyable<ExpEvalContext> {
+public class ExpEvalContext implements Serializable,Copyable<ExpEvalContext> {
 
-    public static final ExpEvalContext      DEFAULT       = new ExpEvalContext();
+    public static final ExpEvalContext DEFAULT = new ExpEvalContext(null);
 
-    private final       Map<String, Object> placeholderMapping;
+    private final Map<String, Object> placeholderMapping;
 
-    private             boolean             failOnUnknown = true;
+    private boolean failOnUnknown = true;   // fail on unknown placeholder
 
-    private             boolean             allowNull     = false;
+    private boolean allowNull = false;  // placeholder is nullable
 
-    private             boolean             nullToEmpty   = false;
-
-    public ExpEvalContext() {
-        this(null);
-    }
+    private boolean nullToEmpty = false;  // convert the null value of placeholder to empty string
 
     public ExpEvalContext(Map<String, Object> placeholderMapping) {
         this(placeholderMapping, true);
@@ -52,9 +48,14 @@ public class ExpEvalContext implements Serializable, Copyable<ExpEvalContext> {
     }
 
     public ExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull) {
+        this(placeholderMapping, failOnUnknown, allowNull, false);
+    }
+
+    public ExpEvalContext(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, boolean nullToEmpty) {
         this.placeholderMapping = placeholderMapping == null ? Collections.emptyMap() : placeholderMapping;
         this.failOnUnknown = failOnUnknown;
         this.allowNull = allowNull;
+        this.nullToEmpty = nullToEmpty;
     }
 
     public Map<String, Object> getPlaceholderMapping() {

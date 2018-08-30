@@ -43,7 +43,7 @@ public class ExpressionMatcherTest {
         map.put("Coremail.sid", "test");
 
         HashMap<String, Object> fields = new HashMap<>();
-        map.put("cookie", map);
+        fields.put("cookie", map);
 
         String value = matcher.evalExp(new ExpEvalContext(fields, false, true));
         System.out.println(value);

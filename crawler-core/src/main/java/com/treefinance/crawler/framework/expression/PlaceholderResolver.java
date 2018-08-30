@@ -44,6 +44,13 @@ class PlaceholderResolver {
         this.nullToEmpty = context.isNullToEmpty();
     }
 
+    public PlaceholderResolver(Map<String, Object> placeholderMapping, boolean failOnUnknown, boolean allowNull, boolean nullToEmpty) {
+        this.placeholderMapping = placeholderMapping;
+        this.failOnUnknown = failOnUnknown;
+        this.allowNull = allowNull;
+        this.nullToEmpty = nullToEmpty;
+    }
+
     public void validate() {
         if (failOnUnknown && placeholderMapping.isEmpty()) {
             throw new PlaceholderResolveException("Can not resolve placeholder. - Not found placeholder mapping.");
