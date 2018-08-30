@@ -130,7 +130,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         fieldValue = this.tryResolveUrl(fieldValue, request);
 
         boolean notEmpty = BooleanUtils.isTrue(fieldExtractor.getNotEmpty());
-        if (notEmpty && (fieldValue == null || StringUtils.isEmpty(fieldValue.toString()))) {
+        if (notEmpty && FieldUtils.isNullOrEmpty(fieldValue)) {
             throw new ResultEmptyException(fieldExtractor + " >> result should not be Empty!");
         }
 
@@ -241,19 +241,19 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
     private Object defaultValueIfEmpty(Object fieldValue, SpiderRequest request, SpiderResponse response, FieldExtractResultSet fieldExtractResultSet) {
         String defaultValue = fieldExtractor.getDefaultValue();
         if (defaultValue != null && FieldUtils.isNullOrEmptyString(fieldValue)) {
-            Object result;
-            ResultType type = fieldExtractor.getResultType();
-            if (ResultType.String.equals(type)) {
-                result = StandardExpression.eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
-            } else {
-                String val = type != null ? StringUtils.trim(defaultValue) : defaultValue;
-                result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
-            }
-            logger.info("Field: {}, default value: {}", fieldExtractor.getField(), LogUtils.abbreviate(result));
             try {
+                Object result;
+                ResultType type = fieldExtractor.getResultType();
+                if (ResultType.String.equals(type)) {
+                    result = StandardExpression.eval(defaultValue, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
+                } else {
+                    String val = type != null ? StringUtils.trim(defaultValue) : defaultValue;
+                    result = StandardExpression.evalWithObject(val, ImmutableList.of(fieldExtractResultSet.resultMap(), request.getGlobalScopeAsMap()));
+                }
+                logger.info("Field: {}, default value: {}", fieldExtractor.getField(), LogUtils.abbreviate(result));
                 return this.format(result, type, fieldExtractor.getFormat(), request, response);
             } catch (Exception e) {
-                logger.warn("Error formatting default value for field: {}", fieldExtractor, e);
+                logger.warn("Error setting default value for field: {}", fieldExtractor, e);
                 return null;
             }
         }

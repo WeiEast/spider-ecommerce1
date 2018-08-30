@@ -41,6 +41,10 @@ public final class FieldUtils {
     private FieldUtils() {
     }
 
+    public static boolean isNullOrEmpty(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty()) || (object instanceof Collection && ((Collection) object).isEmpty());
+    }
+
     public static boolean isNullOrEmptyString(Object object) {
         return object == null || (object instanceof String && ((String) object).isEmpty());
     }

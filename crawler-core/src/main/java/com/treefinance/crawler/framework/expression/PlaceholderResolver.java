@@ -18,7 +18,6 @@ package com.treefinance.crawler.framework.expression;
 
 import javax.annotation.Nonnull;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +58,7 @@ class PlaceholderResolver {
 
     public String resolveAsString(@Nonnull String placeholder) {
         LOGGER.debug("placeholder: {}, Fields context: {}", placeholder, placeholderMapping);
-        Object value = findValue(placeholderMapping, placeholder);
+        Object value = search(placeholderMapping, placeholder);
 
         if (value == null) {
             if (!allowNull) {
@@ -83,7 +82,7 @@ class PlaceholderResolver {
 
     public Object resolve(@Nonnull String placeholder) {
         LOGGER.debug("placeholder: {}, Fields context: {}", placeholder, placeholderMapping);
-        Object value = findValue(placeholderMapping, placeholder);
+        Object value = search(placeholderMapping, placeholder);
 
         if (value == null) {
             if (!allowNull) {
@@ -92,20 +91,28 @@ class PlaceholderResolver {
 
             LOGGER.warn("Can not resolve placeholder '{}'", placeholder);
         } else {
-            LOGGER.debug("placeholder: {}, result: {}", placeholder, value);
+            LOGGER.debug("placeholder: {}, result: {}, type: {}", placeholder, value, value.getClass());
         }
 
         return value;
     }
 
+    private Object search(@Nonnull Map<String, Object> map, @Nonnull String name) {
+        try {
+            return findValue(map, name);
+        } catch (PathNotFoundException e) {
+            throw new PlaceholderResolveException("Can not resolve placeholder '" + name + "'! - Missing: " + e.getPath());
+        }
+    }
+
     @SuppressWarnings("unchecked")
-    private Object findValue(@Nonnull Map<String, Object> map, @Nonnull String name) {
+    private Object findValue(@Nonnull Map<String, Object> map, @Nonnull String name) throws PathNotFoundException {
         Placeholder placeholder = Placeholder.parse(name);
         LOGGER.debug("Parsed placeholder: {}", placeholder);
         String key = placeholder.getName();
 
         if (failOnUnknown && (map.isEmpty() || !map.containsKey(key))) {
-            throw new PlaceholderResolveException("Can not resolve placeholder '" + key + "'");
+            throw new PathNotFoundException(name);
         }
 
         Object value = map.get(key);
@@ -119,15 +126,58 @@ class PlaceholderResolver {
                 return findValue((Map) value, next);
             } else if (value instanceof Collection) {
                 Collection<Object> collection = (Collection<Object>) value;
-                return collection.stream().filter(item -> item instanceof Map).map(item -> this.findValue((Map) item, next)).filter(Objects::nonNull).collect(Collectors.toList());
+
+                boolean flag = true;
+                List<Object> list = new ArrayList<>(collection.size());
+                for (Object item : collection) {
+                    if (item instanceof Map) {
+                        if (addNext((Map) item, next, list)) {
+                            flag = false;
+                        }
+                    }
+                }
+
+                if (flag) {
+                    throw new PathNotFoundException(next);
+                }
+
+                return list;
             } else if (value instanceof Object[]) {
                 Class<?> componentType = value.getClass().getComponentType();
                 if (Map.class.isAssignableFrom(componentType)) {
                     Object[] array = (Object[]) value;
-                    return Arrays.stream(array).map(item -> this.findValue((Map) item, next)).filter(Objects::nonNull).collect(Collectors.toList());
+
+                    boolean flag = true;
+                    List<Object> list = new ArrayList<>(array.length);
+                    for (Object item : array) {
+                        if (addNext((Map) item, next, list)) {
+                            flag = false;
+                        }
+                    }
+
+                    if (flag) {
+                        throw new PathNotFoundException(next);
+                    }
+
+                    return list;
                 } else if (componentType == Object.class) {
                     Object[] array = (Object[]) value;
-                    return Arrays.stream(array).filter(item -> item instanceof Map).map(item -> this.findValue((Map) item, next)).filter(Objects::nonNull).collect(Collectors.toList());
+
+                    boolean flag = true;
+                    List<Object> list = new ArrayList<>(array.length);
+                    for (Object item : array) {
+                        if (item instanceof Map) {
+                            if (addNext((Map) item, next, list)) {
+                                flag = false;
+                            }
+                        }
+                    }
+
+                    if (flag) {
+                        throw new PathNotFoundException(next);
+                    }
+
+                    return list;
                 }
                 return Collections.emptyList();
             }
@@ -140,5 +190,18 @@ class PlaceholderResolver {
         }
 
         return value;
+    }
+
+    private boolean addNext(Map<String, Object> item, String next, List<Object> list) {
+        try {
+            Object val = this.findValue(item, next);
+            if (val != null) {
+                list.add(val);
+            }
+            return true;
+        } catch (PathNotFoundException e) {
+            LOGGER.debug("path not found. path: {}, fields: {}", next, item);
+        }
+        return false;
     }
 }

@@ -227,12 +227,22 @@ public class ExpressionMatcher {
         if (matcher.matches()) {
             find = true;
 
-            PlaceholderResolver placeholderResolver = new PlaceholderResolver(context.getPlaceholderMapping(), !context.isNullableIfMatch(), context.isNullableIfMatch(), false);
-
-            if (context.isFormat()) {
-                return placeholderResolver.resolveAsString(getPlaceholder());
+            if (context.isNullableIfMatch()) {
+                PlaceholderResolver placeholderResolver = new PlaceholderResolver(context.getPlaceholderMapping(), false, true, false);
+                if (context.isFormat()) {
+                    return placeholderResolver.resolveAsString(getPlaceholder());
+                } else {
+                    return placeholderResolver.resolve(getPlaceholder());
+                }
             } else {
-                return placeholderResolver.resolve(getPlaceholder());
+                PlaceholderResolver placeholderResolver = new PlaceholderResolver(context);
+                if (context.isFormat()) {
+                    Object result = placeholderResolver.resolveAsString(getPlaceholder());
+
+                    return result == null ? text : result;
+                } else {
+                    return placeholderResolver.resolve(getPlaceholder());
+                }
             }
         }
 

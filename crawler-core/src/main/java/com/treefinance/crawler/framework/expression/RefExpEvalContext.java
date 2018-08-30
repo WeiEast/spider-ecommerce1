@@ -26,7 +26,7 @@ public class RefExpEvalContext extends ExpEvalContext {
 
     public static final RefExpEvalContext DEFAULT = new RefExpEvalContext(null);
 
-    private boolean nullableIfMatch = true;
+    private boolean nullableIfMatch = false;
 
     private boolean format;
 
