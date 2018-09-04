@@ -250,12 +250,12 @@ public class Collector {
             }
 
             boolean loginStatus = !needLogin || loginResult.getStatus();
-            if (!taskMessage.isSubTask() && !context.needInteractive()) {
+            if (taskMessage.isMainTask() && !context.needInteractive()) {
                 messageService.sendTaskLog(taskMessage.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
             }
 
             if (loginStatus) {
-                if (!taskMessage.isSubTask()) {
+                if (taskMessage.isMainTask()) {
                     messageService.sendTaskLog(taskMessage.getTaskId(), "开始抓取");
                 }
                 HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch(taskMessage);
@@ -292,7 +292,7 @@ public class Collector {
             if (null != watcher) {
                 this.actorLockWatchRelease(watcher);
             }
-            if (!taskMessage.isSubTask()) {
+            if (taskMessage.isMainTask()) {
                 String logMsg;
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
@@ -326,7 +326,7 @@ public class Collector {
         message.setFinish(true);
         this.messageComplement(taskMessage, message);
         taskService.updateTask(task);
-        if (!taskMessage.isSubTask()) {
+        if (taskMessage.isMainTask()) {
             TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER), System.currentTimeMillis() + "");
             monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
         }

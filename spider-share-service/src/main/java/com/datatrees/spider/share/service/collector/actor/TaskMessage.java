@@ -117,6 +117,10 @@ public class TaskMessage {
         return task.isSubTask();
     }
 
+    public boolean isMainTask() {
+        return !isSubTask();
+    }
+
     public int getParentTaskId() {
         return parentTaskId;
     }

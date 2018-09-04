@@ -35,7 +35,7 @@ public abstract class AbstractTask {
     }
 
     public synchronized void setErrorCode(ErrorCode errorCode, String message) {
-        if (null == getStatus() || 0 == getStatus() || errorCode.getErrorCode() < getStatus()) {
+        if (0 == getStatus() || errorCode.getErrorCode() < getStatus()) {
             this.markStatus(errorCode.getErrorCode(), message != null ? message : errorCode.getErrorMsg());
         }
     }
@@ -47,9 +47,9 @@ public abstract class AbstractTask {
 
     public abstract void setRemark(String remark);
 
-    public abstract Integer getStatus();
+    public abstract int getStatus();
 
-    public abstract void setStatus(Integer status);
+    public abstract void setStatus(int status);
 
     public String getWebsiteName() {
         return websiteName;

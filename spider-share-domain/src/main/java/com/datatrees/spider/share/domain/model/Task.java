@@ -56,7 +56,7 @@ public class Task extends AbstractTask implements Serializable {
     private              AtomicInteger filteredCount;
 
     /** 0:init;200:success;101:cookie Invalid，102：block 103：no result */
-    private              Integer       status;
+    private              int       status;
 
     /**  */
     private              String        remark;
@@ -166,11 +166,11 @@ public class Task extends AbstractTask implements Serializable {
         this.filteredCount = filteredCount;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
