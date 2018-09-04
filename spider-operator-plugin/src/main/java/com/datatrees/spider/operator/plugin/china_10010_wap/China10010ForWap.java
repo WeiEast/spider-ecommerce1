@@ -229,7 +229,7 @@ public class China10010ForWap implements OperatorPlugin {
                 for (int i = 2; i <= totalPage; i++) {
                     templateUrl = "http://wap.10010.com/mobileService/query/getPhoneByDetailContent.htm";
                     templateData = "t={}&YYYY={}&MM={}&DD=&queryMonthAndDay=month&menuId=000200010005&currNum={}";
-                    data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month);
+                    data = TemplateUtils.format(templateData, System.currentTimeMillis(), year, month, i);
                     response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                             .setRequestBody(data).invoke();
                     list.add(response.getPageContent());

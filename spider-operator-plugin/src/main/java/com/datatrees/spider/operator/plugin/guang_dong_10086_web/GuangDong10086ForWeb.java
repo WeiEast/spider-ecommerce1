@@ -19,6 +19,8 @@ package com.datatrees.spider.operator.plugin.guang_dong_10086_web;
 import javax.script.Invocable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,6 +34,8 @@ import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
@@ -164,6 +168,11 @@ public class GuangDong10086ForWeb implements OperatorPlugin {
         CheckUtils.checkNotBlank(param.getSmsCode(), ErrorCode.EMPTY_SMS_CODE);
         HttpResult<Map<String, Object>> result = new HttpResult<>();
         Response response = null;
+        //请求参数date
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyymmddhhmmssSSS");
+        String date = sdf.format(new Date());
+        TaskUtils.addTaskShare(param.getTaskId(), "date", date);
+
         try {
             String templateUrl = "https://gd.ac.10086.cn/ucs/ucs/webForm.jsps";
             String templateData = "mobile={}&smsPwd={}&loginType=1&cookieMobile=on&backURL=http://gd.10086.cn/commodity/index.shtml";

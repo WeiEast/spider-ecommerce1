@@ -39,7 +39,6 @@ import org.slf4j.LoggerFactory;
 public class ShangHai10000ForWeb implements OperatorPlugin {
 
     private static final Logger                     logger     = LoggerFactory.getLogger(ShangHai10000ForWeb.class);
-
     private              LoginUtilsForChina10000Web loginUtils = new LoginUtilsForChina10000Web();
 
     @Override
@@ -100,14 +99,16 @@ public class ShangHai10000ForWeb implements OperatorPlugin {
             }
 
             String referer = "http://www.189.cn/sh/";
-            String templateUrl
-                    = "http://www.189.cn/login/skip/ecs.do?method=skip&platNo=93507&toStUrl=http://service.sh.189.cn/service/query/balance";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).setReferer(referer)
-                    .invoke();
+            String templateUrl = "http://www.189.cn/login/skip/ecs" +
+                    ".do?method=skip&platNo=93507&toStUrl=http://service" + ".sh.189.cn/service/query/balance";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl
+                    (templateUrl).setReferer(referer).invoke();
 
             templateUrl = "http://service.sh.189.cn/service/mobileLogin";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl).invoke();
-            if (StringUtils.contains(response.getPageContent(), "我的电信")) {
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl
+                    (templateUrl).invoke();
+            if (StringUtils.contains(response.getPageContent(), "账户余额") && StringUtils.contains(response
+                    .getPageContent(), "退出")) {
                 logger.warn("登录成功,params={}", param);
                 return result.success();
             } else {
@@ -126,10 +127,10 @@ public class ShangHai10000ForWeb implements OperatorPlugin {
         String pageContent = null;
         try {
             String referer = "http://service.sh.189.cn/service/query/detail";
-            String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/sendCode" +
-                    ".do?flag=1&devNo={}&dateType=&moPingType=LOCAL&startDate=&endDate=";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, param.getMobile())
-                    .setReferer(referer).invoke();
+            String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/sendCode" + ""
+                    + ".do?flag=1&devNo={}&dateType=&moPingType=LOCAL&startDate=&endDate=";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl
+                    (templateUrl, param.getMobile()).setReferer(referer).invoke();
             pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"result\":true")) {
                 logger.info("详单-->短信验证码-->刷新成功,param={}", param);
@@ -150,10 +151,10 @@ public class ShangHai10000ForWeb implements OperatorPlugin {
 
         try {
             String referer = "http://service.sh.189.cn/service/query/detail";
-            String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/validate" +
-                    ".do?input_code={}&selDevid={}&flag=nocw&checkCode=%E9%AA%8C%E8%AF%81%E7%A0%81";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                    .setFullUrl(templateUrl, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
+            String templateUrl = "http://service.sh.189.cn/service/service/authority/query/billdetail/validate" + ""
+                    + ".do?input_code={}&selDevid={}&flag=nocw&checkCode=%E9%AA%8C%E8%AF%81%E7%A0%81";
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl
+                    (templateUrl, param.getSmsCode(), param.getMobile()).setReferer(referer).invoke();
             String pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "\"CODE\":\"0\"")) {
                 logger.info("详单-->校验成功,param={}", param);

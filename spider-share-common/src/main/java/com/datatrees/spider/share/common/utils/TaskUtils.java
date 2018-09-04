@@ -86,7 +86,13 @@ public class TaskUtils {
         if (null != headers && headers.length > 0) {
             for (Header header : headers) {
                 String headerValue = header.getValue();
-                HttpCookie httpCookie = HttpCookie.parse(headerValue).get(0);
+                HttpCookie httpCookie=null;
+                try {
+                    httpCookie = HttpCookie.parse(headerValue).get(0);
+                }catch (IllegalArgumentException e){
+                    logger.warn("更新cookie时发生IllegalArgumentException,捕获后跳过此异常。headerValue={}",headerValue);
+                    continue;
+                }
                 Cookie orignCookie = findCookie(host, httpCookie, list);
                 if (null != orignCookie) {
                     if (!StringUtils.equals(orignCookie.getValue(), httpCookie.getValue())) {

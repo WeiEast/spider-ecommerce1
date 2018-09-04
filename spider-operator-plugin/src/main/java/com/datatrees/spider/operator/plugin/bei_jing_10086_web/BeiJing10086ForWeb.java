@@ -25,19 +25,19 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorLoginPostPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +66,8 @@ public class BeiJing10086ForWeb implements OperatorLoginPostPlugin {
     @Override
     public HttpResult<Map<String, Object>> init(OperatorParam param) {
         HttpResult<Map<String, Object>> result = new HttpResult<>();
+        String time = String.valueOf(System.currentTimeMillis());
+        TaskUtils.addTaskShare(param.getTaskId(), "time", time);
         try {
             //获取cookie:Webtrends
             TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl("https://login.10086.cn/html/bj/login.html")
@@ -347,6 +349,17 @@ public class BeiJing10086ForWeb implements OperatorLoginPostPlugin {
                 logger.info("详单校验成功,param={}", param);
                 TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                         .setFullUrl("https://login.10086.cn/SSOCheck.action?channelID=12003&backUrl=http://shop.10086.cn/i/?f=custinfoqry").invoke();
+
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setFullUrl("http://shop.10086.cn/i/v1/fee/billinfo/{}?_=", param.getMobile())
+                        .setReferer("https://shop.10086.cn/i/?f=billqry&welcome=").addHeader("Content-Type", "*")
+                        .addHeader("X-Requested-With", "XMLHttpRequest").setAutoRedirect(false).invoke();
+                String redirectUrl = response.getRedirectUrl();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl)
+                        .setReferer("https://shop.10086.cn/i/?f=billqry&welcome=").addHeader("Content-Type", "*")
+                        .addHeader("X-Requested-With", "XMLHttpRequest").invoke();
+                TaskUtils.addTaskShare(param.getTaskId(), "billInfoPage", response.getPageContent());
+                TaskUtils.addTaskShare(param.getTaskId(), "billInfoUrl", redirectUrl);
                 return result.success();
             } else {
                 logger.warn("详单校验失败,param={}", param);
