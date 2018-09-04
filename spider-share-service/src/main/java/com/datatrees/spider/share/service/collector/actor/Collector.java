@@ -51,7 +51,6 @@ import com.datatrees.spider.share.service.collector.worker.CollectorWorkerFactor
 import com.datatrees.spider.share.service.constants.SubmitConstant;
 import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.domain.SubmitFile;
-import com.datatrees.spider.share.service.domain.TaskRelated;
 import com.datatrees.spider.share.service.extra.ActorLockEventWatcher;
 import com.datatrees.spider.share.service.message.MessageFactory;
 import com.datatrees.spider.share.service.oss.OssServiceProvider;
@@ -240,69 +239,60 @@ public class Collector {
             SearchProcessorContext context = taskMessage.getContext();
             boolean needLogin = context.needLogin();
             LoginType loginType = context.getLoginConfig() != null ? context.getLoginConfig().getType() : null;
-            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", task.getTaskId(), needLogin, loginType, context.getWebsiteName());
+            logger.info("start process taskId={},needLogin={},loginType={},websiteName={}", taskMessage.getTaskId(), needLogin, loginType, context.getWebsiteName());
 
             HttpResult<Boolean> loginResult = new HttpResult<>();
             if (needLogin) {
                 loginResult = collectorWorker.doLogin(taskMessage);
                 if (!loginResult.getStatus()) {
-                    task.setStatus(loginResult.getResponseCode());
-                    task.setRemark(loginResult.getMessage());
+                    taskMessage.failure(loginResult.getResponseCode(), loginResult.getMessage());
                 }
             }
 
             boolean loginStatus = !needLogin || loginResult.getStatus();
-            if (!task.isSubTask() && !context.needInteractive()) {
-                messageService.sendTaskLog(task.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
+            if (!taskMessage.isSubTask() && !context.needInteractive()) {
+                messageService.sendTaskLog(taskMessage.getTaskId(), loginStatus ? "登陆成功" : "登陆失败");
             }
 
             if (loginStatus) {
-                if (!task.isSubTask()) {
-                    messageService.sendTaskLog(task.getTaskId(), "开始抓取");
+                if (!taskMessage.isSubTask()) {
+                    messageService.sendTaskLog(taskMessage.getTaskId(), "开始抓取");
                 }
                 HttpResult<Map<String, Object>> searchResult = collectorWorker.doSearch(taskMessage);
                 if (!searchResult.getStatus()) {
-                    task.setStatus(searchResult.getResponseCode());
-                    task.setRemark(searchResult.getMessage());
+                    taskMessage.failure(searchResult.getResponseCode(), searchResult.getMessage());
+                } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                    logger.warn("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), taskMessage.getTaskId(), taskMessage.getWebsiteName());
+                    taskMessage.failure(ErrorCode.TASK_INTERRUPTED_ERROR);
                 } else {
                     Map submitkeyResult = searchResult.getData();
-                    if (submitkeyResult == null && message instanceof TaskRelated) {
-                        logger.info("current task related to:{},set empty submitkeyResult.", ((TaskRelated) message).getParentTaskId());
-                        submitkeyResult = new HashMap();
-                    }
-                    Set<String> resultTagSet = collectorWorker.getResultTagSet();
 
-                    if (CollectionUtils.isEmpty(resultTagSet)) {
-                        if (CollectionUtils.isEmpty(message.getResultTagSet())) {
-                            resultTagSet = new HashSet<>(taskMessage.getContext().getWebsite().getSearchConfig().getResultTagList());
-                        } else {
-                            resultTagSet = message.getResultTagSet();
-                        }
-                    }
-                    if (task.isSubTask() && MapUtils.isEmpty(submitkeyResult)) {
-                        logger.info("skip send mq message threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
-                    } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
-                        logger.warn("Thread interrupt before result send to queue. threadId={},taskId={},websiteName={}", Thread.currentThread().getId(), task.getTaskId(), task.getWebsiteName());
-                        task.setStatus(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode());
-                        task.setRemark(ErrorCode.TASK_INTERRUPTED_ERROR.getErrorMsg());
+                    if (taskMessage.isSubTask() && MapUtils.isEmpty(submitkeyResult)) {
+                        logger.info("skip send mq message threadId={},taskId={},websiteName={},parent={}", Thread.currentThread().getId(), taskMessage.getTaskId(), taskMessage.getWebsiteName(), taskMessage.getParentTaskId());
                     } else {
+                        Set<String> resultTagSet = collectorWorker.getResultTagSet();
+                        if (CollectionUtils.isEmpty(resultTagSet)) {
+                            resultTagSet = taskMessage.getResultTagSet();
+                        }
+
                         this.sendResult(taskMessage, submitkeyResult, resultTagSet);
                     }
-
                 }
             }
         } catch (Throwable e) {
             logger.error("processMessage error taskId={}", message.getTaskId(), e);
             if (e instanceof LoginTimeOutException) {
-                taskMessage.setErrorCode(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
+                taskMessage.failure(ErrorCode.LOGIN_TIMEOUT_ERROR, ErrorCode.LOGIN_TIMEOUT_ERROR.getErrorMsg() + " " + e.getMessage());
+            } else if (ThreadInterruptedUtil.isInterrupted(Thread.currentThread())) {
+                taskMessage.failure(ErrorCode.TASK_INTERRUPTED_ERROR);
             } else {
-                taskMessage.setErrorCode(ErrorCode.UNKNOWN_REASON, e.toString());
+                taskMessage.failure(ErrorCode.UNKNOWN_REASON, e.toString());
             }
         } finally {
             if (null != watcher) {
                 this.actorLockWatchRelease(watcher);
             }
-            if (!task.isSubTask()) {
+            if (!taskMessage.isSubTask()) {
                 String logMsg;
                 switch (taskMessage.getTask().getStatus()) {
                     case 0:
@@ -336,7 +326,7 @@ public class Collector {
         message.setFinish(true);
         this.messageComplement(taskMessage, message);
         taskService.updateTask(task);
-        if (null != task && !task.isSubTask()) {
+        if (!taskMessage.isSubTask()) {
             TaskUtils.addTaskShare(task.getTaskId(), RedisKeyPrefixEnum.FINISH_TIMESTAMP.getRedisKey(AttributeKey.CRAWLER), System.currentTimeMillis() + "");
             monitorService.sendTaskCompleteMsg(task.getTaskId(), task.getWebsiteName(), task.getStatus(), task.getRemark());
         }

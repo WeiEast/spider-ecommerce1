@@ -17,7 +17,6 @@
 package com.datatrees.spider.share.service.collector.subtask.pool;
 
 import javax.annotation.Resource;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,8 +27,6 @@ import com.alibaba.rocketmq.common.ThreadFactoryImpl;
 import com.datatrees.spider.share.service.collector.actor.Collector;
 import com.datatrees.spider.share.service.collector.subtask.container.Container;
 import com.datatrees.spider.share.service.collector.subtask.container.Mutex;
-import com.datatrees.spider.share.service.domain.SpiderTask;
-import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.service.domain.SubTask;
 import com.datatrees.spider.share.service.domain.SubTaskCollectorMessage;
 import org.apache.commons.collections.MapUtils;
@@ -52,7 +49,6 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
     @Resource
     private              Collector       collector;
 
-    @SuppressWarnings("rawtypes")
     @Override
     public Future<Map> submit(Container container) {
         return pool.submit(() -> {
@@ -77,25 +73,16 @@ public class MutexSupportSubTaskExecutor implements SubTaskExecutor {
         });
     }
 
-    private SubTaskCollectorMessage initSubTaskCollectorMessage(SubTask task) {
-        SpiderTask parentTask = task.getParentTask();
-        SubTaskCollectorMessage message = new SubTaskCollectorMessage(parentTask);
 
-        SubSeed subSeed = task.getSeed();
-        message.setSubSeed(subSeed);
-
-        Map<String, Object> property = new HashMap<>(parentTask.getProperty());
-        property.putAll(subSeed);
-        message.setProperty(property);
-
-        return message;
-    }
-
-    @SuppressWarnings("rawtypes")
     private Map execute(SubTask task) {
         try {
             logger.info("start to execute sub task taskId={}", task.getTaskId());
-            Map resultObject = collector.processMessage(initSubTaskCollectorMessage(task));
+            SubTaskCollectorMessage message = new SubTaskCollectorMessage(task.getParentTask());
+
+            message.setSubSeed(task.getSeed());
+
+            Map resultObject = collector.processMessage(message);
+
             if (MapUtils.isNotEmpty(resultObject)) {
                 return  resultObject;
             }

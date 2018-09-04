@@ -16,6 +16,8 @@
 
 package com.datatrees.spider.share.service.domain;
 
+import java.util.HashMap;
+
 import com.datatrees.spider.share.domain.CollectorMessage;
 import org.apache.commons.lang.BooleanUtils;
 
@@ -38,6 +40,7 @@ public class SubTaskCollectorMessage extends CollectorMessage implements SubTask
         setEndURL(collectorMessage.getEndURL());
         setNeedDuplicate(collectorMessage.isNeedDuplicate());
         setLevel1Status(collectorMessage.isLevel1Status());
+        setProperty(new HashMap<>(parentTask.getProperty()));
     }
 
     @Override
@@ -50,6 +53,7 @@ public class SubTaskCollectorMessage extends CollectorMessage implements SubTask
 
         setWebsiteName(subSeed.getWebsiteName());
         setLoginCheckIgnore(BooleanUtils.isTrue(subSeed.getLoginCheckIgnore()));
+        addProperties(subSeed);
     }
 
     public String getTemplateId() {

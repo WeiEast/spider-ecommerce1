@@ -21,11 +21,15 @@ package com.datatrees.spider.share.service.domain;
  * @version 1.0
  * @since 2016年1月18日 下午5:39:23
  */
-public interface SubTaskAble extends TaskRelated, TemplteAble {
+public interface SubTaskAble {
 
     SubSeed getSubSeed();
 
     boolean isSynced();
 
     boolean noStatus();
+
+    String getTemplateId();
+
+    Integer getParentTaskId();
 }

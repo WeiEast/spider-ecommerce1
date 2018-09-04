@@ -116,6 +116,14 @@ public class CollectorMessage extends MessageInfo {
         this.property = property;
     }
 
+    public void addProperties(Map<String, Object> property) {
+        if (this.property == null) {
+            this.property = new HashMap<>(property);
+        } else {
+            this.property.putAll(property);
+        }
+    }
+
     /**
      * @return the level1Status
      */

@@ -16,8 +16,10 @@
 
 package com.datatrees.spider.share.service.collector.actor;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import com.datatrees.spider.share.domain.CollectorMessage;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -25,10 +27,9 @@ import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.domain.website.WebsiteType;
 import com.datatrees.spider.share.service.domain.SubTaskAble;
-import com.datatrees.spider.share.service.domain.TaskRelated;
-import com.datatrees.spider.share.service.domain.TemplteAble;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -91,32 +92,29 @@ public class TaskMessage {
     public void setCollectorMessage(CollectorMessage message) {
         this.collectorMessage = message;
 
-        if (message instanceof TemplteAble) {
-            this.templateId = ((TemplteAble) message).getTemplateId();
-        }
-        if (message instanceof TaskRelated) {
-            this.parentTaskId = ((TaskRelated) message).getParentTaskId();
-            context.setAttribute("parentTaskLogId", this.parentTaskId);
-        }
         // set subtask parameter
         if (message instanceof SubTaskAble) {
             //标记子任务
-            markSubtask(!((SubTaskAble) message).isSynced(), !((SubTaskAble) message).noStatus());
+            task.setSubTask(true);
 
-            if (((SubTaskAble) message).getSubSeed() != null) {
-                this.uniqueSuffix = ((SubTaskAble) message).getSubSeed().getUniqueSuffix();
+            SubTaskAble sub = (SubTaskAble) message;
+            this.parentTaskId = sub.getParentTaskId();
+            context.setAttribute("parentTaskLogId", this.parentTaskId);
+            this.templateId = sub.getTemplateId();
+            this.messageSend = !sub.isSynced();
+            this.statusSend = !sub.noStatus();
+            if (sub.getSubSeed() != null) {
+                this.uniqueSuffix = sub.getSubSeed().getUniqueSuffix();
             }
         }
     }
 
-    private void markSubtask(boolean messageSend, boolean statusSend) {
-        task.setSubTask(true);
-        this.messageSend = messageSend;
-        this.statusSend = statusSend;
-    }
-
     public String getTemplateId() {
         return templateId;
+    }
+
+    public boolean isSubTask() {
+        return task.isSubTask();
     }
 
     public int getParentTaskId() {
@@ -135,28 +133,38 @@ public class TaskMessage {
         return uniqueSuffix;
     }
 
-
-    @Override
-    public String toString() {
-        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskId + "]";
+    public Set<String> getResultTagSet() {
+        Set<String> resultTagSet = collectorMessage.getResultTagSet();
+        if (CollectionUtils.isEmpty(resultTagSet)) {
+            resultTagSet = new HashSet<>(getContext().getSearchConfig().getResultTagList());
+        }
+        return resultTagSet;
     }
 
-    public void setErrorCode(ErrorCode errorCode) {
+    public void failure(ErrorCode errorCode) {
         task.setErrorCode(errorCode);
     }
 
-    public void setErrorCode(ErrorCode errorCode, String message) {
+    public void failure(ErrorCode errorCode, String message) {
         task.setErrorCode(errorCode, message);
+    }
+
+    public void failure(int code, String message) {
+        task.markStatus(code, message);
     }
 
     public void completeSearch(HttpResult<Map<String, Object>> searchResult) {
         Task task = getTask();
         task.setFinishedAt(UnifiedSysTime.INSTANCE.getSystemTime());
         task.setDuration((task.getFinishedAt().getTime() - task.getStartedAt().getTime()) / 1000);
-        //释放代理
         if (searchResult.getResponseCode() != ErrorCode.TASK_INTERRUPTED_ERROR.getErrorCode()) {
+            //释放代理
             getContext().release();
         }
     }
 
+    @Override
+    public String toString() {
+        return "TaskMessage [websiteName=" + getWebsiteName() + ", templateId=" + templateId + ", messageSend=" + messageSend + ", parentTaskID=" + parentTaskId + "]";
+    }
 }

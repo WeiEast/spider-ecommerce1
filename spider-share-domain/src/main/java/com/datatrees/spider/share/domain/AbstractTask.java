@@ -16,37 +16,33 @@
 
 package com.datatrees.spider.share.domain;
 
-import com.datatrees.spider.share.domain.ErrorCode;
-
 /**
  * Created by zhouxinghai on 2017/7/4.
  */
 public abstract class AbstractTask {
 
-    protected String  websiteName;
+    protected String websiteName;
 
     /**
      * 是否子任务
      */
-    private   boolean isSubTask = false;
+    private boolean isSubTask = false;
 
-    private   boolean isDuplicateRemoved;
+    private boolean isDuplicateRemoved;
 
     public void setErrorCode(ErrorCode errorCode) {
         this.setErrorCode(errorCode, null);
     }
 
-    public void setErrorCode(ErrorCode errorCode, String message) {
-        synchronized (this) {
-            if (null == getStatus() || 0 == getStatus() || errorCode.getErrorCode() < getStatus()) {
-                this.setStatus(errorCode.getErrorCode());
-                if (message != null) {
-                    this.setRemark(message);
-                } else {
-                    this.setRemark(errorCode.getErrorMsg());
-                }
-            }
+    public synchronized void setErrorCode(ErrorCode errorCode, String message) {
+        if (null == getStatus() || 0 == getStatus() || errorCode.getErrorCode() < getStatus()) {
+            this.markStatus(errorCode.getErrorCode(), message != null ? message : errorCode.getErrorMsg());
         }
+    }
+
+    public void markStatus(int status, String message) {
+        setStatus(status);
+        setRemark(message);
     }
 
     public abstract void setRemark(String remark);
