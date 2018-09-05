@@ -39,7 +39,6 @@ dependencies {
     compile ("org.seleniumhq.selenium:selenium-java:${seleniumVersion}"){
         exclude(module: "guava")
     }
-    testCompile "junit:junit:${junitVersion}"
     testCompile "javax.mail:mail:${mailVersion}"
 }
 

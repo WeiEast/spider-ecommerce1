@@ -24,8 +24,6 @@ subprojects {
     apply plugin: "eclipse"
     apply plugin: "maven"
 
-
-
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
@@ -51,6 +49,11 @@ subprojects {
         all*.exclude group: "com.datatrees.crawler", module: "crawler-core"
         all*.exclude group: "io.netty", module: "netty-all"
     }
+
+    dependencies {
+        testCompile "junit:junit:${junitVersion}"
+    }
+
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = "sources"
