@@ -1,7 +1,6 @@
 #!/bin/sh
 host="spider.saas.test.treefinance.com.cn"
 
-
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
 list=`find spider-operator-plugin/build/libs/spider-operator-plugin.jar -name '*.jar' | grep -v 'sources'`
