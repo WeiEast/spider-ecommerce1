@@ -100,7 +100,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
         WebsiteOperatorExample example = new WebsiteOperatorExample();
         example.createCriteria().andWebsiteNameEqualTo(websiteName).andEnvEqualTo(env);
         List<WebsiteOperator> list = websiteOperatorDAO.selectByExample(example);
-        return list.isEmpty() ? null : list.get(0);
+        if (list.isEmpty()) {
+            logger.error("operator config not found websiteName:{},env:{}", websiteName, env);
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override
