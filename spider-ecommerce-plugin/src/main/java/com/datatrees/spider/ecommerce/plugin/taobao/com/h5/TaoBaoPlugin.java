@@ -83,7 +83,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
     private static final String         UAB_COLLINA_COOKIE       = "uab_collina";
 
-    private static final String         QRCODE_GEN_TIME_KEY      = "com.treefinance.rawdatacentral.ecommerce.h5_login.qrcode.gen_time:";
+    private static final String         QRCODE_GEN_TIME_KEY      = "com.treefinance.spider.ecommerce.h5_login.qrcode.gen_time:";
 
     /**
      * qrcode 过期时间，单位：秒

@@ -48,7 +48,7 @@ public class EcommerceServiceImpl implements EcommerceService {
     public Ecommerce getByWebsiteId(Integer websiteId) {
         Ecommerce ecommerce = null;
         if (null != websiteId) {
-            String key = "rawdatacentral_ecommerce_websiteid_" + websiteId;
+            String key = "spider_ecommerce_websiteid_" + websiteId;
             ecommerce = redisService.getCache(key, new TypeReference<Ecommerce>() {});
             if (null == ecommerce) {
                 EcommerceExample example = new EcommerceExample();

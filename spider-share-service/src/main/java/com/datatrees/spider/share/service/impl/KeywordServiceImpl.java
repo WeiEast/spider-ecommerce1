@@ -50,7 +50,7 @@ public class KeywordServiceImpl implements KeywordService {
             logger.warn("invalid param websiteType={}", websiteType);
             return null;
         }
-        String key = "rawdatacentral_keyword_websitetype_" + websiteType;
+        String key = "spider_keyword_websitetype_" + websiteType;
         List<Keyword> list = redisService.getCache(key, new TypeReference<List<Keyword>>() {});
         if (null == list || list.isEmpty()) {
             KeywordExample example = new KeywordExample();

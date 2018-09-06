@@ -8,7 +8,7 @@
            http://www.springframework.org/schema/tx      http://www.springframework.org/schema/tx/spring-tx-4.0.xsd">
 
 
-    <bean id="rawdatacentralDataSource" class="com.alibaba.druid.pool.DruidDataSource"
+    <bean id="spiderDataSource" class="com.alibaba.druid.pool.DruidDataSource"
           init-method="init" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url">
@@ -53,7 +53,7 @@
     <!--</tx:advice>-->
 
     <!--<aop:config>-->
-        <!--<aop:pointcut id="ao_service" expression="(execution(* com.datatrees.rawdatacentral.service.impl.*.*(..)))"/>-->
+        <!--<aop:pointcut id="ao_service" expression="(execution(* com.datatrees.spider.service.impl.*.*(..)))"/>-->
         <!--<aop:advisor pointcut-ref="ao_service" advice-ref="txAdvice"/>-->
     <!--</aop:config>-->
 

@@ -27,7 +27,7 @@ public class DirectiveResult<T> implements Serializable {
     /**
      * 应用名称
      */
-    private static final String  appName       = "rawdatacentral";
+    private static final String  appName       = "spider";
 
     /**
      * 当前线程ID

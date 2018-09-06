@@ -90,7 +90,7 @@ public class OperatorMessageNormalizer implements MessageNormalizer {
             logger.warn("invalid param websiteId is null");
             return null;
         }
-        String key = "rawdatacentral_operator_websiteid_" + websiteId;
+        String key = "spider_operator_websiteid_" + websiteId;
         Operator operator = redisService.getCache(key, new TypeReference<Operator>() {});
         if (null == operator) {
             OperatorExample example = new OperatorExample();

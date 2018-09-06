@@ -65,7 +65,7 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public Map<String, Integer> getMailBankMap() {
-        String key = "rawdatacentral_mail_bank";
+        String key = "spider_mail_bank";
         Map<String, Integer> map = redisService.getCache(key, new TypeReference<Map<String, Integer>>() {});
         if (null == map || map.isEmpty()) {
             List<BankMail> list = bankMailDAO.selectByExample(new BankMailExample());

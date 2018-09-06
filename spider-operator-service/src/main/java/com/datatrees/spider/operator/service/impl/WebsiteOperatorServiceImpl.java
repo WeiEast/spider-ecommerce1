@@ -65,8 +65,8 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
 
     static {
         hosts.put("开发", "192.168.5.15:60666");
-        hosts.put("测试", "rawdatacentral.saas.test.treefinance.com.cn");
-        hosts.put("准生产", "rawdatacentral.approach.saas.treefinance.com.cn");
+        hosts.put("测试", "spider.saas.test.treefinance.com.cn");
+        hosts.put("准生产", "spider.approach.saas.treefinance.com.cn");
         hosts.put("预发布", "rawdatecentral.yfb.saas.treefinance.com.cn");
         hosts.put("生产", "rawdatecentral.yfb.saas.treefinance.com.cn");
     }

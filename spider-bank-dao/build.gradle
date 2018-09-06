@@ -2,7 +2,7 @@ dependencies {
     compile project(":spider-bank-domain")
 
 //    compile project(":spider-share-dao")
-//    compile project(":rawdatacentral-dao")
+//    compile project(":spider-dao")
 
     compile("org.mybatis.spring.boot:mybatis-spring-boot-starter:${mybatisSpringBootStarterVersion}") {
         exclude(module: 'spring-boot-starter')
