@@ -1,3 +1,5 @@
+
+
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
@@ -22,9 +24,9 @@ import java.nio.charset.Charset
 scan("60 seconds")
 def charsetName = "UTF-8"
 def appName = "spider"
-def serverIp = System.getProperty("server.ip", "127.0.0.1")
+def serverIp = System.getProperty("server.ip","127.0.0.1")
 
-def ips = serverIp.split("\\.");
+def ips =serverIp.split("\\.");
 // 日志路径
 def publishDate = DateUtils.format(new Date(), "MMdd")
 def logPath = "/dashu/log/${appName}/${publishDate}/${ips[2]}.${ips[3]}"
@@ -76,7 +78,10 @@ logger("org.apache.http", INFO)
 logger("org.apache.http.client.protocol.ResponseProcessCookies", INFO)
 //logger("org.apache.http.client.protocol.ResponseProcessCookies",DEBUG)
 logger("com.alibaba.dubbo.monitor.dubbo", OFF)
+logger("com.alibaba.dubbo.rpc.cluster.support.wrapper", OFF)
 logger("com.alibaba.dubbo.rpc.protocol.dubbo", OFF)
 logger("com.datatrees.spider.spider.share.service.impl.FileStoreServiceImpl", OFF)
-logger("com.datatrees.spider.spider.share.service.impl.AppCrawlerConfigServiceImpl", DEBUG)
+logger("com.datatrees.spider.spider.share.service.impl.AppCrawlerConfigServiceImpl", INFO)
+logger("com.treefinance.crawler.framework.process.operation", INFO)
+logger("com.datatrees.crawler.core.processor.extractor", INFO)
 
