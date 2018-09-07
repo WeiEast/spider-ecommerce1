@@ -31,6 +31,8 @@ function restartApp(){
 		echo "服务$OLD_JAR_NAME($PID)停止完成"
 	fi;
 	if test ! -d "logs" ;then mkdir logs ; fi
+	echo jvm_opt=$jvm_opt
+	echo jar=$JAR_NAME
 	nohup java $jvm_opt -jar $JAR_NAME > /dev/null 2>logs/log &
 	echo "正在启动服务$JAR_NAME"
 	echo "jps -l | grep $APP_NAME | awk '{print \$1}'"
