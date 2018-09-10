@@ -151,4 +151,9 @@ public class WebsiteOperatorController {
         return new HttpResult<>().success();
     }
 
+    @RequestMapping("/queryAll")
+    public Object queryAll() {
+        return new HttpResult<>().success(websiteOperatorService.queryAll());
+    }
+
 }
