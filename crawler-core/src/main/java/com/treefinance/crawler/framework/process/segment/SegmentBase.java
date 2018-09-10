@@ -50,7 +50,7 @@ import com.treefinance.crawler.framework.protocol.util.HeaderParser;
 import com.treefinance.crawler.framework.protocol.util.UrlUtils;
 import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.crawler.framework.util.LogUtils;
-import com.treefinance.crawler.framework.util.SourceUtils;
+import com.treefinance.crawler.framework.util.ObjectUtils;
 import com.treefinance.toolkit.util.RegExp;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.functors.UniquePredicate;
@@ -78,7 +78,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
         this.context = Objects.requireNonNull(request.getProcessorContext());
         String sourceId = segment.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
-            Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
+            Object result = FieldUtils.getSourceFieldValue(sourceId, request, response);
             logger.info("Will use source input instead of stdin for segment processor. segment: {}, sourceId: {}, input: {}", segment.getName(), sourceId, LogUtils.abbreviate(result));
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
@@ -90,7 +90,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
 
     @Override
     protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
-        if (FieldUtils.isNullOrEmptyString(request.getInput())) {
+        if (ObjectUtils.isNullOrEmptyString(request.getInput())) {
             logger.warn("Empty input content used for segment processing and skip. segment: {}, taskId: {}", segment.getName(), context.getTaskId());
             return true;
         }

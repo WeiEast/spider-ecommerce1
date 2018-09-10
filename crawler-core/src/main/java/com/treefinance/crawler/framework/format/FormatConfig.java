@@ -31,7 +31,7 @@ import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.format.datetime.DateTimeFormats;
 import com.treefinance.crawler.framework.format.number.NumberUnit;
 import com.treefinance.crawler.framework.format.number.NumberUnitMapping;
-import com.treefinance.crawler.framework.util.SourceUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -95,7 +95,7 @@ public class FormatConfig implements Serializable {
     }
 
     public Object getSourceFieldValue(String fieldName) {
-        return SourceUtils.getSourceFieldValue(fieldName, request, response);
+        return FieldUtils.getSourceFieldValue(fieldName, request, response);
     }
 
     public LinkNode getCurrentLinkNode() {

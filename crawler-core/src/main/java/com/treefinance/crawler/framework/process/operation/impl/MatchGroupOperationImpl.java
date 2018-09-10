@@ -25,7 +25,7 @@ import com.treefinance.crawler.framework.context.function.SpiderRequest;
 import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.exception.InvalidOperationException;
 import com.treefinance.crawler.framework.process.operation.Operation;
-import com.treefinance.crawler.framework.util.SourceUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -50,7 +50,7 @@ public class MatchGroupOperationImpl extends Operation<MatchGroupOperation> {
 
     @Override
     protected Object doOperation(@Nonnull MatchGroupOperation operation, @Nonnull Object operatingData, @Nonnull SpiderRequest request, @Nonnull SpiderResponse response) throws Exception {
-        Matcher matcher = (Matcher) SourceUtils.getSourceFieldValue(operation.getSourceId(), request, response);
+        Matcher matcher = (Matcher) FieldUtils.getSourceFieldValue(operation.getSourceId(), request, response);
 
         String result = null;
         if (matcher != null) {

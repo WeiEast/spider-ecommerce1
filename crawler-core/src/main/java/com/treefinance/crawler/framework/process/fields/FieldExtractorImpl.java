@@ -47,10 +47,7 @@ import com.treefinance.crawler.framework.format.Formatter;
 import com.treefinance.crawler.framework.process.ProcessorFactory;
 import com.treefinance.crawler.framework.process.operation.OperationPipeline;
 import com.treefinance.crawler.framework.protocol.util.UrlUtils;
-import com.treefinance.crawler.framework.util.CharsetUtil;
-import com.treefinance.crawler.framework.util.FieldUtils;
-import com.treefinance.crawler.framework.util.LogUtils;
-import com.treefinance.crawler.framework.util.SourceUtils;
+import com.treefinance.crawler.framework.util.*;
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 
@@ -73,7 +70,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         // reset input content with source id.
         String sourceId = fieldExtractor.getSourceId();
         if (StringUtils.isNotEmpty(sourceId)) {
-            Object result = SourceUtils.getSourceFieldValue(sourceId, request, response);
+            Object result = FieldUtils.getSourceFieldValue(sourceId, request, response);
             logger.info("Will use source input instead of stdin for field extractor. fieldId: {}, sourceId: {}, input: {}", fieldExtractor.getId(), sourceId, LogUtils.abbreviate(result));
             // TODO: 2018/8/21 由于历史配置不严谨暂时采用兼容做法，解析结果不可控
             if (result != null) {
@@ -130,7 +127,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
         fieldValue = this.tryResolveUrl(fieldValue, request);
 
         boolean notEmpty = BooleanUtils.isTrue(fieldExtractor.getNotEmpty());
-        if (notEmpty && FieldUtils.isNullOrEmpty(fieldValue)) {
+        if (notEmpty && ObjectUtils.isNullOrEmpty(fieldValue)) {
             throw new ResultEmptyException(fieldExtractor + " >> result should not be Empty!");
         }
 
@@ -240,7 +237,7 @@ public class FieldExtractorImpl extends SingletonProcessorValve {
 
     private Object defaultValueIfEmpty(Object fieldValue, SpiderRequest request, SpiderResponse response, FieldExtractResultSet fieldExtractResultSet) {
         String defaultValue = fieldExtractor.getDefaultValue();
-        if (defaultValue != null && FieldUtils.isNullOrEmptyString(fieldValue)) {
+        if (defaultValue != null && ObjectUtils.isNullOrEmptyString(fieldValue)) {
             try {
                 Object result;
                 ResultType type = fieldExtractor.getResultType();

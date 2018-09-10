@@ -16,28 +16,26 @@
 
 package com.treefinance.crawler.framework.util;
 
-import com.treefinance.crawler.framework.context.FieldScopes;
-import com.treefinance.crawler.framework.context.function.SpiderRequest;
-import com.treefinance.crawler.framework.context.function.SpiderResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Collection;
 
 /**
  * @author Jerry
- * @since 17:18 2018/7/13
+ * @since 18:03 2018/9/10
  */
-public final class SourceUtils {
+public final class ObjectUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SourceUtils.class);
-
-    private SourceUtils() {
+    private ObjectUtils() {
     }
 
-    public static Object getSourceFieldValue(String sourceId, SpiderRequest request, SpiderResponse response) {
-        Object result = FieldScopes.getVisibleField(sourceId, request, response);
+    public static boolean isNullOrEmpty(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty()) || (object instanceof Collection && ((Collection) object).isEmpty());
+    }
 
-        LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);
+    public static boolean isNullOrEmptyString(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty());
+    }
 
-        return result;
+    public static boolean isNullOrEmptyCollection(Object object) {
+        return object == null || (object instanceof Collection && ((Collection) object).isEmpty());
     }
 }
