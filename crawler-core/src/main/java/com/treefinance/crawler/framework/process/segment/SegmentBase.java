@@ -48,6 +48,7 @@ import com.treefinance.crawler.framework.process.fields.FieldExtractorPipeline;
 import com.treefinance.crawler.framework.process.operation.impl.ParserURLCombiner;
 import com.treefinance.crawler.framework.protocol.util.HeaderParser;
 import com.treefinance.crawler.framework.protocol.util.UrlUtils;
+import com.treefinance.crawler.framework.util.FieldUtils;
 import com.treefinance.crawler.framework.util.LogUtils;
 import com.treefinance.crawler.framework.util.SourceUtils;
 import com.treefinance.toolkit.util.RegExp;
@@ -89,7 +90,7 @@ public abstract class SegmentBase<T extends AbstractSegment> extends FailureSkip
 
     @Override
     protected boolean isSkipped(@Nonnull SpiderRequest request, @Nonnull SpiderResponse response) {
-        if (request.getInput() == null) {
+        if (FieldUtils.isNullOrEmptyString(request.getInput())) {
             logger.warn("Empty input content used for segment processing and skip. segment: {}, taskId: {}", segment.getName(), context.getTaskId());
             return true;
         }
