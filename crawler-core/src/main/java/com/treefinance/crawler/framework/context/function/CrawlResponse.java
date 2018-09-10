@@ -29,7 +29,6 @@ import com.treefinance.crawler.framework.context.ResponseUtil;
 public class CrawlResponse extends Response {
 
     private CrawlResponse() {
-        super();
         setStatus(1);
     }
 
@@ -58,9 +57,7 @@ public class CrawlResponse extends Response {
     }
 
     public String info() {
-        StringBuilder info = new StringBuilder();
-        info.append("status:").append(getStatus()).append("\n").append("error info:").append(getErrorMsg()).append("\n").append("urls size:").append(getUrls().size());
-        return info.toString();
+        return "status:" + getStatus() + "\n" + "error info:" + getErrorMsg() + "\n" + "urls size:" + getUrls().size();
     }
 
 }

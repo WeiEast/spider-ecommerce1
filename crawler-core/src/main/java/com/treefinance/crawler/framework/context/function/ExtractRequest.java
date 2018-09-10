@@ -28,9 +28,6 @@ import com.treefinance.toolkit.util.Preconditions;
  */
 public class ExtractRequest extends Request {
 
-    private ExtractRequest() {
-    }
-
     public static Builder newBuilder() {
         return new Builder();
     }
