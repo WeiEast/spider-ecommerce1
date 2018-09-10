@@ -22,9 +22,4 @@ package com.treefinance.crawler.framework.context.function;
  * @since Feb 18, 2014 2:08:43 PM
  */
 public class Response extends SpiderGenericResponse {
-
-    public Response() {
-        super();
-    }
-
 }

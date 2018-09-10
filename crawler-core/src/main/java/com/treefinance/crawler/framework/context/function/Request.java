@@ -22,10 +22,6 @@ package com.treefinance.crawler.framework.context.function;
  */
 public class Request extends SpiderGenericRequest {
 
-    public Request() {
-        super();
-    }
-
     @Override
     public String toString() {
         return "Request [Input()=" + getInput() + "]";
