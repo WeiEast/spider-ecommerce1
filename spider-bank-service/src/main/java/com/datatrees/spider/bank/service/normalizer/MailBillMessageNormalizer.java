@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.spider.bank.service.BankService;
@@ -70,6 +69,9 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             ((MailBillData) object).setBankId(message.getTypeId());
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
+            if(message.getTypeId() == 0){
+                return false;
+            }
             return true;
         } else if (object instanceof ExtractObject && MailBillData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             MailBillData mailBillData = new MailBillData();
@@ -82,6 +84,9 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             mailBillData.setBankId(message.getTypeId());
             mailBillData.setResultType(message.getResultType().getValue());
             processLoadFile(mailBillData);
+            if(message.getTypeId() == 0){
+                return false;
+            }
             return true;
         } else {
             return false;
@@ -147,7 +152,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
                 return entry.getValue();
             }
         }
-        logger.warn("bankId not found data,data={}", JSON.toJSONString(data));
+        logger.warn("bankId not found data");
         return bankId;
     }
 
