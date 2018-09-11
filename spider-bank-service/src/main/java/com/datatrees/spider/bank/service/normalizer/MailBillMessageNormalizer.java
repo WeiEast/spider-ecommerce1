@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.spider.bank.service.BankService;
@@ -49,14 +50,15 @@ import org.springframework.stereotype.Service;
 public class MailBillMessageNormalizer implements MessageNormalizer {
 
     private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
+
     @Resource
     private              BankService  bankService;
+
     private              String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
 
     private              List<String> loadFileBankList  = Arrays.asList(loadFileBankIds.split(" *; *"));
 
     private              List<String> needLoadFieldList = Arrays.asList(SubmitConstant.SUBMITTER_NEEDUPLOAD_KEY.split(" *, *"));
-
 
     @Override
     public boolean normalize(ExtractMessage message) {
@@ -145,7 +147,7 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
                 return entry.getValue();
             }
         }
-        logger.warn("bankId not found data");
+        logger.warn("bankId not found data,data={}", JSON.toJSONString(data));
         return bankId;
     }
 
