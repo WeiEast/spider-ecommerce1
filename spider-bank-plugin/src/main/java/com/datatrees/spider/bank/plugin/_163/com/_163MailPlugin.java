@@ -91,6 +91,9 @@ public class _163MailPlugin implements CommonPlugin, QRPlugin {
                     driver.findElement(By.xpath("//a[@id='dologin']")).click();
                     TimeUnit.SECONDS.sleep(3);
                     while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId) && !isShowError(driver, param)) {
+                        if (StringUtils.contains(driver.getPageSource(),"若已换号请及时更换手机。")) {
+                            driver.findElement(By.xpath("//a[@data-action='myphonegoon']")).click();
+                        }
                         TimeUnit.SECONDS.sleep(1);
                     }
 
