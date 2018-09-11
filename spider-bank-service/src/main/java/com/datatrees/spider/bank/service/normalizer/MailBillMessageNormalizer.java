@@ -49,14 +49,15 @@ import org.springframework.stereotype.Service;
 public class MailBillMessageNormalizer implements MessageNormalizer {
 
     private static final Logger       logger            = LoggerFactory.getLogger(MailBillMessageNormalizer.class);
+
     @Resource
     private              BankService  bankService;
+
     private              String       loadFileBankIds   = PropertiesConfiguration.getInstance().get("need.load.file.bankids", "3");
 
     private              List<String> loadFileBankList  = Arrays.asList(loadFileBankIds.split(" *; *"));
 
     private              List<String> needLoadFieldList = Arrays.asList(SubmitConstant.SUBMITTER_NEEDUPLOAD_KEY.split(" *, *"));
-
 
     @Override
     public boolean normalize(ExtractMessage message) {
@@ -68,6 +69,9 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             ((MailBillData) object).setBankId(message.getTypeId());
             ((MailBillData) object).setResultType(message.getResultType().getValue());
             processLoadFile((MailBillData) object);
+            if(message.getTypeId() == 0){
+                return false;
+            }
             return true;
         } else if (object instanceof ExtractObject && MailBillData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             MailBillData mailBillData = new MailBillData();
@@ -80,6 +84,9 @@ public class MailBillMessageNormalizer implements MessageNormalizer {
             mailBillData.setBankId(message.getTypeId());
             mailBillData.setResultType(message.getResultType().getValue());
             processLoadFile(mailBillData);
+            if(message.getTypeId() == 0){
+                return false;
+            }
             return true;
         } else {
             return false;
