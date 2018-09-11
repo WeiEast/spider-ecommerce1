@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.WebsiteConfigService;
@@ -68,6 +69,9 @@ public class DefaultProcessorContextBuilder {
                 if (extractorUseDefaultWebsiteIds.contains(websiteIdStr)) {
                     context = websiteConfigService.getExtractorProcessorContext(extractMessage.getTaskId(), extractMessage.getWebsiteName());
                 } else {
+                    if(extractMessage.getTypeId() == 0){
+                        logger.error("invalid bankId,extractMessage={}",JSON.toJSONString(extractMessage));
+                    }
                     context = websiteConfigService.getExtractorProcessorContextWithBankId(extractMessage.getTypeId(), extractMessage.getTaskId());
                 }
                 break;
