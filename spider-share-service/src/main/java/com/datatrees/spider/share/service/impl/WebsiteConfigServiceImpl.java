@@ -121,6 +121,10 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
     @Override
     public ExtractorProcessorContext getExtractorProcessorContextWithBankId(int bankId, Long taskId) {
         String websiteName = bankIds.get(bankId);
+        if (StringUtils.isBlank(websiteName)) {
+            logger.error("invalid bankId={},taskId={},bankIds={}", bankId, taskId, JSON.toJSONString(bankIds));
+            return null;
+        }
         Website website = websiteHolderService.getWebsite(websiteName);
         if (website != null) {
             ExtractorProcessorContext extractorProcessorContext = new ExtractorProcessorContext(website, taskId);
@@ -149,7 +153,8 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = SpiderConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = SpiderConfigFactory
+                        .build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {
