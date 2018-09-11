@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.treefinance.crawler.framework.expression;
 
 import javax.annotation.Nonnull;
@@ -5,14 +21,13 @@ import javax.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
 import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.RequestUtil;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 
 /**
  * @author Jerry
@@ -40,7 +55,7 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String eval(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static String eval(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response));
     }
 
@@ -56,58 +71,64 @@ public final class StandardExpression {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static Object evalWithObject(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static Object evalWithObject(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response));
+    }
+
+    public static Object evalWithObject(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failOnUnknown, boolean allowNull) {
+        return ExpressionExecutor.evalExpWithObject(value, () -> FieldScopes.getVisibleFields(request, response), failOnUnknown, allowNull);
     }
 
     public static Object evalWithObject(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExpWithObject(value, fieldStack);
     }
 
+    public static Object evalWithObject(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failover) {
+        if (failover) {
+            return evalWithObject(value, request, response, false, true);
+        }
+        return evalWithObject(value, request, response);
+    }
+
     public static String evalSpecial(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes) {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.merge(fieldScopes));
     }
 
-    public static String evalSpecial(@Nullable String value, @Nullable Request request, @Nullable Response response) {
+    public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response) {
         return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response));
+    }
+
+    public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failOnUnknown, boolean allowNull) {
+        return ExpressionExecutor.evalExpSpecial(value, () -> FieldScopes.getVisibleFields(request, response), failOnUnknown, allowNull);
     }
 
     public static String evalSpecial(@Nullable String value, @Nullable Map<String, Object> fieldStack) {
         return ExpressionExecutor.evalExpSpecial(value, fieldStack);
     }
 
+    public static String evalSpecial(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, boolean failover) {
+        if (failover) {
+            return evalSpecial(value, request, response, false, true);
+        }
+        return evalSpecial(value, request, response);
+    }
+
     public static String evalUrl(@Nullable String value, @Nullable List<Map<String, Object>> fieldScopes, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.merge(fieldScopes), URL_ENCODED_KEYS, charset);
     }
 
-    public static String evalUrl(@Nullable String value, @Nonnull Request request, @Nullable Response response) {
+    public static String evalUrl(@Nullable String value, @Nonnull SpiderRequest request, @Nullable SpiderResponse response) {
         String charset = RequestUtil.getContentCharset(request);
 
         return evalUrl(value, request, response, charset);
     }
 
-    public static String evalUrl(@Nullable String value, @Nullable Request request, @Nullable Response response, @Nullable String charset) {
+    public static String evalUrl(@Nullable String value, @Nullable SpiderRequest request, @Nullable SpiderResponse response, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, () -> FieldScopes.getVisibleFields(request, response), URL_ENCODED_KEYS, charset);
     }
 
     public static String evalUrl(@Nullable String value, @Nullable Map<String, Object> fieldStack, @Nullable String charset) {
         return ExpressionExecutor.evalExp(value, fieldStack, URL_ENCODED_KEYS, charset);
-    }
-
-    public static String eval(@Nullable String value, @Nonnull ExpEvalContext context) {
-        return ExpressionExecutor.evalExp(value, context);
-    }
-
-    public static String eval(@Nullable String value, @Nonnull ExpEvalContext context, @Nullable BiFunction<String, String, String> mappingFunction) {
-        return ExpressionExecutor.evalExp(value, context, mappingFunction);
-    }
-
-    public static Object evalWithObject(@Nullable String value, @Nonnull ExpEvalContext context) {
-        return ExpressionExecutor.evalExpWithObject(value, context);
-    }
-
-    public static String evalSpecial(@Nullable String value, @Nonnull ExpEvalContext context) {
-        return ExpressionExecutor.evalExpSpecial(value, context);
     }
 
 }

@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.collector.worker;
@@ -16,14 +24,11 @@ import akka.dispatch.Future;
 import akka.pattern.Patterns;
 import akka.util.Timeout;
 import com.datatrees.common.actor.WrappedActorRef;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
-import com.datatrees.spider.share.service.domain.ParentTask;
+import com.datatrees.spider.share.service.domain.SpiderTask;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizerFactory;
-import com.datatrees.spider.share.domain.model.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -44,37 +49,19 @@ public class ResultDataHandler {
     @Resource
     private              WrappedActorRef          extractorActorRef;
 
-    private ParentTask getParentTask(TaskMessage taskMessage) {
-        ParentTask parentTask = new ParentTask();
-        SearchProcessorContext processorContext = taskMessage.getContext();
-        Task task = taskMessage.getTask();
-
-        parentTask.setCollectorMessage(taskMessage.getCollectorMessage());
-        parentTask.setCookie(ProcessorContextUtil.getCookieString(processorContext));
-        parentTask.setProperty(processorContext.getProcessorResult());
-        parentTask.setTaskId(task.getId());
-        parentTask.setWebsiteName(processorContext.getWebsiteName());
-        parentTask.setProcessorContext(processorContext);
-        return parentTask;
-    }
-
     public List<Future<Object>> resultListHandler(List<Object> objs, TaskMessage taskMessage) {
-        List<Future<Object>> futureList = new ArrayList<Future<Object>>();
-        Task task = taskMessage.getTask();
-        ParentTask parentTask = this.getParentTask(taskMessage);
+        List<Future<Object>> futureList = new ArrayList<>();
+
+        SpiderTask task = new SpiderTask(taskMessage.getProcessId(), taskMessage.getContext());
+        task.setCollectorMessage(taskMessage.getCollectorMessage());
+
         for (Object obj : objs) {
-            ExtractMessage message = new ExtractMessage();
-            message.setMessageObject(obj);
-            message.setTaskLogId(task.getId());
-            message.setTaskId(task.getTaskId());
-            message.setWebsiteId(task.getWebsiteId());
-            message.setTask(parentTask);
-            message.setWebsiteName(taskMessage.getWebsiteName());
+            ExtractMessage message = new ExtractMessage(task, obj);
+
             try {
                 boolean result = messageNormalizerFactory.normalize(message);
                 if (result) {
-                    Future<Object> future = Patterns
-                            .ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
+                    Future<Object> future = Patterns.ask(extractorActorRef.getActorRef(), message, new Timeout(CollectorConstants.EXTRACT_ACTOR_TIMEOUT));
                     futureList.add(future);
                 } else {
                     log.warn("message normalize failed, message:" + message + ", obj:" + obj);

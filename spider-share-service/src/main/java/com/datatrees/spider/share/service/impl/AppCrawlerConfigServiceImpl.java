@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
@@ -7,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import com.alibaba.fastjson.JSON;
-import com.datatrees.crawler.core.domain.config.search.BusinessType;
+import com.treefinance.crawler.framework.config.enums.BusinessType;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.CollectionUtils;
 import com.datatrees.spider.share.dao.AppCrawlerConfigDAO;
@@ -26,7 +42,6 @@ import com.google.common.util.concurrent.UncheckedExecutionException;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.saas.merchant.center.facade.result.console.AppBizLicenseSimpleResult;
 import com.treefinance.saas.merchant.center.facade.result.console.MerchantAppLicenseResult;
-import com.treefinance.saas.merchant.center.facade.service.MerchantBaseInfoFacade;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +63,6 @@ public class AppCrawlerConfigServiceImpl implements AppCrawlerConfigService, Ini
     private              AppCrawlerConfigDAO                 appCrawlerConfigDAO;
     @Resource
     private              RedisService                        redisService;
-    @Resource
-    private              MerchantBaseInfoFacade              merchantBaseInfoFacade;
     @Autowired
     private              DistributedLocks                    distributedLocks;
 

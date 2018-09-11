@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.domain;
@@ -11,8 +19,6 @@ package com.datatrees.spider.share.domain;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-
-import com.datatrees.spider.share.domain.MessageInfo;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -25,7 +31,7 @@ public class CollectorMessage extends MessageInfo {
 
     private           String              websiteName;
 
-    private           long                taskId;
+    private           Long                taskId;
 
     private           String              accountNo;
 
@@ -108,6 +114,14 @@ public class CollectorMessage extends MessageInfo {
      */
     public void setProperty(Map<String, Object> property) {
         this.property = property;
+    }
+
+    public void addProperties(Map<String, Object> property) {
+        if (this.property == null) {
+            this.property = new HashMap<>(property);
+        } else {
+            this.property.putAll(property);
+        }
     }
 
     /**
@@ -205,11 +219,11 @@ public class CollectorMessage extends MessageInfo {
         this.sendBack = sendBack;
     }
 
-    public long getTaskId() {
+    public Long getTaskId() {
         return taskId;
     }
 
-    public void setTaskId(long taskId) {
+    public void setTaskId(Long taskId) {
         this.taskId = taskId;
     }
 

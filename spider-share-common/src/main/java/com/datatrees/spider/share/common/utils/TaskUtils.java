@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.common.utils;
 
 import java.net.HttpCookie;
@@ -8,12 +24,12 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.http.HttpHeadKey;
+import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
 import com.datatrees.spider.share.domain.StepEnum;
 import com.datatrees.spider.share.domain.http.Cookie;
+import com.datatrees.spider.share.domain.http.HttpHeadKey;
 import com.datatrees.spider.share.domain.http.Request;
-import com.datatrees.spider.share.domain.ErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.Header;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -304,8 +320,7 @@ public class TaskUtils {
      */
     public static Map<String, String> getTaskShares(Long taskId) {
         String redisKey = RedisKeyPrefixEnum.TASK_SHARE.getRedisKey(taskId);
-        Map<String, String> map = RedisUtils.hgetAll(redisKey);
-        return map;
+        return RedisUtils.hgetAll(redisKey);
     }
 
     /**
@@ -361,8 +376,8 @@ public class TaskUtils {
     }
 
     public static void updateCookies(Long taskId, Map<String, String> newCookieMap) {
-        List<Cookie> cookies = TaskUtils.getCookies(taskId);
-        if (CollectionUtils.isNotEmpty(newCookieMap) && CollectionUtils.isNotEmpty(cookies)) {
+        List<Cookie> cookies;
+        if (CollectionUtils.isNotEmpty(newCookieMap) && CollectionUtils.isNotEmpty(cookies = TaskUtils.getCookies(taskId))) {
             for (Map.Entry<String, String> entry : newCookieMap.entrySet()) {
                 Cookie find = null;
                 for (Cookie cookie : cookies) {
@@ -380,8 +395,8 @@ public class TaskUtils {
                     find.setValue(entry.getValue());
                 }
             }
+            TaskUtils.saveCookie(taskId, cookies);
         }
-        TaskUtils.saveCookie(taskId, cookies);
     }
 
     /**

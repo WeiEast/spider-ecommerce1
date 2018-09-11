@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,7 @@ package com.treefinance.crawler.plugin.alipay.detail;
 
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 import com.treefinance.crawler.plugin.alipay.BaseFieldExtractPlugin;
 import com.treefinance.crawler.plugin.util.HttpSender;
 import com.treefinance.crawler.plugin.util.Unicode;
@@ -41,7 +40,7 @@ public abstract class OtherSideExtractor extends BaseFieldExtractPlugin<Extracto
 
     @Override
     protected Object extract(String content, ExtractorProcessorContext processorContext) throws Exception {
-        Map<String, String> cookies = ProcessorContextUtil.getCookieMap(processorContext);
+        Map<String, String> cookies = processorContext.getCookiesAsMap();
         if (MapUtils.isEmpty(cookies)) {
             throw new IllegalArgumentException("Warn! Warn! Warn! Cookies must not be empty!");
         }

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.operator.plugin.china_10086_app.utils;
 
 import java.util.HashMap;
@@ -132,50 +148,48 @@ public class DefaultData {
     }
 
     public static HashMap<String, String> getPayType() {
-        if (payType != null) {
+        if (payType == null) {
             synchronized (DefaultData.class) {
-                if (payType != null) {
-                    HashMap<String, String> hashMap = payType;
-                    return hashMap;
+                if (payType == null) {
+                    payType = new HashMap();
+                    payType.put("01", "营业厅");
+                    payType.put("02", "网上营业厅");
+                    payType.put("03", "掌上营业厅");
+                    payType.put("04", "短信营业厅");
+                    payType.put("05", "手机营业厅");
+                    payType.put("06", "自助终端");
+                    payType.put("07", "银行");
+                    payType.put("08", "空中充值");
+                    payType.put("09", "移动商城");
+                    payType.put("99", "其他");
                 }
             }
         }
-        payType = new HashMap();
-        payType.put("01", "营业厅");
-        payType.put("02", "网上营业厅");
-        payType.put("03", "掌上营业厅");
-        payType.put("04", "短信营业厅");
-        payType.put("05", "手机营业厅");
-        payType.put("06", "自助终端");
-        payType.put("07", "银行");
-        payType.put("08", "空中充值");
-        payType.put("09", "移动商城");
-        payType.put("99", "其他");
+
         return payType;
     }
 
     public static HashMap<String, String> getPayType1() {
-        if (payType1 != null) {
+        if (payType1 == null) {
             synchronized (DefaultData.class) {
-                if (payType1 != null) {
-                    HashMap<String, String> hashMap = payType1;
-                    return hashMap;
+                if (payType1 == null) {
+                    payType1 = new HashMap();
+                    payType1.put("01", "现金交费");
+                    payType1.put("02", "充值卡充值");
+                    payType1.put("03", "银行托收");
+                    payType1.put("04", "营销活动预存受理");
+                    payType1.put("05", "积分换话费业务受理");
+                    payType1.put("06", "第三方支付");
+                    payType1.put("07", "手机钱包");
+                    payType1.put("08", "空中充值");
+                    payType1.put("09", "代理商渠道办理");
+                    payType1.put("10", "批量冲销");
+                    payType1.put("11", "调帐");
+                    payType1.put("12", "其他");
                 }
             }
         }
-        payType1 = new HashMap();
-        payType1.put("01", "现金交费");
-        payType1.put("02", "充值卡充值");
-        payType1.put("03", "银行托收");
-        payType1.put("04", "营销活动预存受理");
-        payType1.put("05", "积分换话费业务受理");
-        payType1.put("06", "第三方支付");
-        payType1.put("07", "手机钱包");
-        payType1.put("08", "空中充值");
-        payType1.put("09", "代理商渠道办理");
-        payType1.put("10", "批量冲销");
-        payType1.put("11", "调帐");
-        payType1.put("12", "其他");
+
         return payType1;
     }
 

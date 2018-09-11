@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 package com.treefinance.crawler.plugin.alipay.detail;
 
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 
 /**
  * pc端余额收支明细otherSide提取
@@ -28,7 +28,7 @@ public class AppBankOtherSideExtractor extends OtherSideExtractor {
     @Override
     protected String getTradeNo(String content, ExtractorProcessorContext processorContext) {
         boolean support = false;
-        Object tradeType = processorContext.getContext().get("tradeType");
+        Object tradeType = processorContext.getAttribute("tradeType");
         if (tradeType == null || TRADE_TYPE.equals(String.valueOf(tradeType))) {
             String bizType = getValueByXpath(content, "//li/div[@class='cm-trade-rows']/@data-bizType");
             support = BIZ_TYPE.equals(bizType);
@@ -37,7 +37,7 @@ public class AppBankOtherSideExtractor extends OtherSideExtractor {
         String tradeNo = null;
 
         if(support){
-            tradeNo = (String) processorContext.getContext().get("tradeNumber");
+            tradeNo = (String) processorContext.getAttribute("tradeNumber");
             if(tradeNo == null){
                 tradeNo = getValueByXpath(content, "//li/div[@class='cm-trade-rows']/@data-tradeNo");
             }

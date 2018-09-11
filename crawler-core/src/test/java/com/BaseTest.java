@@ -20,7 +20,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 11:27:49 AM
  */

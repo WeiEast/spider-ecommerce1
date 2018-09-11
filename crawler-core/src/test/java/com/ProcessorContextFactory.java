@@ -18,11 +18,11 @@ package com;
 
 import java.util.Objects;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.ExtractorConfig;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.Website;
+import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 
 /**
  * @author Jerry

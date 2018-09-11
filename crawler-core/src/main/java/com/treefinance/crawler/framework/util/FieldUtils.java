@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2005 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.treefinance.crawler.framework.util;
@@ -11,7 +19,9 @@ package com.treefinance.crawler.framework.util;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.treefinance.crawler.exception.UncheckedInterruptedException;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,15 +32,36 @@ import org.slf4j.LoggerFactory;
  * @version 1.0
  * @since 2015年7月14日 下午4:03:20
  */
-public class FieldUtils {
+public final class FieldUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FieldUtils.class);
 
-    public static String getFieldValueAsString(Object target, String field) throws InterruptedException {
-        return getFieldValueAsString(target, field, StringUtils.EMPTY);
+    private static final String DEFAULT_SEPARATOR = "  \r\n";
+
+    private FieldUtils() {
     }
 
-    public static String getFieldValueAsString(Object target, String field, String separator) throws InterruptedException {
+    public static boolean isNullOrEmpty(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty()) || (object instanceof Collection && ((Collection) object).isEmpty());
+    }
+
+    public static boolean isNullOrEmptyString(Object object) {
+        return object == null || (object instanceof String && ((String) object).isEmpty());
+    }
+
+    public static boolean isNullOrEmptyCollection(Object object) {
+        return object == null || (object instanceof Collection && ((Collection) object).isEmpty());
+    }
+
+    public static String getFieldValueAsString(Object target, String field) {
+        return getFormattedFieldValue(target, field, DEFAULT_SEPARATOR);
+    }
+
+    public static String getFieldValueAsString(Object target, String field, String separator) {
+        return getFormattedFieldValue(target, field, separator == null ? DEFAULT_SEPARATOR : separator);
+    }
+
+    public static String getFormattedFieldValue(Object target, String field, String separator) {
         Object value = getFieldValue(target, field);
 
         return formatValue(value, separator);
@@ -50,7 +81,8 @@ public class FieldUtils {
         return null;
     }
 
-    private static String formatValue(Object value, String separator) throws InterruptedException {
+    @SuppressWarnings("unchecked")
+    private static String formatValue(Object value, String separator) {
         if (value == null) {
             return StringUtils.EMPTY;
         } else if (value instanceof String) {
@@ -58,6 +90,8 @@ public class FieldUtils {
         } else if (value instanceof WrappedFile) {
             try {
                 return ((WrappedFile) value).readToString();
+            } catch (InterruptedException e) {
+                throw new UncheckedInterruptedException("unexpected interrupted exception!", e);
             } catch (IOException e) {
                 LOGGER.error("Error reading file content. - " + value, e);
             }
@@ -66,11 +100,7 @@ public class FieldUtils {
         } else if (value instanceof Collection) {
             String delimiter = StringUtils.defaultString(separator);
 
-            StringBuilder builder = new StringBuilder();
-            for (Object sub : (Collection) value) {
-                builder.append(formatValue(sub, delimiter)).append(delimiter);
-            }
-            return builder.toString();
+            return ((Collection<Object>) value).stream().map(sub -> formatValue(sub, delimiter)).collect(Collectors.joining(delimiter));
         } else {
             return value.toString();
         }

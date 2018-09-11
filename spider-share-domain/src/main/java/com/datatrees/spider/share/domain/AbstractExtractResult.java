@@ -1,17 +1,23 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.domain;
 
 import java.io.Serializable;
 import java.util.Map;
-
-import com.datatrees.spider.share.domain.ExtractCode;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -23,33 +29,33 @@ public abstract class AbstractExtractResult implements Serializable {
     /**
      *
      */
-    private static final long                serialVersionUID = 3890382241592488877L;
+    private static final long serialVersionUID = 3890382241592488877L;
 
-    private              int                 id;
+    private int id;
 
-    private              int                 taskId;
+    private Integer taskId;
 
-    private              int                 websiteId;
+    private int websiteId;
 
-    private              String              uniqueSign;
+    private String uniqueSign;
 
-    private              String              uniqueMd5;
+    private String uniqueMd5;
 
-    private              int                 status;
+    private int status;
 
-    private              String              remark;
+    private String remark;
 
-    private              String              storagePath;
+    private String storagePath;
 
-    private              String              resultType;
+    private String resultType;
 
-    private              String              url;
+    private String url;
 
-    private              String              pageExtractId;
+    private String pageExtractId;
 
-    private              long                duration;
+    private long duration;
 
-    private              Map<String, Object> extraInfo;
+    private Map<String, Object> extraInfo;
 
     /**
      * @return the extraInfo
@@ -118,14 +124,14 @@ public abstract class AbstractExtractResult implements Serializable {
     /**
      * @return the taskId
      */
-    public int getTaskId() {
+    public Integer getTaskId() {
         return taskId;
     }
 
     /**
      * @param taskId the taskId to set
      */
-    public void setTaskId(int taskId) {
+    public void setTaskId(Integer taskId) {
         this.taskId = taskId;
     }
 

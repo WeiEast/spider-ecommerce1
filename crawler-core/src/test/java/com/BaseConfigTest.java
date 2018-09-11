@@ -22,16 +22,16 @@ import java.net.URL;
 import java.util.Objects;
 
 import com.datatrees.common.util.ResourceUtil;
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.ExtractorConfig;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
-import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
+import com.treefinance.crawler.framework.context.Website;
+import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.config.SpiderConfig;
+import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
 
 /**
- * @author <A HREF="mailto:wangcheng@datatrees.com.cn">Cheng Wang</A>
+ * @author <A HREF="">Cheng Wang</A>
  * @version 1.0
  * @since Feb 24, 2014 11:27:49 AM
  */
@@ -40,7 +40,7 @@ public abstract class BaseConfigTest {
     protected static SearchConfig getSearchConfig(String fileName) {
         String content = ResourceUtil.getContent(fileName, null);
 
-        return CrawlerConfigFactory.build(content, SearchConfig.class);
+        return SpiderConfigFactory.build(content, SearchConfig.class);
     }
 
     protected static SearchProcessorContext getProcessorContext(String fileName, String website) {
@@ -73,10 +73,10 @@ public abstract class BaseConfigTest {
         return context;
     }
 
-    private static <T extends CrawlerConfig> T getConfig(String filename, Class<T> configClass) {
+    private static <T extends SpiderConfig> T getConfig(String filename, Class<T> configClass) {
         String content = ResourceUtil.getContent(filename, null);
 
-        return CrawlerConfigFactory.build(content, configClass);
+        return SpiderConfigFactory.build(content, configClass);
     }
 
     protected static String getContent(String fileName) {

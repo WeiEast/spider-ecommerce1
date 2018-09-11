@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,7 @@ public final class ExtensionLoader {
     private ExtensionLoader() {
     }
 
-    public static <T> T load(@Nonnull final File file, @Nonnull final String mainClass, final boolean forceReload, @Nullable final ClassLoader parent,
-            @Nonnull final Class<T> resultType) {
+    public static <T> T load(@Nonnull final File file, @Nonnull final String mainClass, final boolean forceReload, @Nullable final ClassLoader parent, @Nonnull final Class<T> resultType) {
         ClassLoader parentLoader = parent;
         if (parentLoader == null) {
             parentLoader = ExtensionLoader.class.getClassLoader();

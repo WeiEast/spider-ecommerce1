@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,8 +18,8 @@ package com.treefinance.crawler.framework.extension.spider;
 
 import javax.annotation.Nonnull;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.extension.ExtensionFactory;
 import com.treefinance.crawler.framework.extension.Interrupter;
 
@@ -32,13 +32,11 @@ public final class Spiders {
     private Spiders() {
     }
 
-    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
-            final PageProcessor pageProcessor) throws InterruptedException {
+    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor) throws InterruptedException {
         run(pluginMetadata, context, pageProcessor, null);
     }
 
-    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
-            final PageProcessor pageProcessor, final Interrupter interrupter) throws InterruptedException {
+    public static void run(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor, final Interrupter interrupter) throws InterruptedException {
         Spider spider = ExtensionFactory.getSpider(pluginMetadata, context, pageProcessor, interrupter);
         spider.run();
     }

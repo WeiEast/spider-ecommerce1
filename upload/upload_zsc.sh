@@ -1,5 +1,5 @@
 #!/bin/sh
-host="rawdatacentral.approach.saas.treefinance.com.cn"
+host="spider.approach.saas.treefinance.com.cn"
 
 
 url="http://$host/plugin/uploadPlugin"

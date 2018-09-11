@@ -1,12 +1,29 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.treefinance.crawler.framework.format.datetime;
 
 import javax.annotation.Nonnull;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.datatrees.crawler.core.processor.Constants;
-import com.datatrees.crawler.core.processor.common.exception.FormatException;
+import com.treefinance.crawler.framework.consts.Constants;
+import com.treefinance.crawler.framework.exception.FormatException;
 import com.treefinance.crawler.framework.format.ConfigurableFormatter;
 import com.treefinance.crawler.framework.format.FormatConfig;
 import com.treefinance.toolkit.util.RegExp;
@@ -41,6 +58,10 @@ public class DateFormatter extends ConfigurableFormatter<Date> {
 
         String separator = getConf().get("DEFAULT_DATE_PATTERN_SEPARATOR", ";");
         String[] patterns = actualPattern.split(separator);
+        if (patterns.length > 1) {
+            patterns = Arrays.stream(patterns).sorted((o1, o2) -> Integer.compare(o2.length(), o1.length())).toArray(String[]::new);
+        }
+
         DateTimeFormats dateTimeFormats = config.getDateTimeFormats();
         DateTime dateTime;
         for (String pattern : patterns) {

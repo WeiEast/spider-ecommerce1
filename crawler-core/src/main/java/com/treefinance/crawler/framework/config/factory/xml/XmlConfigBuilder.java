@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.treefinance.crawler.framework.config.factory.xml;
 
 import java.lang.reflect.Method;
@@ -6,12 +22,12 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.datatrees.common.util.ReflectionUtils;
+import com.treefinance.crawler.framework.config.SpiderConfig;
 import com.treefinance.crawler.framework.config.annotation.Attr;
 import com.treefinance.crawler.framework.config.annotation.ChildTag;
 import com.treefinance.crawler.framework.config.annotation.Tag;
-import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
-import com.treefinance.crawler.framework.config.CrawlerConfig;
 import com.treefinance.crawler.framework.config.factory.ConfigBuilder;
+import com.treefinance.crawler.framework.config.xml.AbstractBeanDefinition;
 import org.apache.commons.lang.StringUtils;
 import org.jdom2.CDATA;
 import org.jdom2.Document;
@@ -28,7 +44,9 @@ import org.jdom2.output.XMLOutputter;
 public class XmlConfigBuilder implements ConfigBuilder {
 
     private static final XmlConfigBuilder INSTANCE    = new XmlConfigBuilder();
+
     private static final String           splitRegex  = "/";
+
     private static final List<Class>      boxingTypes = Arrays.asList(new Class[]{String.class, Long.class, Integer.class, Short.class, Double.class, Float.class, Boolean.class});
 
     private XmlConfigBuilder() {
@@ -52,7 +70,7 @@ public class XmlConfigBuilder implements ConfigBuilder {
     }*/
 
     @Override
-    public <C extends CrawlerConfig> String build(C obj) {
+    public <C extends SpiderConfig> String build(C obj) {
         Document document = new Document();
         if (obj != null) {
             this.processObjectWithTag(document, obj);

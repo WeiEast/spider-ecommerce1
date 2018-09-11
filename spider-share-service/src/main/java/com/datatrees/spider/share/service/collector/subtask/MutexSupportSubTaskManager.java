@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.collector.subtask;
@@ -19,7 +27,6 @@ import com.datatrees.spider.share.service.collector.subtask.container.Mutex;
 import com.datatrees.spider.share.service.collector.subtask.container.impl.MutexSubTaskContainer;
 import com.datatrees.spider.share.service.collector.subtask.container.impl.SimpleSubTaskContainer;
 import com.datatrees.spider.share.service.collector.subtask.pool.SubTaskExecutor;
-import com.datatrees.spider.share.service.domain.SubSeed;
 import com.datatrees.spider.share.service.domain.SubTask;
 import com.datatrees.spider.share.service.extra.SubTaskManager;
 import org.apache.commons.collections.CollectionUtils;
@@ -37,22 +44,21 @@ import org.springframework.stereotype.Service;
 @Service
 public class MutexSupportSubTaskManager implements SubTaskManager {
 
-    private static final Logger                             logger                  = LoggerFactory.getLogger(MutexSupportSubTaskManager.class);
+    private static final Logger logger = LoggerFactory.getLogger(MutexSupportSubTaskManager.class);
 
     // asyncSubTask has no mutex
-    private              LinkedBlockingQueue<SubTask>       asyncSubTaskManagerList = new LinkedBlockingQueue<SubTask>();
+    private LinkedBlockingQueue<SubTask> asyncSubTaskManagerList = new LinkedBlockingQueue<>();
 
-    private              Map<Integer, Queue<SubTaskFuture>> syncSubTaskFutureMap    = new ConcurrentHashMap<Integer, Queue<SubTaskFuture>>();
+    private final Map<Integer, Queue<SubTaskFuture>> syncSubTaskFutureMap = new ConcurrentHashMap<>();
 
-    private              Map<String, SubTaskFuture>         mutexSubTaskFutureMap   = new ConcurrentHashMap<String, SubTaskFuture>();
+    private final Map<String, SubTaskFuture> mutexSubTaskFutureMap = new ConcurrentHashMap<String, SubTaskFuture>();
 
-    private              int                                maxSubTaskWaitSecond    = PropertiesConfiguration.getInstance()
-            .getInt("max.subTask.wait.second", 60 * 2);
+    private final int maxSubTaskWaitSecond = PropertiesConfiguration.getInstance().getInt("max.subTask.wait.second", 60 * 2);
 
-    private              Map<String, SubTask>               syncMutexSubTaskMap     = new ConcurrentHashMap<String, SubTask>();
+    private Map<String, SubTask> syncMutexSubTaskMap = new ConcurrentHashMap<>();
 
     @Resource
-    private              SubTaskExecutor                    taskExecutor;
+    private SubTaskExecutor taskExecutor;
 
     public MutexSupportSubTaskManager() {
         super();
@@ -63,25 +69,21 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         new AsyncSubTaskScheduleThread(taskExecutor).start();
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see SubTaskManager#getSyncedSubTaskResults(int)
-     */
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public List<Map> getSyncedSubTaskResults(int taskid) {
-        List<Map> resultsList = new ArrayList<Map>();
-        Queue<SubTaskFuture> syncSubTaskLists = syncSubTaskFutureMap.remove(taskid);
+    public List<Map> getSyncedSubTaskResults(Integer taskLogId) {
+        List<Map> resultsList = new ArrayList<>();
+        Queue<SubTaskFuture> syncSubTaskLists = syncSubTaskFutureMap.remove(taskLogId);
         if (CollectionUtils.isNotEmpty(syncSubTaskLists)) {
-            for (SubTaskFuture future : syncSubTaskLists) {
+            SubTaskFuture future;
+            while ((future = syncSubTaskLists.poll()) != null) {
                 try {
                     Container container = future.container;
                     if (container instanceof Mutex) {
                         ((Mutex) container).stopWaiting();
                         mutexSubTaskFutureMap.remove(future.mutexKey);
                     }
-                    Map result = null;
+                    Map result;
                     try {
                         result = future.future.get(maxSubTaskWaitSecond, TimeUnit.SECONDS);
                     } catch (Exception e) {
@@ -105,81 +107,60 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
         return resultsList;
     }
 
-    private Queue<SubTaskFuture> getSubTaskFutureQueue(SubTask task) {
-        Queue<SubTaskFuture> subTaskFutureList = syncSubTaskFutureMap.get(task.getParentTask().getTaskId());
-        if (subTaskFutureList == null) {
-            synchronized (syncSubTaskFutureMap) {
-                subTaskFutureList = syncSubTaskFutureMap.get(task.getParentTask().getTaskId());
-                if (subTaskFutureList == null) {
-                    subTaskFutureList = new LinkedBlockingQueue<MutexSupportSubTaskManager.SubTaskFuture>();
-                    syncSubTaskFutureMap.put(task.getParentTask().getTaskId(), subTaskFutureList);
-                }
-            }
-        }
-        return subTaskFutureList;
-    }
-
-    private void submitMutexSubTask(SubTask task, Queue<SubTaskFuture> queue) {
-        SubSeed seed = task.getSeed();
-        String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
-        logger.info("submit mutex sync subtask " + mutexKey + "queue:" + queue.hashCode() + " ,task:" + task);
-        SubTaskFuture mutexSubTaskFuture = mutexSubTaskFutureMap.get(mutexKey);
-        if (mutexSubTaskFuture == null) {
-            synchronized (mutexSubTaskFutureMap) {
-                mutexSubTaskFuture = mutexSubTaskFutureMap.get(mutexKey);
-                if (mutexSubTaskFuture == null) {
-                    Container container = new MutexSubTaskContainer();
-                    mutexSubTaskFuture = new SubTaskFuture(mutexKey, container, taskExecutor.submit(container));
-                    queue.offer(mutexSubTaskFuture);// add to task list
-                    mutexSubTaskFutureMap.put(mutexKey, mutexSubTaskFuture);
-                }
-            }
-        }
-        mutexSubTaskFuture.container.addSubTask(task);
-    }
-
     @Override
     public void submitSubTask(SubTask task) {
-        SubSeed seed = task.getSeed();
         task.setSubmitAt(System.currentTimeMillis());
-        if (BooleanUtils.isTrue(seed.isSync())) {
+
+        if (task.isSync()) {
             // auto submit to pool
-            Queue<SubTaskFuture> queue = this.getSubTaskFutureQueue(task);
-            if (BooleanUtils.isTrue(seed.isMutex())) {
+            Queue<SubTaskFuture> queue = syncSubTaskFutureMap.computeIfAbsent(task.getParentProcessId(), k -> new LinkedBlockingQueue<>());
+            if (task.isMutex()) {
                 this.submitMutexSubTask(task, queue);
             } else {
                 Container container = new SimpleSubTaskContainer();
                 container.addSubTask(task);
-                String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
-                logger.info("submit normal sync subtask " + mutexKey + "queue:" + queue.hashCode() + " ,task:" + task);
+                String mutexKey = task.getUniqueKey();
+                logger.info("submit normal sync subtask {}, queue: {},task: {}", mutexKey, queue.hashCode(), task);
                 queue.offer(new SubTaskFuture(mutexKey, container, taskExecutor.submit(container)));
             }
-        } else {
-            if (BooleanUtils.isTrue(seed.isMutex())) {
-                String mutexKey = task.getParentTask().getTaskId() + "_" + seed.getUniqueSuffix();
-                if (syncMutexSubTaskMap.containsKey(mutexKey)) {
-                    logger.info("already contains  async & mutex task for key:" + mutexKey);
-                } else {
-                    // add to async queue
-                    boolean result = asyncSubTaskManagerList.offer(task);
-                    syncMutexSubTaskMap.put(mutexKey, task);
-                    logger.info("submit async & mutex" + task + " result:" + result);
-                }
-            } else {
+        } else if (task.isMutex()) {
+            String mutexKey = task.getUniqueKey();
+
+            if (syncMutexSubTaskMap.putIfAbsent(mutexKey, task) == null) {
                 // add to async queue
                 boolean result = asyncSubTaskManagerList.offer(task);
-                logger.info("submit async " + task + " result:" + result);
+                logger.info("submit async & mutex {} result: {}", task, result);
+            } else {
+                logger.info("already contains async & mutex task for key:" + mutexKey);
             }
+        } else {
+            // add to async queue
+            boolean result = asyncSubTaskManagerList.offer(task);
+            logger.info("submit async {} result: {}", task, result);
         }
+    }
+
+    private void submitMutexSubTask(SubTask task, Queue<SubTaskFuture> queue) {
+        String mutexKey = task.getUniqueKey();
+        logger.info("submit mutex sync subtask " + mutexKey + " queue:" + queue.hashCode() + " ,task:" + task);
+
+        SubTaskFuture mutexSubTaskFuture = mutexSubTaskFutureMap.computeIfAbsent(mutexKey, k -> {
+            Container container = new MutexSubTaskContainer();
+            SubTaskFuture subTaskFuture = new SubTaskFuture(mutexKey, container, taskExecutor.submit(container));
+            queue.offer(subTaskFuture);// add to task list
+            return subTaskFuture;
+        });
+
+        mutexSubTaskFuture.container.addSubTask(task);
     }
 
     static class SubTaskFuture {
 
-        String      mutexKey;
+        private String mutexKey;
 
-        Container   container;
+        private Container container;
 
-        Future<Map> future;
+        private Future<Map> future;
 
         /**
          * @param mutexKey
@@ -196,19 +177,17 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
 
     private class AsyncSubTaskScheduleThread extends Thread {
 
-        private final String          waitingOnParentTask     = "parentTask";
+        private final String waitingOnParentTask = "parentTask";
 
-        private       boolean         shutdown                = false;
+        private boolean shutdown = false;
 
-        private       long            scheduleInterval        = PropertiesConfiguration.getInstance()
-                .getLong("subtask.async.schedule.interval", 3000);
+        private long scheduleInterval = PropertiesConfiguration.getInstance().getLong("subtask.async.schedule.interval", 3000);
 
-        private       int             subTaskCorePoolSize     = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
+        private int subTaskCorePoolSize = PropertiesConfiguration.getInstance().getInt("subtask.core.pool.size", 50);
 
-        private       long            maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 *
-                1000L;
+        private long maxSubtaskWaitingMillis = PropertiesConfiguration.getInstance().getInt("max.subtask.waiting.minutes", 5) * 60 * 1000L;
 
-        private       SubTaskExecutor subTaskExecutor;
+        private SubTaskExecutor subTaskExecutor;
 
         /**
          * @param subTaskExecutor
@@ -264,7 +243,7 @@ public class MutexSupportSubTaskManager implements SubTaskManager {
                                 continue;
                             }
                             if (BooleanUtils.isTrue(subTask.getSeed().isMutex())) {
-                                String mutexKey = subTask.getParentTask().getTaskId() + "_" + subTask.getSeed().getUniqueSuffix();
+                                String mutexKey = subTask.getUniqueKey();
                                 syncMutexSubTaskMap.remove(mutexKey);
                                 logger.info("submit async & mutex task " + subTask + " ,for mutexKey:" + mutexKey);
                             } else {

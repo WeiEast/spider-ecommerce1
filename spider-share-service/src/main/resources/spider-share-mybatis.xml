@@ -5,14 +5,14 @@
 
 
     <bean id="shareSessionFactoryBean" class="org.mybatis.spring.SqlSessionFactoryBean">
-        <property name="dataSource" ref="rawdatacentralDataSource"/>
+        <property name="dataSource" ref="spiderDataSource"/>
         <property name="mapperLocations">
             <list>
                 <value>classpath*:sqlmap/spider/share/*DAO.xml</value>
                 <value>classpath*:sqlmap/spider/share/mapper/*Mapper.xml</value>
             </list>
         </property>
-        <!--<property name="typeAliasesPackage" value="com.datatrees.rawdatacentral.domain.model.example"/>-->
+        <!--<property name="typeAliasesPackage" value="com.datatrees.spider.domain.model.example"/>-->
         <property name="configLocation" value="classpath:spider-share-mybatis-config.xml"/>
     </bean>
 

@@ -1,23 +1,29 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.plugin.login;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.ThreadInterruptedUtil;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.*;
 import com.datatrees.crawler.core.processor.common.resource.DataResource;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.core.processor.service.ServiceBase;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
-import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.ErrorCode;
@@ -27,7 +33,14 @@ import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.exception.LoginFailException;
 import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
 import com.datatrees.spider.share.service.MonitorService;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
+import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
+import com.treefinance.crawler.framework.util.CodecUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -100,8 +113,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         monitorService.sendTaskLog(taskId, "模拟登录-->启动-->成功");
 
         initLoginStatus();
-        Map<String, String> paramMap = (LinkedHashMap<String, String>) GsonUtils
-                .fromJson(args[0], new TypeToken<LinkedHashMap<String, String>>() {}.getType());
+        Map<String, String> paramMap = GsonUtils.fromJson(args[0], new TypeToken<HashMap<String, String>>() {}.getType());
         // pre login param
         Map<String, Object> preParamMap = preLogin(paramMap);
         if (MapUtils.isNotEmpty(preParamMap) && preParamMap.get("errorCode") != null) {
@@ -109,8 +121,7 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
             throw new InterruptedException(GsonUtils.toJson(preParamMap));
         }
         // spin for app input smsCode
-        HashMap<String, Object> loginParamMap = new HashMap<String, Object>();
-        loginParamMap.putAll(preParamMap);
+        HashMap<String, Object> loginParamMap = new HashMap<>(preParamMap);
         final String groupKey = DirectiveResult.getGroupKey(DirectiveType.PLUGIN_LOGIN, taskId);
         String errorCode = null;
         DirectiveResult<String> sendResult = new DirectiveResult<>(DirectiveType.PLUGIN_LOGIN, taskId);
@@ -227,34 +238,9 @@ public abstract class AbstractLoginPlugin extends AbstractRawdataPlugin implemen
         return this.getResponseByWebRequest(linkNode, contentType, null);
     }
 
-    protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retyrcount) {
-        boolean flag = false;
-        Object result = null;
-        Request newRequest = new Request();
-        RequestUtil.setProcessorContext(newRequest, PluginFactory.getProcessorContext());
-        RequestUtil.setConf(newRequest, PropertiesConfiguration.getInstance());
-        RequestUtil.setContext(newRequest, PluginFactory.getProcessorContext().getContext());
-        RequestUtil.setRetryCount(newRequest, retyrcount);
-        Response newResponse = new Response();
-        try {
-            RequestUtil.setCurrentUrl(newRequest, linkNode);
-            ServiceBase serviceProcessor = ProcessorFactory.getService(null);
-            serviceProcessor.invoke(newRequest, newResponse);
-        } catch (Exception e) {
-            logger.error("execute request error! " + e.getMessage(), e);
-            flag = true;
-        }
-        switch (contentType) {
-            case ValidCode:
-                result = flag ? new byte[0] : ResponseUtil.getProtocolResponse(newResponse).getContent().getContent();
-                break;
-            case Content:
-                result = flag ? StringUtils.EMPTY : StringUtils.defaultString(RequestUtil.getContent(newRequest));
-                break;
-            default:
-                break;
-        }
-        return result;
+    @Deprecated
+    protected Object getResponseByWebRequest(LinkNode linkNode, ContentType contentType, Integer retries) {
+        return sendRequest(linkNode, contentType == ContentType.ValidCode ? ResultType.ValidCode : ResultType.Content, retries);
     }
 
     protected void setErrorCode(Map<String, Object> resultMap, String message) {

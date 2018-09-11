@@ -1,17 +1,33 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.extra;
 
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
-import com.datatrees.crawler.core.processor.proxy.Proxy;
-import com.datatrees.crawler.core.processor.proxy.ProxyStatus;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.treefinance.crawler.framework.proxy.Proxy;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
+import com.treefinance.crawler.framework.proxy.ProxyStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * 代理,重新定义,以taskId为唯一标识
  */
-public class SimpleProxyManager extends ProxyManager {
+public class SimpleProxyManager implements ProxyManager {
 
     private static final Logger       logger = LoggerFactory.getLogger(SimpleProxyManager.class);
 

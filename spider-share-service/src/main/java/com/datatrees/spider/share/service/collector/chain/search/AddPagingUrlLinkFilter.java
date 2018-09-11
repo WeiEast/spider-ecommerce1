@@ -1,18 +1,33 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.collector.chain.search;
 
 import java.util.List;
 
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.bean.Status;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.treefinance.crawler.framework.context.function.CrawlRequest;
+import com.treefinance.crawler.framework.context.function.CrawlResponse;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.consts.Status;
+import com.treefinance.crawler.framework.context.RequestUtil;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filter;
 import com.datatrees.spider.share.service.collector.chain.FilterChain;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,7 +72,7 @@ public class AddPagingUrlLinkFilter implements Filter {
     }
 
     private boolean needAddPagingUrl(CrawlRequest request, CrawlResponse response) {
-        int responseStatus = ResponseUtil.getResponseStatus(response);
+        int responseStatus = response.getStatus();
 
         if (responseStatus == Status.NO_SEARCH_RESULT || responseStatus == Status.LAST_PAGE) {
             log.warn("needAddPagingUrl : false, responseStatus: {}", responseStatus);
@@ -75,7 +90,7 @@ public class AddPagingUrlLinkFilter implements Filter {
         log.info("getPageLinkUrl currentPageNum: {}", currentPageNum);
         return SearchTemplateCombine
                 .constructSearchURL(searchProcessor.getSearchTemplate(), searchProcessor.getKeyword(), searchProcessor.getEncoding(), currentPageNum,
-                        true, searchProcessor.getProcessorContext().getContext());
+                        true, searchProcessor.getProcessorContext().getVisibleScope());
     }
 
     /**

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.impl;
 
 import javax.annotation.Resource;
@@ -9,12 +25,6 @@ import java.util.Map;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.AbstractWebsiteConfig;
-import com.datatrees.crawler.core.domain.config.ExtractorConfig;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.processor.ExtractorProcessorContext;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
 import com.datatrees.spider.share.common.share.service.ProxyService;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.domain.GroupEnum;
@@ -24,8 +34,14 @@ import com.datatrees.spider.share.domain.website.WebsiteConfig;
 import com.datatrees.spider.share.service.WebsiteConfigService;
 import com.datatrees.spider.share.service.WebsiteHolderService;
 import com.datatrees.spider.share.service.extra.SimpleProxyManager;
-import com.treefinance.crawler.framework.config.factory.CrawlerConfigFactory;
 import com.treefinance.crawler.framework.config.factory.ParentConfigHandler;
+import com.treefinance.crawler.framework.config.factory.SpiderConfigFactory;
+import com.treefinance.crawler.framework.config.xml.AbstractWebsiteConfig;
+import com.treefinance.crawler.framework.config.xml.ExtractorConfig;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.Website;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -123,7 +139,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         Website website = new Website();
         if (StringUtils.isNotEmpty(websiteConfig.getSearchConfig())) {
             try {
-                SearchConfig searchConfig = CrawlerConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
+                SearchConfig searchConfig = SpiderConfigFactory.build(websiteConfig.getSearchConfig(), SearchConfig.class, parentConfigHandler);
                 website.setSearchConfig(searchConfig);
                 website.setSearchConfigSource(websiteConfig.getSearchConfig());
             } catch (Exception e) {
@@ -133,8 +149,7 @@ public class WebsiteConfigServiceImpl implements WebsiteConfigService {
         }
         if (StringUtils.isNotEmpty(websiteConfig.getExtractorConfig())) {
             try {
-                ExtractorConfig extractorConfig = CrawlerConfigFactory
-                        .build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
+                ExtractorConfig extractorConfig = SpiderConfigFactory.build(websiteConfig.getExtractorConfig(), ExtractorConfig.class, parentConfigHandler);
                 website.setExtractorConfig(extractorConfig);
                 website.setExtractorConfigSource(websiteConfig.getExtractorConfig());
             } catch (Exception e) {

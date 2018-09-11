@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,10 +25,9 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import com.treefinance.crawler.plugin.util.HttpHelper;
 import com.treefinance.crawler.plugin.util.TopApi;
 import org.apache.commons.lang3.ArrayUtils;
@@ -109,7 +108,7 @@ public class HuabeiOpenApiSpider extends AbstractClientPlugin {
         String appKey = "12574478";
         String data = "{\"redirectUrl\":\"https://huabei.alipay.com/wap/moonlight/sign.htm\",\"to\":\"alipay\"}";
         CloseableHttpClient httpClient = HttpHelper.customClient();
-        Map<String, String> cookieMap = ProcessorContextUtil.getCookieMap(PluginFactory.getProcessorContext());
+        Map<String, String> cookieMap = PluginFactory.getProcessorContext().getCookiesAsMap();
         logger.info("cookieMap{}", cookieMap);
         cookieStore = HttpHelper.createCookieStore(cookieMap, "taobao.com");
         try {

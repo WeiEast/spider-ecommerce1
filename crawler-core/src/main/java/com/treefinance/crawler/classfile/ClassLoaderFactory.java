@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,7 +54,7 @@ public final class ClassLoaderFactory {
             throw new IllegalArgumentException("Can not find the resource of jar files to create class loader.");
         }
 
-        URL[] array = urls.toArray(new URL[urls.size()]);
+        URL[] array = urls.toArray(new URL[0]);
         if (parent != null) {
             return URLClassLoader.newInstance(array, parent);
         }

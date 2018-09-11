@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
 import java.util.HashMap;
@@ -5,11 +21,11 @@ import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.crawler.core.util.json.JsonPathUtil;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
+import com.treefinance.crawler.framework.util.json.JsonPathUtil;
 import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin;
 import com.datatrees.spider.share.service.plugin.login.AbstractPicPlugin;
 import com.google.common.collect.ImmutableMap;
@@ -83,12 +99,12 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         logger.debug("访问安全页2：{}", pageContent);
         String identity = PatternUtils.group(pageContent, "identity:\\s*'([^']+)'", 1);
         String sessionid = PatternUtils.group(pageContent, "sessionid:\\s*'([^']+)'", 1);
-        context.getContext().put("identity", identity);
-        context.getContext().put("sessionid", sessionid);
-        context.getContext().put("smTag", smTag);
-        context.getContext().put("smReturn", smReturn);
-        context.getContext().put("smSign", smSign);
-        context.getContext().put("smPolicy", smPolicy);
+        context.setAttribute("identity", identity);
+        context.setAttribute("sessionid", sessionid);
+        context.setAttribute("smTag", smTag);
+        context.setAttribute("smReturn", smReturn);
+        context.setAttribute("smSign", smSign);
+        context.setAttribute("smPolicy", smPolicy);
         url = "https://pin.aliyun.com/get_img?identity=" + identity + "&sessionid=" + sessionid + "&type=150_40&t=" + System.currentTimeMillis();
         checkNode = new LinkNode(url);
         checkNode.setReferer(url);
@@ -104,12 +120,12 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
     @Override
     public String vaildPicCode(Map<String, String> parms, String pidCode) {
         AbstractProcessorContext context = PluginFactory.getProcessorContext();
-        String identity = (String) context.getContext().get("identity");
-        String sessionid = (String) context.getContext().get("sessionid");
-        String smTag = (String) context.getContext().get("smTag");
-        String smReturn = (String) context.getContext().get("smReturn");
-        String smSign = (String) context.getContext().get("smSign");
-        String smPolicy = (String) context.getContext().get("smPolicy");
+        String identity = (String) context.getAttribute("identity");
+        String sessionid = (String) context.getAttribute("sessionid");
+        String smTag = (String) context.getAttribute("smTag");
+        String smReturn = (String) context.getAttribute("smReturn");
+        String smSign = (String) context.getAttribute("smSign");
+        String smPolicy = (String) context.getAttribute("smPolicy");
         LinkNode validNode = new LinkNode("https://pin.aliyun.com/check_img?code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=&identity=" + identity + "&sessionid=" + sessionid + "&delflag=0&type=150_40");
         String pageContent = (String) getResponseByWebRequest(validNode, AbstractLoginPlugin.ContentType.Content, null);
         logger.debug("校验后交易页面1：{}", pageContent);

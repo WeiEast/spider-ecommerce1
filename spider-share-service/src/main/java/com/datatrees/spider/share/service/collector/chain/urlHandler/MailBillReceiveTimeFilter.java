@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.collector.chain.urlHandler;
@@ -11,8 +19,8 @@ package com.datatrees.spider.share.service.collector.chain.urlHandler;
 import java.util.Date;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.crawler.core.domain.config.search.SearchType;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
+import com.treefinance.crawler.framework.config.enums.SearchType;
+import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
@@ -47,7 +55,7 @@ public class MailBillReceiveTimeFilter extends RemovedFetchLinkNodeFilter {
                 if (currentLinkNode != null && currentLinkNode.getpNum() > 0) {
                     logger.info("receive time come to threshold, mark as the LastPageLink ...");
                     searchProcessor.setLastLink(true);
-                    searchProcessor.getProcessorContext().getProcessorResult().put("LastPageLink", true);
+                    searchProcessor.getProcessorContext().addProcessorResult("LastPageLink", true);
                 }
             }
         }

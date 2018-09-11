@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.plugin.crawl;
 
 import java.util.HashMap;
@@ -5,16 +21,15 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
-import com.datatrees.spider.share.domain.directive.DirectiveType;
 import com.datatrees.spider.share.domain.directive.DirectiveEnum;
+import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
 import com.datatrees.spider.share.domain.directive.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveType;
+import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +85,7 @@ public abstract class AbstractGrabPlugin extends AbstractRawdataPlugin {
         }
         String cookeString = receiveDirective.getData().get("cookes");
         logger.info("get cookie success,taskId={},websiteName={},cookes={}", taskId, websiteName, cookeString);
-        ProcessorContextUtil.setCookieString(context, cookeString);
+        context.setCookies(cookeString);
         resultMap.put(PluginConstants.FIELD, receiveDirective.getData().get("html"));
         logger.info("get result success,taskId={},websiteName={},resultKey={}", taskId, websiteName, resultKey);
         return resultMap;

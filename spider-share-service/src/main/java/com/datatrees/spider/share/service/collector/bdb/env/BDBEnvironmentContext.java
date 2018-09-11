@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.collector.bdb.env;
 
 import java.io.File;
@@ -23,6 +39,10 @@ public class BDBEnvironmentContext {
     private final static String homePath      = CollectorConstants.COLLECTOR_TEMP_DIR;
 
     private static final int    LOG_FILE_SIZE = 128 * 1024 * 1024;
+
+    private static final int MAX_ENTRIES = PropertiesConfiguration.getInstance().getInt("bdb.node.max.entries", 1024);
+
+    private static final int MAX_DUP_TREE_ENTRIES = PropertiesConfiguration.getInstance().getInt("bdb.node.max.duptree.entries", 2048);
 
     static {
         log.info("Init Home Path : start..." + homePath);
@@ -67,17 +87,17 @@ public class BDBEnvironmentContext {
         log.info("clear file : " + folder.getName());
         try {
             File[] files = folder.listFiles();
-            for (File file : files) {
-                if (file.isDirectory()) {
-                    destroyEnv(file);
-                }
-                boolean flag = file.delete();
-                if (!flag) {
-                    log.info("This file  has been deleted.." + file.getName());
+            if(files != null){
+                for (File file : files) {
+                    if (file.isDirectory()) {
+                        destroyEnv(file);
+                    }
+                    if (!file.delete()) {
+                        log.info("This file  has been deleted.." + file.getName());
+                    }
                 }
             }
-            boolean flag = folder.delete();
-            if (!flag) {
+            if (!folder.delete()) {
                 log.info("This folder  has been deleted..." + folder.getName());
             }
         } catch (Exception e) {
@@ -130,8 +150,8 @@ public class BDBEnvironmentContext {
         log.info("BDB init database config");
         dbConfig = new DatabaseConfig();
         dbConfig.setAllowCreate(true);
-        dbConfig.setNodeMaxEntries(PropertiesConfiguration.getInstance().getInt("bdb.node.max.entries", 1024));
-        dbConfig.setNodeMaxDupTreeEntries(PropertiesConfiguration.getInstance().getInt("bdb.node.max.duptree.entries", 2048));
+        dbConfig.setNodeMaxEntries(MAX_ENTRIES);
+        dbConfig.setNodeMaxDupTreeEntries(MAX_DUP_TREE_ENTRIES);
         dbConfig.setBtreeComparator(LinkNodeComparator.class);
     }
 

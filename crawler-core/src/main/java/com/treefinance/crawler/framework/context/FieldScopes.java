@@ -1,15 +1,29 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.treefinance.crawler.framework.context;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.*;
 
-import com.datatrees.common.pipeline.Request;
-import com.datatrees.common.pipeline.Response;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResult;
-import com.datatrees.crawler.core.processor.extractor.FieldExtractResultSet;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResult;
+import com.treefinance.crawler.framework.process.fields.FieldExtractResultSet;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections4.MapUtils;
 import org.slf4j.Logger;
@@ -26,15 +40,15 @@ public final class FieldScopes {
     private FieldScopes() {
     }
 
-    public static Map<String, Object> getSharedFields(Request request) {
-        return RequestUtil.getSourceMap(request);
+    public static Map<String, Object> getSharedFields(SpiderRequest request) {
+        return request.getGlobalScopeAsMap();
     }
 
-    public static Map<String, Object> getExtractFields(Response response) {
+    public static Map<String, Object> getExtractFields(SpiderResponse response) {
         return ResponseUtil.getFieldExtractResultMap(response);
     }
 
-    public static Object getVisibleField(String name, Request request, Response response) {
+    public static Object getVisibleField(String name, SpiderRequest request, SpiderResponse response) {
         Object result = null;
         FieldExtractResultSet fieldExtractResultSet = ResponseUtil.getFieldExtractResultSet(response);
         if (fieldExtractResultSet != null) {
@@ -44,7 +58,7 @@ public final class FieldScopes {
             }
         }
         if (result == null) {
-            result = RequestUtil.getSourceMap(request).get(name);
+            result = request.getGlobalFieldValue(name);
         }
         LOGGER.debug("Search field in extracted fields or global fields. - name: {}, value: {}", name, result);
 
@@ -54,7 +68,7 @@ public final class FieldScopes {
     /**
      * 获取当前上下文可见的值栈，包含解析出的字段值，共享的值。其中解析值优先于共享值。
      */
-    public static Map<String, Object> getVisibleFields(Request request, Response response) {
+    public static Map<String, Object> getVisibleFields(SpiderRequest request, SpiderResponse response) {
         List<Map<String, Object>> fieldScopes = new ArrayList<>(2);
 
         if (response != null) {

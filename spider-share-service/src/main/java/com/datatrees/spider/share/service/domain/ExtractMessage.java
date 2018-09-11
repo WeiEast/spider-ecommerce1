@@ -1,17 +1,23 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.domain;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.annotation.Nonnull;
+import java.util.*;
 
 import com.datatrees.spider.share.domain.ExtractCode;
 import com.datatrees.spider.share.domain.ResultType;
@@ -23,112 +29,79 @@ import com.datatrees.spider.share.domain.ResultType;
  */
 public class ExtractMessage {
 
-    private int                                          taskLogId;//TaskLog Id
+    private final SpiderTask task;
 
-    private Long                                         taskId;
+    private Object messageObject;
 
-    private int                                          websiteId;// search websiteid
+    private ResultType ResultType;
 
-    private com.datatrees.spider.share.domain.ResultType ResultType;
+    private int typeId;// maybe bankid，operatorid，ecommerceid
 
-    private int                                          typeId;// maybe bankid，operatorid，ecommerceid
+    private ExtractCode extractCode;
 
-    private Object                                       messageObject;
+    private Map<String, String> submitkeyResult = new HashMap<>();
 
-    private ExtractCode                                  extractCode;
+    private List<ExtractMessage> subExtractMessageList;
 
-    private Map<String, String>                          submitkeyResult = new HashMap<String, String>();
+    private Integer messageIndex;
 
-    private ParentTask                                   task;
+    public ExtractMessage(@Nonnull SpiderTask task) {
+        this(task, null);
+    }
 
-    private List<ExtractMessage>                         subExtractMessageList;
+    public ExtractMessage(@Nonnull SpiderTask task, Object obj) {
+        this.task = Objects.requireNonNull(task);
+        this.messageObject = obj;
+    }
 
-    private Integer                                      messageIndex;
-
-    private String                                       websiteName;
+    public SpiderTask getTask() {
+        return task;
+    }
 
     public Long getTaskId() {
-        return taskId;
+        return task.getTaskId();
     }
 
-    public void setTaskId(Long taskId) {
-        this.taskId = taskId;
+    public Integer getProcessId() {
+        return task.getProcessId();
     }
 
-    /**
-     * @return the messageIndex
-     */
+    public Integer getWebsiteId() {
+        return task.getWebsiteId();
+    }
+
+    public String getWebsiteName() {
+        return task.getWebsiteName();
+    }
+
     public Integer getMessageIndex() {
         return messageIndex;
     }
 
-    /**
-     * @param messageIndex the messageIndex to set
-     */
     public void setMessageIndex(Integer messageIndex) {
         this.messageIndex = messageIndex;
     }
 
-    public int getTaskLogId() {
-        return taskLogId;
-    }
-
-    public void setTaskLogId(int taskLogId) {
-        this.taskLogId = taskLogId;
-    }
-
-    /**
-     * @return the websiteId
-     */
-    public int getWebsiteId() {
-        return websiteId;
-    }
-
-    /**
-     * @param websiteId the websiteId to set
-     */
-    public void setWebsiteId(int websiteId) {
-        this.websiteId = websiteId;
-    }
-
-    /**
-     * @return the resultType
-     */
     public ResultType getResultType() {
         return ResultType;
     }
 
-    /**
-     * @param resultType the resultType to set
-     */
     public void setResultType(ResultType resultType) {
         ResultType = resultType;
     }
 
-    /**
-     * @return the typeId
-     */
     public int getTypeId() {
         return typeId;
     }
 
-    /**
-     * @param typeId the typeId to set
-     */
     public void setTypeId(int typeId) {
         this.typeId = typeId;
     }
 
-    /**
-     * @return the messageObject
-     */
     public Object getMessageObject() {
         return messageObject;
     }
 
-    /**
-     * @param messageObject the messageObject to set
-     */
     public void setMessageObject(Object messageObject) {
         this.messageObject = messageObject;
     }
@@ -154,68 +127,29 @@ public class ExtractMessage {
         return submitkeyResult;
     }
 
-    /**
-     * @param submitkeyResult the submitkeyResult to set
-     */
-    public void setSubmitkeyResult(Map<String, String> submitkeyResult) {
-        this.submitkeyResult = submitkeyResult;
+    public void addSubmitKey(String name, String value) {
+        submitkeyResult.put(name, value);
     }
 
-    /**
-     * @return the task
-     */
-    public ParentTask getTask() {
-        return task;
-    }
-
-    /**
-     * @param task the task to set
-     */
-    public void setTask(ParentTask task) {
-        this.task = task;
-    }
-
-    /**
-     * @return the subExtractMessageList
-     */
     public List<ExtractMessage> getSubExtractMessageList() {
         return subExtractMessageList;
-    }
-
-    /**
-     * @param subExtractMessageList the subExtractMessageList to set
-     */
-    public void setSubExtractMessageList(List<ExtractMessage> subExtractMessageList) {
-        this.subExtractMessageList = subExtractMessageList;
     }
 
     public void addSubExtractMessage(ExtractMessage subExtractMessage) {
         if (subExtractMessageList == null) {
             synchronized (this) {
                 if (subExtractMessageList == null) {
-                    subExtractMessageList = new ArrayList<ExtractMessage>();
+                    subExtractMessageList = new ArrayList<>();
                 }
             }
         }
         subExtractMessageList.add(subExtractMessage);
     }
 
-    public String getWebsiteName() {
-        return websiteName;
-    }
 
-    public void setWebsiteName(String websiteName) {
-        this.websiteName = websiteName;
-    }
-
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ExtractMessage [taskLogId=" + taskLogId + ",taskId=" + taskId + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";
+        return "ExtractMessage [pid=" + getProcessId() + ",taskId=" + getTaskId() + ", ResultType=" + ResultType + ", typeId=" + typeId + "]";
     }
 
 }

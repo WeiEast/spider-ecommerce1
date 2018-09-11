@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package com.treefinance.crawler.framework.extension;
 import javax.annotation.Nonnull;
 import java.util.Objects;
 
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.plugin.impl.JavaPlugin;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.plugin.JavaPlugin;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.exception.UnsupportedExtensionException;
 import com.treefinance.crawler.framework.extension.manager.WrappedExtension;
 import com.treefinance.crawler.framework.extension.spider.PageProcessor;
@@ -36,13 +36,11 @@ public final class ExtensionFactory {
     private ExtensionFactory() {
     }
 
-    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
-            final PageProcessor pageProcessor) {
+    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor) {
         return getSpider(pluginMetadata, context, pageProcessor, null);
     }
 
-    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context,
-            final PageProcessor pageProcessor, final Interrupter interrupter) {
+    public static Spider getSpider(@Nonnull final AbstractPlugin pluginMetadata, @Nonnull final SearchProcessorContext context, final PageProcessor pageProcessor, final Interrupter interrupter) {
         Objects.requireNonNull(context);
         if (!(pluginMetadata instanceof JavaPlugin)) {
             throw new UnsupportedExtensionException("Unsupported extension type - " + pluginMetadata.getClass());

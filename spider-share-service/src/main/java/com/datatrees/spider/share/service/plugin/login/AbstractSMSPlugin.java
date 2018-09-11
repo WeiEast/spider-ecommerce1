@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.plugin.login;
 
 import java.util.HashMap;
@@ -7,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import com.datatrees.spider.share.service.plugin.AbstractRawdataPlugin;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
@@ -40,7 +56,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
 
         paramMap.put("taskId", taskId.toString());
 
-        if (null == taskId || StringUtils.isBlank(websiteName)) {
+        if (StringUtils.isBlank(websiteName)) {
             logger.error("sms plugin's taskId or websitename is empty! taskId={},websiteName={}", taskId, websiteName);
             resultMap.put(AttributeKey.ERROR_CODE, "-1");
             //貌似没用
@@ -102,7 +118,7 @@ public abstract class AbstractSMSPlugin extends AbstractRawdataPlugin {
                 continue;
             }
             inputSmsCount++;
-            PluginFactory.getProcessorContext().getProcessorResult().put("smsCodeCount", inputSmsCount);
+            PluginFactory.getProcessorContext().addProcessorResult("smsCodeCount", inputSmsCount);
             //返回不为空就"认为是正确",实际大概就是短信验证码不为空,就返回短信验证码,诡异的代码,踩坑了......
             String inputCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
             if (vaildSMSCode(paramsMap, inputCode)) {

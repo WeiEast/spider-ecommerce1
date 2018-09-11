@@ -1,12 +1,25 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.domain;
+
+import javax.annotation.Nonnull;
+import java.util.Objects;
+
+import org.apache.commons.lang.BooleanUtils;
 
 /**
  * @author <A HREF="">Cheng Wang</A>
@@ -15,86 +28,55 @@ package com.datatrees.spider.share.service.domain;
  */
 public class SubTask {
 
-    private long       taskId;
+    private final SpiderTask parentTask;
 
-    private ParentTask parentTask;
-
-    private SubSeed    seed;
+    private final SubSeed seed;
 
     private long       submitAt;
 
-    /**
-     *
-     */
-    public SubTask() {
-        super();
+    public SubTask(@Nonnull SpiderTask parentTask, @Nonnull SubSeed seed) {
+        this.parentTask = Objects.requireNonNull(parentTask);
+        this.seed = Objects.requireNonNull(seed);
     }
 
-    public SubTask(long taskId, ParentTask parentTask, SubSeed seed) {
-        super();
-        this.taskId = taskId;
-        this.parentTask = parentTask;
-        this.seed = seed;
-    }
-
-    /**
-     * @return the submitAt
-     */
-    public long getSubmitAt() {
-        return submitAt;
-    }
-
-    /**
-     * @param submitAt the submitAt to set
-     */
-    public void setSubmitAt(long submitAt) {
-        this.submitAt = submitAt;
-    }
-
-    public long getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(long taskId) {
-        this.taskId = taskId;
-    }
-
-    /**
-     * @return the parentTask
-     */
-    public ParentTask getParentTask() {
+    public SpiderTask getParentTask() {
         return parentTask;
     }
 
-    /**
-     * @param parentTask the parentTask to set
-     */
-    public void setParentTask(ParentTask parentTask) {
-        this.parentTask = parentTask;
+    public Long getTaskId() {
+        return parentTask.getTaskId();
     }
 
-    /**
-     * @return the seed
-     */
+    public Integer getParentProcessId() {
+        return parentTask.getProcessId();
+    }
+
     public SubSeed getSeed() {
         return seed;
     }
 
-    /**
-     * @param seed the seed to set
-     */
-    public void setSeed(SubSeed seed) {
-        this.seed = seed;
+    public long getSubmitAt() {
+        return submitAt;
     }
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see java.lang.Object#toString()
-     */
+    public void setSubmitAt(long submitAt) {
+        this.submitAt = submitAt;
+    }
+
+    public boolean isSync() {
+        return BooleanUtils.isTrue(seed.isSync());
+    }
+
+    public boolean isMutex() {
+        return BooleanUtils.isTrue(seed.isMutex());
+    }
+
+    public String getUniqueKey() {
+        return parentTask.getProcessId() + "_" + seed.getUniqueSuffix();
+    }
+
     @Override
     public String toString() {
-        return "SubTask [taskId=" + taskId + ", parentTask=" + parentTask + ", seed=" + seed + "]";
+        return "SubTask [taskId=" + getTaskId() + ", parentTask=" + parentTask + ", seed=" + seed + "]";
     }
-
 }

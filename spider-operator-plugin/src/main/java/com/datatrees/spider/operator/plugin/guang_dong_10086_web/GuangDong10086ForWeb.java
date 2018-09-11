@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.operator.plugin.guang_dong_10086_web;
 
 import javax.script.Invocable;
@@ -7,24 +23,25 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipInputStream;
 
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.crawler.core.processor.format.unit.TimeUnit;
+import com.datatrees.spider.operator.domain.OperatorParam;
+import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.CheckUtils;
 import com.datatrees.spider.share.common.http.ScriptEngineUtil;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.spider.operator.domain.OperatorParam;
-import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import com.google.gson.reflect.TypeToken;
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.entity.ContentType;
@@ -263,7 +280,7 @@ public class GuangDong10086ForWeb implements OperatorPlugin {
             String pageContent = new String(response.getResponse(), "GBK");
             String checkPageContent = new String(response.getResponse(), "UTF-8");
             if (StringUtils.contains(checkPageContent, "发生错误")) {
-                TimeUnit.SECOND.toMillis(1);
+                TimeUnit.SECONDS.toMillis(1);
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(templateUrl)
                         .setRequestBody(data).invoke();
                 pageContent = new String(response.getResponse(), "GBK");

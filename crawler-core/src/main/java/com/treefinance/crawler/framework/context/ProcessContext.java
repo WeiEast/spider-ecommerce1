@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,17 +17,19 @@
 package com.treefinance.crawler.framework.context;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.datatrees.crawler.core.domain.Website;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.service.AbstractService;
-import com.datatrees.crawler.core.domain.config.service.impl.TaskHttpService;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.service.AbstractService;
+import com.treefinance.crawler.framework.config.xml.service.TaskHttpService;
+import com.treefinance.crawler.framework.consts.Constants;
 import com.treefinance.crawler.framework.extension.manager.PluginManager;
+import com.treefinance.crawler.lang.SynchronizedMap;
 import com.treefinance.toolkit.util.Preconditions;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -39,24 +41,31 @@ import org.slf4j.LoggerFactory;
  * @author Jerry
  * @since 13:54 25/01/2018
  */
-public abstract class ProcessContext implements CrawlerContext {
+public abstract class ProcessContext extends DefaultCookieStore implements SpiderContext {
 
     protected final Logger                      logger = LoggerFactory.getLogger(getClass());
 
     private final   Website                     website;
 
-    private final   Map<String, AbstractPlugin> pluginMetadataMap;
+    private final Map<String, AbstractPlugin> pluginMetadataMap;
 
-    private         PluginManager               pluginManager;
+    private Map<String, Object> attributes;
+
+    private PluginManager pluginManager;
 
     public ProcessContext(@Nonnull final Website website) {
         Preconditions.notNull("website", website);
         this.website = website;
+        this.attributes = new SynchronizedMap<>();
         this.pluginMetadataMap = new ConcurrentHashMap<>();
     }
 
     public Website getWebsite() {
         return website;
+    }
+
+    public Integer getWebsiteId() {
+        return website.getId();
     }
 
     public String getWebsiteName() {
@@ -73,19 +82,18 @@ public abstract class ProcessContext implements CrawlerContext {
     }
 
     @Override
-    public void registerPlugins(@Nonnull List<AbstractPlugin> pluginMetadataList) {
+    public void registerPlugins(List<AbstractPlugin> pluginMetadataList) {
         if (CollectionUtils.isNotEmpty(pluginMetadataList)) {
-            for (AbstractPlugin pluginMetadata : pluginMetadataList) {
-                if (pluginMetadata != null) {
-                    registerPlugin(pluginMetadata);
-                }
-            }
+            pluginMetadataList.forEach(this::registerPlugin);
         }
     }
 
     @Override
-    public void registerPlugin(@Nonnull AbstractPlugin pluginMetadata) {
-        Objects.requireNonNull(pluginMetadata);
+    public void registerPlugin(AbstractPlugin pluginMetadata) {
+        if (pluginMetadata == null) {
+            return;
+        }
+
         if (StringUtils.isEmpty(pluginMetadata.getId())) {
             logger.warn("Failed to register plugin metadata >>> The plugin id is missing!");
             return;
@@ -97,6 +105,89 @@ public abstract class ProcessContext implements CrawlerContext {
     @Override
     public AbstractPlugin getPluginMetadataById(@Nonnull String pluginId) {
         return pluginMetadataMap.get(pluginId);
+    }
+
+    @Override
+    public void setCookies(String cookies) {
+        super.setCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void setCookies(@Nullable String cookies, boolean retainQuote) {
+        super.setCookies(cookies, retainQuote);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void setCookies(Map<String, String> cookies) {
+        super.setCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void addCookies(Map<String, String> cookies) {
+        super.addCookies(cookies);
+        updateCookiesInAttributes();
+    }
+
+    @Override
+    public void addCookies(@Nullable String[] cookies, boolean retainQuote) {
+        super.addCookies(cookies, retainQuote);
+        updateCookiesInAttributes();
+    }
+
+    private void updateCookiesInAttributes() {
+        setAttribute(Constants.COOKIE, this.getCookiesAsMap());
+        setAttribute(Constants.COOKIE_STRING, this.getCookiesAsString());
+    }
+
+    /**
+     * @return the context
+     */
+    @Deprecated
+    public Map<String, Object> getContext() {
+        return getAttributes();
+    }
+
+    /**
+     * the shared fields map with the global context scope.
+     * @return the unmodifiable map.
+     * @see #getAttributes()
+     */
+    public Map<String, Object> getVisibleScope() {
+        return Collections.unmodifiableMap(attributes);
+    }
+
+    protected Map<String, Object> getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(Map<String, Object> attributes) {
+        if (attributes == null) {
+            getAttributes().clear();
+        } else {
+            this.attributes = new SynchronizedMap<>(attributes);
+        }
+    }
+
+    public Object getAttribute(String name) {
+        return getAttributes().get(name);
+    }
+
+    public void setAttribute(String name, Object value) {
+        logger.debug("add context attribute >> {} : {}", name, value);
+        if (value == null) {
+            getAttributes().remove(name);
+        } else {
+            getAttributes().put(name, value);
+        }
+    }
+
+    public void addAttributes(Map<String, Object> attributes) {
+        if (attributes != null) {
+            getAttributes().putAll(attributes);
+        }
     }
 
     public PluginManager getPluginManager() {

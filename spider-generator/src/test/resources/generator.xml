@@ -5,7 +5,7 @@
         <username>root</username>
         <password>Tianxing@0701</password>
         <host>192.168.5.24</host>
-        <database_name>rawdatacentral</database_name>
+        <database_name>spider</database_name>
     </database>
     <target>
         <model_target_package>com.datatrees.spider.share.domain.model</model_target_package>

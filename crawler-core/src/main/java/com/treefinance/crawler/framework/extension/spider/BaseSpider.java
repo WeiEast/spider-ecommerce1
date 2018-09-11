@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,8 +16,8 @@
 
 package com.treefinance.crawler.framework.extension.spider;
 
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.resource.ProxyManager;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.proxy.ProxyManager;
 import com.treefinance.crawler.framework.extension.Interrupter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

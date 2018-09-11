@@ -1,5 +1,5 @@
 /*
- * Copyright © 2015 - 2017 杭州大树网络技术有限公司. All Rights Reserved
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,7 @@ public final class ClassLoaderUtils {
     private ClassLoaderUtils() {
     }
 
-    public static <T> T loadAndInstantiate(File file, ClassLoader parent, boolean forceReload, String className,
-            Class<T> resultType) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
+    public static <T> T loadAndInstantiate(File file, ClassLoader parent, boolean forceReload, String className, Class<T> resultType) throws ClassNotFoundException, IllegalAccessException, InstantiationException {
         Objects.requireNonNull(className);
         Objects.requireNonNull(resultType);
         ClassLoader classLoader = ClassLoaderManager.findClassLoader(file, parent, forceReload);

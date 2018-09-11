@@ -1,9 +1,17 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.collector.worker;
@@ -16,34 +24,34 @@ import akka.dispatch.Future;
 import akka.util.Timeout;
 import com.datatrees.common.conf.PropertiesConfiguration;
 import com.datatrees.common.util.GsonUtils;
-import com.datatrees.crawler.core.domain.config.plugin.AbstractPlugin;
-import com.datatrees.crawler.core.domain.config.search.Request;
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.exception.ResponseCheckException;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.login.Login;
+import com.datatrees.spider.share.common.utils.DateUtils;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.ExtractCode;
+import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
+import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.collector.search.CrawlExecutor;
 import com.datatrees.spider.share.service.collector.search.SearchProcessor;
 import com.datatrees.spider.share.service.collector.worker.filter.BusinessTypeFilter;
 import com.datatrees.spider.share.service.collector.worker.filter.TemplateFilter;
-import com.datatrees.spider.share.common.utils.DateUtils;
 import com.datatrees.spider.share.service.dao.RedisDao;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.extra.SubTaskManager;
-import com.datatrees.spider.share.domain.ExtractCode;
-import com.datatrees.spider.share.domain.exception.LoginTimeOutException;
-import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.util.RedisKeyUtils;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.http.HttpResult;
 import com.google.gson.reflect.TypeToken;
+import com.treefinance.crawler.framework.config.xml.plugin.AbstractPlugin;
+import com.treefinance.crawler.framework.config.xml.search.Request;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
 import com.treefinance.crawler.framework.exception.ConfigException;
+import com.treefinance.crawler.framework.exception.ResponseCheckException;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
 import com.treefinance.crawler.framework.expression.StandardExpression;
 import com.treefinance.crawler.framework.extension.spider.Spiders;
+import com.treefinance.crawler.framework.login.Login;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang.StringUtils;
@@ -107,8 +115,8 @@ public class CollectorWorker {
                 }
                 redisDao.pushMessage(keyString, keyString, interactiveTimeoutSeconds);
             }
-            Login.INSTANCE.doLogin(context);
-            if (!context.getLoginStatus().equals(Login.Status.SUCCEED)) {
+            Login.Status status = Login.INSTANCE.doLogin(context);
+            if (Login.Status.FAILED.equals(status)) {
                 LOGGER.warn("login fail taskId={},websiteName={} ", task.getTaskId(), task.getWebsiteName());
                 return loginResult.failure(ErrorCode.COOKIE_INVALID);
             }
@@ -142,11 +150,11 @@ public class CollectorWorker {
 
             Map<String, Object> resultMap = this.awaitDone(futureList, taskMessage);
 
-            Map<String, Object> extractResult = mergeSubTaskResult(task.getId(), resultMap);
+            appendSubTaskResult(resultMap, task.getId());
 
             LOGGER.info("doSearch success taskId={}, websiteName={}", task.getTaskId(), task.getWebsiteName());
 
-            return searchResult.success(extractResult);
+            return searchResult.success(resultMap);
         } catch (ConfigException e) {
             LOGGER.error("Search config is incorrect! taskId={}, websiteName= {}", task.getTaskId(), task.getWebsiteName(), e);
             return searchResult.failure(ErrorCode.CONFIG_ERROR);
@@ -317,7 +325,7 @@ public class CollectorWorker {
     private void addDefaultHeaders(SearchProcessorContext context, Request request) {
         String headerString = request.getDefaultHeader();
         if (StringUtils.isNotBlank(headerString)) {
-            headerString = StandardExpression.eval(headerString, context.getContext());
+            headerString = StandardExpression.eval(headerString, context.getVisibleScope());
             Map<String, String> defaultHeader = GsonUtils.fromJson(headerString, new TypeToken<Map<String, String>>() {}.getType());
             if (MapUtils.isNotEmpty(defaultHeader)) {
                 context.getDefaultHeader().putAll(defaultHeader);
@@ -339,8 +347,8 @@ public class CollectorWorker {
         return seedUrl;
     }
 
-    public Map<String, Object> mergeSubTaskResult(int taskid, Map<String, Object> resultMap) {
-        List<Map> results = subTaskManager.getSyncedSubTaskResults(taskid);
+    private void appendSubTaskResult(Map<String, Object> resultMap, Integer taskLogId) {
+        List<Map> results = subTaskManager.getSyncedSubTaskResults(taskLogId);
         if (CollectionUtils.isNotEmpty(results)) {
             LOGGER.info("try to merge subTaskResult: {}", results);
             List<Map> errorSubTasks = new ArrayList<>();
@@ -359,7 +367,6 @@ public class CollectorWorker {
                 resultMap.put("errorSubTasks", errorSubTasks);
             }
         }
-        return resultMap;
     }
 
     /**

@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.collector.search;
 
 import javax.annotation.Resource;
@@ -10,10 +26,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 
 import com.datatrees.common.util.ThreadInterruptedUtil;
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.search.SearchTemplateCombine;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.process.search.SearchTemplateCombine;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.util.UnifiedSysTime;
 import com.datatrees.spider.share.domain.model.Keyword;
@@ -82,7 +98,7 @@ public class CrawlExecutor {
     private void doExecute(SearchProcessor searchProcessor, LinkQueue linkQueue, String keyword, Integer threadCount) throws ResultEmptyException {
         searchProcessor.initWithKeyword(keyword);
         String url = SearchTemplateCombine.constructSearchURL(searchProcessor.getSearchTemplate(), keyword, searchProcessor.getEncoding(), 0, true,
-                searchProcessor.getProcessorContext().getContext());
+                searchProcessor.getProcessorContext().getVisibleScope());
 
         log.info("Actual search seed url: {}", url);
 

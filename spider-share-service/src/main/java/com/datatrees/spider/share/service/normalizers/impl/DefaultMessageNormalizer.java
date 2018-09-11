@@ -1,21 +1,28 @@
-/**
- * This document and its contents are protected by copyright 2015 and owned by datatrees.com Inc.
- * The copying and reproduction of this document and/or its content (whether wholly or partly) or
- * any incorporation of the same into any other material in any media or format of any kind is
- * strictly prohibited. All rights are reserved.
- * Copyright (c) datatrees.com Inc. 2015
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package com.datatrees.spider.share.service.normalizers.impl;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import com.datatrees.crawler.core.processor.Constants;
 import com.datatrees.spider.share.domain.DefaultData;
 import com.datatrees.spider.share.domain.ResultType;
 import com.datatrees.spider.share.service.domain.ExtractMessage;
 import com.datatrees.spider.share.service.normalizers.MessageNormalizer;
+import com.treefinance.crawler.framework.process.domain.ExtractObject;
 import org.springframework.stereotype.Service;
 
 /**
@@ -33,10 +40,10 @@ public class DefaultMessageNormalizer implements MessageNormalizer {
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             return true;
-        } else if (object instanceof HashMap && DefaultData.class.getSimpleName().equals(((Map) object).get(Constants.SEGMENT_RESULT_CLASS_NAMES))) {
+        } else if (object instanceof ExtractObject && DefaultData.class.getSimpleName().equals(((ExtractObject) object).getResultClass())) {
             DefaultData defaultData = new DefaultData();
             defaultData.putAll((Map) object);
-            defaultData.remove(Constants.SEGMENT_RESULT_CLASS_NAMES);
+
             message.setResultType(ResultType.DEFAULT);
             message.setTypeId(message.getWebsiteId());
             message.setMessageObject(defaultData);

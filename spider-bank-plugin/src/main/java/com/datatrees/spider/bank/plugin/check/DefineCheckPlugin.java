@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.bank.plugin.check;
 
 import java.util.Arrays;
@@ -6,21 +22,21 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.TypeReference;
-import com.datatrees.crawler.core.processor.AbstractProcessorContext;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.plugin.AbstractClientPlugin;
-import com.datatrees.crawler.core.processor.plugin.PluginConstants;
-import com.datatrees.crawler.core.processor.plugin.PluginFactory;
-import com.datatrees.spider.share.service.CommonPluginService;
-import com.datatrees.spider.share.service.MonitorService;
-import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.AttributeKey;
 import com.datatrees.spider.share.domain.CommonPluginParam;
 import com.datatrees.spider.share.domain.FormType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.service.CommonPluginService;
+import com.datatrees.spider.share.service.MonitorService;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
+import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
+import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +61,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         String websiteName = context.getWebsiteName();
         Long taskId = context.getLong(AttributeKey.TASK_ID);
 
-        TaskUtils.updateCookies(taskId, ProcessorContextUtil.getCookieMap(context));
+        TaskUtils.updateCookies(taskId, context.getCookiesAsMap());
 
         TaskUtils.initTaskContext(taskId, context.getContext());
         Map<String, String> map = JSON.parseObject(args[args.length - 1], new TypeReference<Map<String, String>>() {});
@@ -66,7 +82,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
             monitorService.sendTaskLog(taskId, TemplateUtils.format("{}-->处理-->失败", FormType.getName(fromType)));
         }
         String cookieString = TaskUtils.getCookieString(taskId);
-        ProcessorContextUtil.setCookieString(context, cookieString);
+        context.setCookies(cookieString);
 
         Map<String, String> shares = TaskUtils.getTaskShares(taskId);
         for (Map.Entry<String, String> entry : shares.entrySet()) {

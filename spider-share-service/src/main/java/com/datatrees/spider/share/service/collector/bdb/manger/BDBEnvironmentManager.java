@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.collector.bdb.manger;
 
 import java.io.File;
@@ -17,7 +33,7 @@ public class BDBEnvironmentManager implements EnvironmentManager {
 
     private static final Logger                                      log                    = LoggerFactory.getLogger(BDBEnvironmentManager.class);
 
-    private static       BDBEnvironmentManager                       manager                = new BDBEnvironmentManager();
+    private static final BDBEnvironmentManager manager = new BDBEnvironmentManager();
 
     // Save the object needs to be destoryed
     // private ConcurrentLinkedQueue<BDBEnvironmentWapper> toBeDestroyedContainer = new
@@ -29,8 +45,6 @@ public class BDBEnvironmentManager implements EnvironmentManager {
     private              ConcurrentLinkedQueue<BDBEnvironmentWapper> newGenerationContainer = new ConcurrentLinkedQueue<BDBEnvironmentWapper>();
 
     private BDBEnvironmentManager() {}
-
-    ;
 
     public static BDBEnvironmentManager getInstance() {
         return manager;

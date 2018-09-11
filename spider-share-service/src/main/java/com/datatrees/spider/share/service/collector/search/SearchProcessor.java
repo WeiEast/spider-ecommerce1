@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.collector.search;
 
 import java.util.ArrayList;
@@ -9,25 +25,25 @@ import java.util.concurrent.TimeUnit;
 
 import akka.dispatch.Future;
 import com.alibaba.rocketmq.common.ThreadFactoryImpl;
-import com.datatrees.crawler.core.domain.config.SearchConfig;
-import com.datatrees.crawler.core.domain.config.properties.Properties;
-import com.datatrees.crawler.core.domain.config.search.SearchTemplateConfig;
-import com.datatrees.crawler.core.domain.config.search.SearchType;
-import com.datatrees.crawler.core.processor.SearchProcessorContext;
-import com.datatrees.crawler.core.processor.bean.CrawlRequest;
-import com.datatrees.crawler.core.processor.bean.CrawlResponse;
-import com.datatrees.crawler.core.processor.bean.LinkNode;
-import com.datatrees.crawler.core.processor.common.ProcessorContextUtil;
-import com.datatrees.crawler.core.processor.common.RequestUtil;
-import com.datatrees.crawler.core.processor.common.ResponseUtil;
-import com.datatrees.crawler.core.processor.common.exception.ResultEmptyException;
-import com.datatrees.crawler.core.processor.search.Crawler;
+import com.treefinance.crawler.framework.config.xml.SearchConfig;
+import com.treefinance.crawler.framework.config.xml.properties.Properties;
+import com.treefinance.crawler.framework.config.xml.search.SearchTemplateConfig;
+import com.treefinance.crawler.framework.config.enums.SearchType;
+import com.treefinance.crawler.framework.context.SearchProcessorContext;
+import com.treefinance.crawler.framework.context.function.CrawlRequest;
+import com.treefinance.crawler.framework.context.function.CrawlResponse;
+import com.treefinance.crawler.framework.context.function.LinkNode;
+import com.treefinance.crawler.framework.context.ProcessorContextUtil;
+import com.treefinance.crawler.framework.context.RequestUtil;
+import com.treefinance.crawler.framework.context.ResponseUtil;
+import com.treefinance.crawler.framework.exception.ResultEmptyException;
+import com.treefinance.crawler.framework.boot.Crawler;
+import com.datatrees.spider.share.domain.model.Task;
 import com.datatrees.spider.share.service.collector.actor.TaskMessage;
 import com.datatrees.spider.share.service.collector.chain.Context;
 import com.datatrees.spider.share.service.collector.chain.Filters;
 import com.datatrees.spider.share.service.collector.common.CollectorConstants;
 import com.datatrees.spider.share.service.collector.worker.ResultDataHandler;
-import com.datatrees.spider.share.domain.model.Task;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -121,11 +137,10 @@ public class SearchProcessor {
 
     public List<LinkNode> crawlOneURL(LinkNode url) throws ResultEmptyException {
         List<LinkNode> linkNodeList = null;
-        CrawlRequest request = null;
         try {
             URLHandlerImpl handler = initURLHandlerImpl();
-            request = CrawlRequest.build().setProcessorContext(getProcessorContext()).setUrl(url).setSearchTemplateId(searchTemplateConfig.getId())
-                    .setSearchTemplate(searchTemplate).setUrlHandler(handler).contextInit();
+            CrawlRequest request = CrawlRequest.newBuilder().setUrl(url).setSearchContext(getProcessorContext()).setTemplateId(searchTemplateConfig.getId()).setSeedUrl(searchTemplate).setUrlHandler
+                    (handler).build();
 
             RequestUtil.setKeyWord(request, keyword);
             CrawlResponse response = Crawler.crawl(request);
@@ -153,10 +168,6 @@ public class SearchProcessor {
         } catch (Exception e) {
             log.error("Caught Exception in crawlOneURL ,url [{}]", url.getUrl(), e);
         } finally {
-            if (null != request) {
-                // reset page content
-                RequestUtil.setContent(request, null);
-            }
             // clear Embedded context
             ProcessorContextUtil.clearThreadLocalLinkNode(getProcessorContext());
             ProcessorContextUtil.clearThreadLocalResponseList(getProcessorContext());

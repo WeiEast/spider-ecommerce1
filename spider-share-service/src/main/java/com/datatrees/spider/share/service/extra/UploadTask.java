@@ -1,3 +1,19 @@
+/*
+ * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.datatrees.spider.share.service.extra;
 
 import java.util.*;
@@ -32,7 +48,7 @@ public class UploadTask implements Runnable {
 
     @Override
     public void run() {
-        LOGGER.info("start upload task! id={},taskId={}", extractMessage.getTaskLogId(), extractMessage.getTaskId());
+        LOGGER.info("start upload task! pid={},taskId={}", extractMessage.getProcessId(), extractMessage.getTaskId());
         try {
             Map<String, SubmitFile> uploadMap = this.getSubmitFiles(extractMessage.getMessageObject());
             // after upload complete remove extract message object
@@ -40,12 +56,12 @@ public class UploadTask implements Runnable {
                 byte[] data = ZipCompressUtils.compress(uploadMap);
                 OssService service = OssServiceProvider.getDefaultService();
                 service.putObject(SubmitConstant.ALIYUN_OSS_DEFAULTBUCKET, this.ossKey, data);
-                LOGGER.debug("upload task completed! id: {}, ossKey: {}", extractMessage.getTaskLogId(), ossKey);
+                LOGGER.info("upload task completed! pid: {}, ossKey: {}", extractMessage.getProcessId(), ossKey);
             } else {
                 LOGGER.info("no need to upload file for message: {}", extractMessage);
             }
         } catch (Exception e) {
-            LOGGER.error("upload task run failed! taskId:" + extractMessage.getTaskLogId(), e);
+            LOGGER.error("upload task run failed! pid: {}, taskId: {}", extractMessage.getProcessId(), extractMessage.getTaskId(), e);
         }
     }
 
