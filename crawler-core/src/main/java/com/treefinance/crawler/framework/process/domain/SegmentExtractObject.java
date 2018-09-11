@@ -102,7 +102,7 @@ public class SegmentExtractObject extends HashMap<String, Object> implements Ext
         }
 
         if (value == null) {
-            putIfAbsent(fieldName, null);
+            //putIfAbsent(fieldName, null);
             return;
         }
 

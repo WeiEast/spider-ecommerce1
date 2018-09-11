@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.treefinance.crawler.exception.UncheckedInterruptedException;
+import com.treefinance.crawler.framework.context.FieldScopes;
+import com.treefinance.crawler.framework.context.function.SpiderRequest;
+import com.treefinance.crawler.framework.context.function.SpiderResponse;
 import com.treefinance.crawler.framework.download.WrappedFile;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -39,18 +42,6 @@ public final class FieldUtils {
     private static final String DEFAULT_SEPARATOR = "  \r\n";
 
     private FieldUtils() {
-    }
-
-    public static boolean isNullOrEmpty(Object object) {
-        return object == null || (object instanceof String && ((String) object).isEmpty()) || (object instanceof Collection && ((Collection) object).isEmpty());
-    }
-
-    public static boolean isNullOrEmptyString(Object object) {
-        return object == null || (object instanceof String && ((String) object).isEmpty());
-    }
-
-    public static boolean isNullOrEmptyCollection(Object object) {
-        return object == null || (object instanceof Collection && ((Collection) object).isEmpty());
     }
 
     public static String getFieldValueAsString(Object target, String field) {
@@ -104,5 +95,13 @@ public final class FieldUtils {
         } else {
             return value.toString();
         }
+    }
+
+    public static Object getSourceFieldValue(String sourceId, SpiderRequest request, SpiderResponse response) {
+        Object result = FieldScopes.getVisibleField(sourceId, request, response);
+
+        LOGGER.debug("Field value from sourceId: {}, result: {}", sourceId, result);
+
+        return result;
     }
 }
