@@ -18,7 +18,6 @@ package com.datatrees.spider.operator.web.controller;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +25,7 @@ import com.alibaba.fastjson.JSON;
 import com.datatrees.spider.operator.domain.model.WebsiteGroup;
 import com.datatrees.spider.operator.service.WebsiteGroupService;
 import com.datatrees.spider.operator.service.WebsiteOperatorService;
+import com.datatrees.spider.operator.web.controller.domain.GroupConfig;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.treefinance.saas.knife.common.CommonStateCode;
 import com.treefinance.saas.knife.result.Results;
@@ -58,15 +58,12 @@ public class WebsiteGroupController {
      * "groupCode":"CHINA_10000",
      * "config":{"china_10000_app":200}
      * }
-     * @param map
      * @return
      */
     @RequestMapping("/configGroup")
-    public SaasResult configGroup(@RequestBody Map<String, Object> map) {
-        String groupCode = (String) map.get("groupCode");
-        Map<String, Integer> config = (LinkedHashMap<String, Integer>) map.get("config");
-        List<WebsiteGroup> list = websiteGroupService.configGroup(groupCode, config);
-        logger.info("configGroup success config={}", JSON.toJSONString(map));
+    public SaasResult configGroup(@RequestBody GroupConfig groupConfig) {
+        List<WebsiteGroup> list = websiteGroupService.configGroup(groupConfig.getGroupCode(), groupConfig.getConfig());
+        logger.info("configGroup success config={}", JSON.toJSONString(groupConfig));
         return Results.newSuccessResult(list);
     }
 
