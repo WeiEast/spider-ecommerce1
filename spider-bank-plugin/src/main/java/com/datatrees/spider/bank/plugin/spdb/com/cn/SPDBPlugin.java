@@ -17,6 +17,7 @@
 package com.datatrees.spider.bank.plugin.spdb.com.cn;
 
 import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.CommonPluginParam;
@@ -74,7 +75,12 @@ public class SPDBPlugin implements CommonPlugin {
 
     @Override
     public HttpResult<Object> defineProcess(CommonPluginParam param) {
-        return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        switch (param.getFormType()) {
+            case "CHECK_UNIQUE":
+                return processForCheckUnique(param);
+            default:
+                return new HttpResult<>().failure(ErrorCode.NOT_SUPORT_METHOD);
+        }
     }
 
     private HttpResult<Object> refeshSmsCodeForBillDetail(CommonPluginParam param) {
@@ -120,6 +126,23 @@ public class SPDBPlugin implements CommonPlugin {
         } catch (Exception e) {
             logger.error("浦发网银-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
+        }
+    }
+
+    private HttpResult<Object> processForCheckUnique(CommonPluginParam param) {
+        HttpResult<Object> result = new HttpResult<>();
+        Response response = null;
+        try {
+            String redisKey = "spdb.com.checkUniqueness." + param.getTaskId();
+            String checkUniqueness = null;
+            if (RedisUtils.setnx(redisKey, "true", 10 * 60)) {
+                checkUniqueness = "true";
+            }
+            logger.info("checkUniqueness:{}", checkUniqueness);
+            return result.success(checkUniqueness);
+        } catch (Exception e) {
+            logger.error("账单页访问失败,param={},response={}", param, response, e);
+            return result.failure(ErrorCode.UNKNOWN_REASON);
         }
     }
 }

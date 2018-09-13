@@ -59,7 +59,7 @@ public class DefineCheckPlugin extends AbstractClientPlugin {
         Map<String, Object> pluginResult = new HashMap<>();
 
         String websiteName = context.getWebsiteName();
-        Long taskId = context.getLong(AttributeKey.TASK_ID);
+        Long taskId = context.getTaskId();
 
         TaskUtils.updateCookies(taskId, context.getCookiesAsMap());
 

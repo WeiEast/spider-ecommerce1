@@ -106,6 +106,9 @@ public class _126MailPlugin implements CommonPlugin, QRPlugin {
                         TimeUnit.SECONDS.sleep(3);
                         while (!isLoginSuccess(driver, param) && !ProcessResultUtils.processExpire(taskId, processId) &&
                                 !isShowError(driver, param)) {
+                            if (StringUtils.contains(driver.getPageSource(),"若已换号请及时更换手机。")) {
+                                driver.findElement(By.xpath("//a[@data-action='myphonegoon']")).click();
+                            }
                             TimeUnit.SECONDS.sleep(1);
                         }
                         if (isLoginSuccess(driver, param)) {
