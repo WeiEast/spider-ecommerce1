@@ -64,11 +64,11 @@ public class WebsiteOperatorServiceImpl implements WebsiteOperatorService {
     private static final String              OPERATOR_PLUGIN_FILENAME = "spider-operator-plugin.jar";
 
     static {
-        hosts.put("开发", "192.168.5.15:60666");
+        hosts.put("开发", "192.168.5.12:60666");
         hosts.put("测试", "spider.saas.test.treefinance.com.cn");
         hosts.put("准生产", "spider.approach.saas.treefinance.com.cn");
-        hosts.put("预发布", "rawdatecentral.yfb.saas.treefinance.com.cn");
-        hosts.put("生产", "rawdatecentral.yfb.saas.treefinance.com.cn");
+        hosts.put("预发布", "spider.yfb.saas.treefinance.com.cn");
+        hosts.put("生产", "spider.yfb.saas.treefinance.com.cn");
     }
 
     @Resource

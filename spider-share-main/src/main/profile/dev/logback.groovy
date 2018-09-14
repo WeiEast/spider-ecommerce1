@@ -29,7 +29,7 @@ def serverIp = System.getProperty("server.ip","127.0.0.1")
 def ips =serverIp.split("\\.");
 // 日志路径
 def publishDate = DateUtils.format(new Date(), "MMdd")
-def logPath = "/dashu/log/${appName}/${publishDate}/${ips[2]}.${ips[3]}"
+def logPath = "/dashu/log/${appName}"
 
 // 控制台
 appender("consoleAppender", ConsoleAppender) {

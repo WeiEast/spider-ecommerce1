@@ -1,5 +1,5 @@
 #!/bin/sh
-host="http://spider.yfb.saas.treefinance.com.cn/"
+host="spider.yfb.saas.treefinance.com.cn"
 
 url="http://$host/plugin/uploadPlugin"
 gradle clean install -x test
