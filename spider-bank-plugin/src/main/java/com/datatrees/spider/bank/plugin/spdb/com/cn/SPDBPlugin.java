@@ -16,6 +16,7 @@
 
 package com.datatrees.spider.bank.plugin.spdb.com.cn;
 
+import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.RedisUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
@@ -84,6 +85,7 @@ public class SPDBPlugin implements CommonPlugin {
     }
 
     private HttpResult<Object> refeshSmsCodeForBillDetail(CommonPluginParam param) {
+        ProxyUtils.setProxyEnable(param.getTaskId(), true);
         HttpResult<Object> result = new HttpResult<>();
         String seedurl = TaskUtils.getTaskContext(param.getTaskId(), "seedurl");
         Response response = null;

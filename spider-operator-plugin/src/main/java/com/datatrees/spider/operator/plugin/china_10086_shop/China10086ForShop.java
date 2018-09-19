@@ -229,7 +229,7 @@ public class China10086ForShop implements OperatorPlugin {
             Integer channelID = Integer.valueOf(TaskUtils.getTaskShare(param.getTaskId(), "channelID"));
             String templateUrl = "https://login.10086.cn/sendRandomCodeAction.action?type=01&channelID={}&userName={}";
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST)
-                    .setFullUrl(templateUrl, channelID, param.getMobile()).invoke();
+                    .setFullUrl(templateUrl, channelID, param.getMobile()).setReferer("https://login.10086.cn/").invoke();
             switch (response.getPageContent()) {
                 case "0":
                     logger.info("登录-->短信验证码-->刷新成功,param={}", param);

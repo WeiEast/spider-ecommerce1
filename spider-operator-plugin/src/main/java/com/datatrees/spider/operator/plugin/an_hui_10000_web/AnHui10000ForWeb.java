@@ -17,25 +17,29 @@
 package com.datatrees.spider.operator.plugin.an_hui_10000_web;
 
 import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.CheckUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.operator.domain.OperatorParam;
 import com.datatrees.spider.operator.service.plugin.OperatorPlugin;
+import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.CheckUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
 import com.datatrees.spider.share.domain.ErrorCode;
 import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.RequestType;
 import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import com.google.gson.reflect.TypeToken;
 import com.ibm.icu.text.SimpleDateFormat;
 import org.apache.commons.lang3.StringUtils;
@@ -161,9 +165,13 @@ public class AnHui10000ForWeb implements OperatorPlugin {
         if (!result.getStatus()) {
             return result;
         }
+        logger.info("genggai");
+
         Response response = null;
         try {
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            //Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("an_hui_10000_web/des.js");
+            Invocable invocable = createInvocable(inputStream, "GBK");
             String encryptPassword = invocable.invokeFunction("encryptedString", param.getPassword()).toString();
 
             String templateUrl = "http://ah.189.cn/sso/LoginServlet";
@@ -203,7 +211,9 @@ public class AnHui10000ForWeb implements OperatorPlugin {
         Response response = null;
         String mobile = String.valueOf(param.getMobile());
         try {
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            //Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "des.js", "GBK");
+            InputStream inputStream = this.getClass().getClassLoader().getResourceAsStream("an_hui_10000_web/des.js");
+            Invocable invocable = createInvocable(inputStream, "GBK");
             String data = invocable.invokeFunction("encryptedString",
                     "mobileNum=" + param.getMobile() + "&key=" + mobile.substring(1, 2) + mobile.substring(3, 4) + mobile.substring(6, 7) +
                             mobile.substring(8, 10)).toString();
@@ -296,6 +306,13 @@ public class AnHui10000ForWeb implements OperatorPlugin {
             return result.failure(ErrorCode.UNKNOWN_REASON);
         }
 
+    }
+
+    private Invocable createInvocable(InputStream inputStream, String charsetName) throws Exception {
+        CheckUtils.checkNotBlank(charsetName, "empty charsetName");
+        ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
+        scriptEngine.eval(new InputStreamReader(inputStream, charsetName));
+        return (Invocable) scriptEngine;
     }
 
 }
