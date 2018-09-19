@@ -153,7 +153,7 @@ public class ZheJiang10000ForWeb implements OperatorLoginPostPlugin {
             //String cdrlevel = TaskUtils.getTaskContext(param.getTaskId(), "cdrlevel");
             String servtype = TaskUtils.getTaskContext(param.getTaskId(), "servtype");
             String username = TaskUtils.getTaskContext(param.getTaskId(), "Name");
-            String idCard = TaskUtils.getTaskContext(param.getTaskId(), "IdentityCard");
+            String idCard = param.getIdCard();
             if (StringUtils.isBlank(username) || StringUtils.isBlank(idCard) || StringUtils.contains(idCard, "*")) {
                 logger.error("详单-->校验失败,姓名或身份证号不完整,param={},username={},idCard={}", param, username, idCard);
                 return result.failure(ErrorCode.VALIDATE_UNEXPECTED_RESULT);
