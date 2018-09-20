@@ -1,10 +1,10 @@
 #!/bin/sh
 sh install.sh
-app_name="spider"
+app_name="spider-ecommerce"
 server_application="/dashu/application/$app_name"
 server_log_path="/dashu/log/$app_name"
 
-app_name="$app_name-share-main"
+app_name="$app_name-web"
 server_ip="192.168.5.12"
 server_port=22
 

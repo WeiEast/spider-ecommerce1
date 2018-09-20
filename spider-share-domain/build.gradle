@@ -1,4 +1,0 @@
-dependencies {
-    compile "com.alibaba:fastjson:${fastjsonVersion}"
-}
-apply from: rootProject.file('upload.gradle')

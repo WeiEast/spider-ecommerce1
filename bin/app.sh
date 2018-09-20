@@ -1,4 +1,4 @@
-APP_NAME='spider-share-main'
+APP_NAME='spider-ecommerce-web'
 echo "预设项目名称:$APP_NAME"
 JAR_NAME=`ls $APP_NAME*.jar | tail -1`
 APP_HOME=`pwd`
