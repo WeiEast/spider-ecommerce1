@@ -1,3 +1,17 @@
+apply plugin: 'org.springframework.boot'
+
+bootRepackage {
+    mainClass = "com.datatrees.spider.ecommerce.web.SpiderEcommerceApplication"
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs = ["src/main/resources", "src/main/profile/$env"]
+        }
+    }
+}
+
 dependencies {
     compile project(':spider-ecommerce-service')
     compile(group: "com.datatrees.spider", name: "spider-share-web", version: "${spiderShareVersion}", changing: true)
