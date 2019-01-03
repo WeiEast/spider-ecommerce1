@@ -1,52 +1,47 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.spider.share.domain.*;
-import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
+import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
+import com.datatrees.spider.share.common.http.ProxyUtils;
+import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
+import com.datatrees.spider.share.domain.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.TopicEnum;
+import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.MessageService;
 import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
-import com.datatrees.spider.share.common.http.ProxyUtils;
-import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.http.Response;
-import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
-import com.datatrees.spider.share.domain.http.HttpResult;
+import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
+import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.proxy.domain.IpLocale;
+import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -55,44 +50,99 @@ import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 /**
- * Created by guimeichao on 18/4/8.
+ * @author guimeichao
+ * @date 18/4/8.
  */
 public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
-    private static final Logger         logger                   = LoggerFactory.getLogger(TaoBaoPlugin.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaoBaoPlugin.class);
 
-    private static final String         IS_RUNNING               = "economic_qr_is_runing_";
+    private static final String IS_RUNNING = "economic_qr_is_runing_";
 
-    private static final String         IS_INIT                  = "economic_qr_is_init_";
+    private static final String IS_INIT = "economic_qr_is_init_";
 
-    private static final String         QR_STATUS                = "economic_qr_status_";
+    private static final String QR_STATUS = "economic_qr_status_";
 
-    private static final String         ALIPAY_URL               = "https://consumeprod.alipay.com/record/advanced.htm";
+    private static final String ALIPAY_URL = "https://consumeprod.alipay.com/record/advanced.htm";
 
-    private static final String         AUTO_SIGN_ALIPAY_URL     = ALIPAY_URL + "?sign_from=3000";
+    private static final String AUTO_SIGN_ALIPAY_URL = ALIPAY_URL + "?sign_from=3000";
 
-    private static final String         preLoginUrl              = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" +
-            encodeUrl(AUTO_SIGN_ALIPAY_URL);
+    private static final String UMID_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UMID_TOKEN_";
 
-    private static final String         UMID_CACHE_PREFIX        = "TAOBAO_QRCODE_AUTH_LOGIN_UMID_TOKEN_";
+    private static final String UAB_COLLINA_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UAB_COLLINA_";
 
-    private static final String         UAB_COLLINA_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UAB_COLLINA_";
+    private static final String UMID_PARAM = "umid_token";
 
-    private static final String         UMID_PARAM               = "umid_token";
+    private static final String UAB_COLLINA_COOKIE = "uab_collina";
 
-    private static final String         UAB_COLLINA_COOKIE       = "uab_collina";
+    private static final String ISG_COOKIE = "isg";
 
-    private static final String         QRCODE_GEN_TIME_KEY      = "com.treefinance.spider.ecommerce.h5_login.qrcode.gen_time:";
+    private static final String COOKIE_DOMAIN = ".taobao.com";
 
+    private static final String QRCODE_GEN_TIME_KEY = "com.treefinance.spider.ecommerce.h5_login.qrcode.gen_time:";
     /**
      * qrcode 过期时间，单位：秒
      */
-    private static final int            QRCODE_EXPIRATION        = 240;
+    private static final int QRCODE_EXPIRATION = 240;
 
-    private              MonitorService monitorService;
+    private static final String PRE_LOGIN_URL = "https://login.taobao.com/member/login.jhtml?f=top&redirectURL=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
 
-    private              MessageService messageService;
+    private static final String QRCODE_GENERATE_URL =
+        "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tbTop&appkey=00000000&_ksTS={}&callback=json&"
+            + UMID_PARAM + "={}";
+
+    private static final String QRCODE_STATUS_URL = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
+
+    private static String js;
+    private static ScriptEngine engine;
+
+    private MonitorService monitorService;
+
+    private MessageService messageService;
+
+    private static String generateIsg() {
+        if (js == null) {
+            synchronized (TaoBaoPlugin.class) {
+                try (InputStream inputStream = Objects.requireNonNull(TaoBaoPlugin.class.getClassLoader().getResourceAsStream("js/taobao.login.isg.js"))) {
+                    js = Streams.readToString(inputStream, Charset.defaultCharset());
+                } catch (IOException e) {
+                    throw new UnexpectedException("Error reading javascript file \"taobao.login.isg" + ".js\"!", e);
+                }
+            }
+        }
+
+        if (engine == null) {
+            synchronized (TaoBaoPlugin.class) {
+                ScriptEngineManager sem = new ScriptEngineManager();
+                engine = sem.getEngineByName("javascript");
+            }
+        }
+
+        try {
+            return (String)engine.eval(js);
+        } catch (ScriptException e) {
+            throw new UnexpectedException("Error eval javascript \"taobao.login.isg.js\"!", e);
+        }
+    }
 
     private static void markQRStatus(CommonPluginParam param, QRCodeVerification.QRCodeStatus qrCodeStatus) {
         RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus.name(), 60 * 2);
@@ -109,7 +159,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
     }
 
     private static String timestampFlag() {
-        return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
+        return System.currentTimeMillis() + "_" + (int)(Math.random() * 1000);
     }
 
     private static TaoBaoPlugin.UMID getUMID(boolean init, CommonPluginParam param) {
@@ -131,7 +181,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
     private static String random(int length) {
         StringBuilder text = new StringBuilder(length);
-        for (; text.length() < length; ) {
+        for (; text.length() < length;) {
             text.append(String.valueOf(Math.random()).substring(2));
         }
         return text.substring(text.length() - length);
@@ -227,11 +277,8 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             try {
                 UMID umid = getUMID(true, param);
 
-                String templateUrl =
-                        "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&appkey=00000000&_ksTS={}&callback=json&" +
-                                UMID_PARAM + "=" + umid.token;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, timestampFlag())
-                        .setReferer(preLoginUrl).addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(QRCODE_GENERATE_URL, timestampFlag(), umid.token)
+                    .setReferer(PRE_LOGIN_URL).addExtraCookie(UAB_COLLINA_COOKIE, umid.uab, COOKIE_DOMAIN).addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(jsonString);
 
@@ -240,8 +287,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
                     imgUrl = "https:" + imgUrl;
                 }
 
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(imgUrl)
-                        .setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(imgUrl).setReferer(PRE_LOGIN_URL).invoke();
 
                 QRUtils qrUtils = new QRUtils();
                 String qrText = qrUtils.parseCode(response.getResponse());
@@ -249,7 +295,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
                     throw new Exception("解析二维码内容失败。");
                 }
 
-                Map<String, String> dataMap = new HashMap<>();
+                Map<String, String> dataMap = new HashMap<>(2);
                 dataMap.put("qrBase64", response.getPageContentForBase64());
                 dataMap.put("qrText", qrText);
 
@@ -271,7 +317,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
         Response response = null;
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(PRE_LOGIN_URL).invoke();
             logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
 
             notifyLogger(param, "初始化二维码成功", "初始化-->成功", null, null);
@@ -342,9 +388,9 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
         private final CommonPluginParam param;
 
-        private final String            cacheKey;
+        private final String cacheKey;
 
-        private       String            lastFailure;
+        private String lastFailure;
 
         QRCodeStatusQuery(CommonPluginParam param) {
             this.param = param;
@@ -419,12 +465,11 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
             Response response = null;
             try {
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl)
-                        .setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl).setReferer(PRE_LOGIN_URL)
+                    .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                 String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl)
-                        .setReferer(referer).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
                 processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
             } catch (Exception e) {
                 markQRStatus(param, QRCodeVerification.QRCodeStatus.FAILED);
@@ -449,7 +494,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             loginMessage.setAccountNo(StringUtils.defaultString(accountNo));
             TaskUtils.addTaskShare(param.getTaskId(), "username", accountNo);
 
-            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(TopicEnum.SPIDER_ECOMMERCE.getCode(),loginMessage);
+            BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(TopicEnum.SPIDER_ECOMMERCE.getCode(), loginMessage);
         }
 
         /**
@@ -457,7 +502,9 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
          */
         private void processCertCheck(Long taskId, String websiteName, String remark, String pageContent) {
             String url = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
-            if (StringUtils.isEmpty(url)) throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
+            if (StringUtils.isEmpty(url)) {
+                throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
+            }
 
             String params = null;
             List<Element> list = JsoupXpathUtils.selectElements(pageContent, "//form//input[@name]|//form//textarea[@name]");
@@ -504,9 +551,9 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
         private String getQRStatusCode(CommonPluginParam param, String lgToken) {
             Response response = null;
             try {
-                String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                        .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
+                    .setFullUrl(QRCODE_STATUS_URL, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(PRE_LOGIN_URL)
+                    .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(resultJson);
                 String code = json.getString("code");
