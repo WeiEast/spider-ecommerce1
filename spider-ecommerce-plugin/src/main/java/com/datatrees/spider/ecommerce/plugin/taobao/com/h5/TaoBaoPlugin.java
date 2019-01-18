@@ -13,24 +13,32 @@
 
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
-import com.datatrees.spider.share.common.utils.RedisUtils;
-import com.datatrees.spider.share.common.utils.TaskUtils;
-import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.LoginMessage;
-import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
-import com.datatrees.spider.share.domain.RequestType;
-import com.datatrees.spider.share.domain.TopicEnum;
+import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.common.utils.*;
+import com.datatrees.spider.share.domain.*;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
+import com.datatrees.spider.share.domain.exception.CommonException;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.CommonPluginService;
@@ -40,6 +48,7 @@ import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
 import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
 import com.treefinance.crawler.exception.UnexpectedException;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.treefinance.proxy.domain.IpLocale;
 import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.lang3.StringUtils;
@@ -49,24 +58,6 @@ import org.apache.http.message.BasicNameValuePair;
 import org.jsoup.nodes.Element;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * @author guimeichao
@@ -104,6 +95,11 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
      */
     private static final int QRCODE_EXPIRATION = 240;
 
+    /**
+     * 短信验证码请求间隔时间
+     */
+    private int sendSmsInterval = 60;
+
     private static final String PRE_LOGIN_URL = "https://login.taobao.com/member/login.jhtml?f=top&redirectURL=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
 
     private static final String QRCODE_GENERATE_URL =
@@ -118,6 +114,11 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
     private MonitorService monitorService;
 
     private MessageService messageService;
+
+    private RedisService redisService;
+
+    // 超时时间120秒
+    private long timeOut = 120;
 
     private static String generateIsg() {
         if (js == null) {
@@ -146,6 +147,10 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
     private static void markQRStatus(CommonPluginParam param, QRCodeVerification.QRCodeStatus qrCodeStatus) {
         RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus.name(), 60 * 2);
+    }
+
+    private static void markQRStatus(CommonPluginParam param, String qrCodeStatus) {
+        RedisUtils.set(QR_STATUS + param.getTaskId(), qrCodeStatus, 60 * 2);
     }
 
     private static String encodeUrl(String queryString) {
@@ -199,6 +204,13 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             messageService = BeanFactoryUtils.getBean(MessageService.class);
         }
         return messageService;
+    }
+
+    public RedisService getRedisService() {
+        if (redisService == null) {
+            redisService = BeanFactoryUtils.getBean(RedisService.class);
+        }
+        return redisService;
     }
 
     private void notifyLogger(CommonPluginParam param, String taskMsg, String monitorMsg, ErrorCode monitorErrorCode, String monitorError) {
@@ -278,7 +290,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
                 UMID umid = getUMID(true, param);
 
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(QRCODE_GENERATE_URL, timestampFlag(), umid.token)
-                    .setReferer(PRE_LOGIN_URL).addExtraCookie(UAB_COLLINA_COOKIE, umid.uab, COOKIE_DOMAIN).addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
+                    .setReferer(PRE_LOGIN_URL).addExtralCookie(UAB_COLLINA_COOKIE, umid.uab, COOKIE_DOMAIN).addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(jsonString);
 
@@ -334,12 +346,18 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
 
     @Override
     public HttpResult<Object> queryQRStatus(CommonPluginParam param) {
+        HttpResult<Object> result = new HttpResult<>();
         String status = RedisUtils.get(QR_STATUS + param.getTaskId());
         if (StringUtils.isEmpty(status)) {
             status = QRCodeVerification.QRCodeStatus.WAITING.name();
         }
-
-        return new HttpResult<>().success(status);
+        if (StringUtils.equals(status, QRStatus.REQUIRE_SMS) || StringUtils.equals(status, QRStatus.REQUIRE_SMS)) {
+            String directiveId = TaskUtils.getTaskShare(param.getTaskId(), AttributeKey.DIRECTIVE_ID);
+            Map<String, Object> extra = new HashMap<>(1);
+            extra.put("directiveId", directiveId);
+            result.setExtra(extra);
+        }
+        return result.success(status);
     }
 
     @Override
@@ -466,11 +484,36 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             Response response = null;
             try {
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl).setReferer(PRE_LOGIN_URL)
-                    .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
-                String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
+                    .addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
-                processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
+                String page = null;
+                if (StringUtils.contains(response.getRedirectUrl(), "/member/login_unusual.htm")) {
+                    logger.info("记录一下关键页面,taskId={},url={},page={}", param.getTaskId(), response.getRedirectUrl(), response.getPageContent());
+                    String validUrl = PatternUtils.group(response.getPageContent(), "var\\s*durexPop\\s*=\\s*AQPop\\(\\{\\s*url:'([^']+)',", 1);
+
+                    for (int i = 0; i < 3; i++) {
+                        page = checkSmsCode(validUrl, param);
+                        if (StringUtils.isNotBlank(page)) {
+                            break;
+                        } else if (StringUtils.isBlank(page) && i == 2) {
+                            markQRStatus(param, QRCodeVerification.QRCodeStatus.FAILED);
+                            logger.error("淘宝二维码登录短信验证环节失败，taskId={},response={}", param.getTaskId(), response);
+                            notifyLogger(param, "登录失败", "短信校验-->失败", ErrorCode.LOGIN_FAIL, "登陆失败,请重试");
+                            return;
+                        }
+                    }
+                    String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
+                        .setFullUrl("https://consumeprod.alipay.com/record/advanced.htm?sign_from=3000").setReferer(referer).invoke();
+                    redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
+                } else {
+                    String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
+                    response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
+                    processCertCheck(param.getTaskId(), param.getWebsiteName(), "", response.getPageContent());
+                }
+
             } catch (Exception e) {
                 markQRStatus(param, QRCodeVerification.QRCodeStatus.FAILED);
 
@@ -480,7 +523,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
                 return;
             }
 
-            markQRStatus(param, QRCodeVerification.QRCodeStatus.CONFIRMED);
+            markQRStatus(param, QRCodeVerification.QRCodeStatus.SUCCESS);
 
             logger.info("用户已确认二维码，发送登录消息，taskId={}, website={}", param.getTaskId(), param.getWebsiteName());
 
@@ -553,7 +596,7 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             try {
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
                     .setFullUrl(QRCODE_STATUS_URL, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(PRE_LOGIN_URL)
-                    .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
+                    .addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
                 String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(resultJson);
                 String code = json.getString("code");
@@ -566,5 +609,88 @@ public class TaoBaoPlugin implements QRPlugin, CommonPlugin {
             }
             return StringUtils.EMPTY;
         }
+    }
+
+    private String checkSmsCode(String validUrl, CommonPluginParam param) {
+        ProcessResult<Object> processResult = ProcessResultUtils.createAndSaveProcessId();
+        Response response = null;
+        try {
+            Long taskId = param.getTaskId();
+            String websiteName = param.getWebsiteName();
+            response = TaskHttpClient.create(taskId, websiteName, RequestType.GET).setFullUrl(validUrl).setReferer(validUrl).invoke();
+            logger.info("记录验证页面的页面响应,taskId={},pageContent={}", taskId, response.getPageContent());
+            String jsonString = getXpathValue("//@value", getXpathValue("input#J_DurexData", response.getPageContent()));
+            jsonString = jsonString.replaceAll("&quot;", "\"").replaceAll("&lt;", "<").replaceAll("&gt;", ">");
+            JSONObject jsonObject = JSON.parseObject(jsonString);
+            String request_param = jsonObject.getString("param");
+            String sendCodeUrl = "https://aq.taobao.com/durex/sendcode?param=" + request_param + "&checkType=phone";
+            String target = (String)(((JSONArray)JSONPath.eval(jsonObject, "$.options[?(@.checkType='phone')].optionText[?(@.type='phone')]" + ".code")).get(0));
+            String sendCodeData = "checkType=phone&target=" + target + "&safePhoneNum=&checkCode=";
+            // 刷新短信间隔时间
+            String latestSendSmsTime = TaskUtils.getTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME);
+            if (StringUtils.isNoneBlank(latestSendSmsTime) && sendSmsInterval > 0) {
+                long endTime = Long.parseLong(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(sendSmsInterval);
+                if (System.currentTimeMillis() < endTime) {
+                    try {
+                        logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(Long.parseLong(latestSendSmsTime)),
+                            DateUtils.getUsedTime(System.currentTimeMillis(), endTime));
+                        TimeUnit.MILLISECONDS.sleep(endTime - System.currentTimeMillis());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException("refeshSmsCode error", e);
+                    }
+                }
+            }
+            response = TaskHttpClient.create(taskId, websiteName, RequestType.POST).setFullUrl(sendCodeUrl).setRequestBody(sendCodeData).setReferer(validUrl).invoke();
+            logger.info("请求短信的页面响应,taskId={},pageContent={}", taskId, response.getPageContent());
+            if (!StringUtils.contains(response.getPageContent(), "\"isSuccess\":true")) {
+                return StringUtils.EMPTY;
+            }
+            // 发送MQ指令(要求短信密码)
+            markQRStatus(param, QRStatus.REQUIRE_SMS);
+            String directiveId = getRedisService().createDirectiveId();
+            TaskUtils.addTaskShare(taskId, AttributeKey.QR_STATUS, QRStatus.REQUIRE_SMS);
+            TaskUtils.addTaskShare(taskId, AttributeKey.DIRECTIVE_ID, directiveId);
+
+            // 等待用户输入短信验证码,等待120秒
+            getMessageService().sendTaskLog(taskId, "等待用户输入短信验证码");
+            DirectiveResult<Map<String, Object>> receiveDirective = getRedisService().getDirectiveResult(directiveId, timeOut, TimeUnit.SECONDS);
+            if (null == receiveDirective) {
+                getMonitorService().sendTaskLog(taskId, TemplateUtils.format("{}-->等待用户输入短信验证码-->失败", FormType.getName(FormType.LOGIN)), ErrorCode.VALIDATE_SMS_TIMEOUT,
+                    "用户输入短信验证码超时,任务即将失败!超时时间(单位:秒):" + timeOut);
+                logger.error("等待用户输入短信验证码超时({}秒),taskId={},websiteName={},directiveId={}", timeOut, taskId, websiteName, directiveId);
+                getMessageService().sendTaskLog(taskId, "短信验证码校验超时");
+                throw new CommonException(ErrorCode.VALIDATE_SMS_TIMEOUT);
+            }
+            markQRStatus(param, QRCodeVerification.QRCodeStatus.CONFIRMED);
+            String smsCode = receiveDirective.getData().get(AttributeKey.CODE).toString();
+            TimeUnit.SECONDS.sleep(3);
+            String checkCodeUrl = "https://aq.taobao.com/durex/checkcode?param=" + request_param;
+            String checkCodeData = "checkType=phone&target=" + target + "&safePhoneNum=&checkCode=" + smsCode;
+            response = TaskHttpClient.create(taskId, websiteName, RequestType.POST).setFullUrl(checkCodeUrl).setRequestBody(checkCodeData).setReferer(validUrl).invoke();
+            logger.info("验证短信的页面响应,taskId={},pageContent={}", taskId, response.getPageContent());
+            if (!StringUtils.contains(response.getPageContent(), "\"isSuccess\":true")) {
+                return StringUtils.EMPTY;
+            }
+            response =
+                TaskHttpClient.create(taskId, websiteName, RequestType.GET).setFullUrl("https://login.taobao.com/member/login_mid.htm?type=success").setReferer(validUrl).invoke();
+            logger.info("验证短信后跳转的页面响应,taskId={},pageContent={}", taskId, response.getPageContent());
+            TaskUtils.addTaskShare(taskId, RedisKeyPrefixEnum.TASK_SMS_CODE.getRedisKey(FormType.LOGIN), smsCode);
+            getMessageService().sendTaskLog(taskId, "短信验证码校验成功");
+            getMonitorService().sendTaskLog(taskId, TemplateUtils.format("{}-->校验短信-->成功", FormType.getName(FormType.LOGIN)));
+            return response.getPageContent();
+        } catch (Exception e) {
+            logger.error("短信验证码校验失败，taskId={}", param.getTaskId(), e);
+            ProcessResultUtils.saveProcessResult(processResult.fail(ErrorCode.LOGIN_ERROR));
+            TaskUtils.addTaskShare(param.getTaskId(), AttributeKey.QR_STATUS, QRStatus.EXPIRE);
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private String getXpathValue(String select, String content) {
+        List<String> resultList = XPathUtil.getXpath(select, content);
+        if (resultList != null && !resultList.isEmpty()) {
+            return resultList.get(0);
+        }
+        return StringUtils.EMPTY;
     }
 }
