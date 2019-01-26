@@ -46,6 +46,7 @@ public class MockTransactionSearcher {
     public MockTransactionSearcher(SearchProcessorContext context, String proxy) {
         this.context = context;
         WebDriver webDriver = WebDriverFactory.makeFirefoxDriver(proxy);
+        LOGGER.info("Succeed to initial web-driver with proxy: {}", proxy);
         this.pageAction = new SearchPageAction(webDriver, context.getWebsiteName().contains("taobao"));
     }
 
