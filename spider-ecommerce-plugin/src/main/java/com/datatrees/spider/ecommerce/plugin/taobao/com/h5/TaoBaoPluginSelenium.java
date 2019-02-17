@@ -13,25 +13,26 @@
 
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRStatusManager;
 import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
 import com.datatrees.spider.ecommerce.plugin.util.SeleniumUtils;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
-import com.datatrees.spider.share.common.utils.*;
-import com.datatrees.spider.share.domain.*;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.common.utils.JsoupXpathUtils;
+import com.datatrees.spider.share.common.utils.RedisUtils;
+import com.datatrees.spider.share.common.utils.TaskUtils;
+import com.datatrees.spider.share.common.utils.TemplateUtils;
+import com.datatrees.spider.share.domain.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.domain.RedisKeyPrefixEnum;
+import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.http.Cookie;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
@@ -41,7 +42,6 @@ import com.datatrees.spider.share.service.MonitorService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.datatrees.spider.share.service.plugin.QRPlugin;
 import com.datatrees.spider.share.service.plugin.qrcode.QRCodeVerification;
-import com.treefinance.proxy.domain.IpLocale;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -52,6 +52,16 @@ import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * Created by guimeichao on 18/4/8.
@@ -164,18 +174,13 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
     @Override
     public HttpResult<Object> refeshQRCode(CommonPluginParam param) {
         // 清理二维码状态
-        RedisUtils.del(QR_STATUS + param.getTaskId());
+        QRStatusManager.clear(param.getTaskId());
 
         HttpResult<Object> result = new HttpResult<>();
 
         try {
             // 设置请求使用代理, 默认区域：浙江杭州
-            IpLocale locale = new IpLocale();
-            locale.setProvinceName("浙江");
-            locale.setCityName("杭州");
-            String key = RedisKeyPrefixEnum.TASK_IP_LOCALE.getRedisKey(param.getTaskId());
-            RedisUtils.setnx(key, JSON.toJSONString(locale));
-            ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            ProxyUtils.setProxyLocation(param.getTaskId(), "浙江", "杭州");
 
             String isInit = RedisUtils.get(IS_INIT + param.getTaskId());
             if (!Boolean.TRUE.toString().equals(isInit)) {
