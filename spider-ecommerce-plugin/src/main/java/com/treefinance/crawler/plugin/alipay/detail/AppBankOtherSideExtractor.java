@@ -20,8 +20,8 @@ import com.treefinance.crawler.framework.context.ExtractorProcessorContext;
 
 /**
  * pc端余额收支明细otherSide提取
- * User: yand
- * Date: 2018/1/9
+ * @author yand
+ * @date 2018/1/9
  */
 public class AppBankOtherSideExtractor extends OtherSideExtractor {
 

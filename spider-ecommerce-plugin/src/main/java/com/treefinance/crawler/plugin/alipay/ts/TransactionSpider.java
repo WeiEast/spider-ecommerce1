@@ -16,15 +16,15 @@
 
 package com.treefinance.crawler.plugin.alipay.ts;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.AlipayRecordPage;
 import com.treefinance.crawler.framework.proxy.Proxy;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 /**
  * WEB端支付宝交易记录的爬取主类
@@ -116,7 +116,7 @@ public class TransactionSpider extends BaseSpider {
 
     private void extractPageContent(TransactionPage page) {
         logger.info("<<<<<<<<< 处理交易记录页 pageNum: {}, type: {}, success: {}, end: {}", page.getPageNum(), page.getType(), page.isSuccess(), page.isEnd());
-        Map<String, Object> extra = new HashMap<>();
+        Map<String, Object> extra = new HashMap<>(2);
         extra.put("pageNum", page.getPageNum());
         extra.put("type", page.getType());
         getPageProcessor().process(new AlipayRecordPage(page.getExpectedUrl(), page.getContent(), extra, "EcommerceData", page.isSuccess(), page.isEnd()));

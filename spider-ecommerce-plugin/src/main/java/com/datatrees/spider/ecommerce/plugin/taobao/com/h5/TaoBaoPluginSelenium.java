@@ -19,6 +19,7 @@ import com.datatrees.common.util.PatternUtils;
 import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRStatusManager;
 import com.datatrees.spider.ecommerce.plugin.util.QRUtils;
 import com.datatrees.spider.ecommerce.plugin.util.SeleniumUtils;
+import com.datatrees.spider.ecommerce.plugin.util.TaobaoHelper;
 import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
@@ -80,7 +81,7 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
 
     private static final String AUTO_SIGN_ALIPAY_URL = ALIPAY_URL + "?sign_from=3000";
 
-    private static final String preLoginUrl = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
+    private static final String PRE_LOGIN_URL = "https://login.taobao.com/member/login.jhtml?style=taobao&goto=" + encodeUrl(AUTO_SIGN_ALIPAY_URL);
 
     private static final String UMID_CACHE_PREFIX = "TAOBAO_QRCODE_AUTH_LOGIN_UMID_TOKEN_";
 
@@ -113,10 +114,6 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
         }
 
         return queryString;
-    }
-
-    private static String timestampFlag() {
-        return System.currentTimeMillis() + "_" + (int)(Math.random() * 1000);
     }
 
     private static TaoBaoPluginSelenium.UMID getUMID(boolean init, CommonPluginParam param) {
@@ -232,8 +229,10 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
                 String templateUrl =
                         "https://qrlogin.taobao.com/qrcodelogin/generateQRCode4Login.do?adUrl=&adImage=&adText=&viewFd4PC=&viewFd4Mobile=&from=tb&appkey=00000000&_ksTS={}&callback=json&"
                                 + UMID_PARAM + "=" + umid.token;
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, timestampFlag()).setReferer(preLoginUrl)
-                        .addExtralCookie("taobao.com", UAB_COLLINA_COOKIE, umid.uab).invoke();
+                response =
+                    TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(templateUrl, TaobaoHelper
+                        .timestampFlag()).setReferer(PRE_LOGIN_URL)
+                    .addExtraCookie(UAB_COLLINA_COOKIE, umid.uab, "taobao.com").invoke();
                 String jsonString = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(jsonString);
 
@@ -242,7 +241,7 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
                     imgUrl = "https:" + imgUrl;
                 }
 
-                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(imgUrl).setReferer(preLoginUrl).invoke();
+                response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(imgUrl).setReferer(PRE_LOGIN_URL).invoke();
 
                 QRUtils qrUtils = new QRUtils();
                 String qrText = qrUtils.parseCode(response.getResponse());
@@ -250,7 +249,7 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
                     throw new Exception("解析二维码内容失败。");
                 }
 
-                Map<String, String> dataMap = new HashMap<>();
+                Map<String, String> dataMap = new HashMap<>(2);
                 dataMap.put("qrBase64", response.getPageContentForBase64());
                 dataMap.put("qrText", qrText);
 
@@ -272,7 +271,7 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
         Response response = null;
         try {
             TaskUtils.addTaskShare(param.getTaskId(), "websiteTitle", "淘宝");
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(preLoginUrl).invoke();
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(PRE_LOGIN_URL).invoke();
             logger.info("淘宝二维码登录-->初始化成功，taskId={}", param.getTaskId());
 
             notifyLogger(param, "初始化二维码成功", "初始化-->成功", null, null);
@@ -433,7 +432,8 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
                 driver.get(loginUrl);
                 new WebDriverWait(driver, 60).until(d -> d.findElement(By.className("fn-left")));
                 TaskUtils.saveCookie(param.getTaskId(), SeleniumUtils.getCookies(driver));
-                //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(loginUrl).setReferer(preLoginUrl).invoke();
+                // response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(),
+                // RequestType.GET).setFullUrl(loginUrl).setReferer(PRE_LOGIN_URL).invoke();
                 //String redirectUrl = PatternUtils.group(response.getPageContent(), "window\\.location\\.href\\s*=\\s*\"([^\"]+)\";", 1);
                 //String referer = "https://auth.alipay.com/login/trust_login.do?null&sign_from=3000&goto=" + ALIPAY_URL;
                 //response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(redirectUrl).setReferer(referer).invoke();
@@ -471,8 +471,9 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
          */
         private void processCertCheck(Long taskId, String websiteName, String remark, String pageContent) {
             String url = JsoupXpathUtils.selectFirst(pageContent, "//form/@action");
-            if (StringUtils.isEmpty(url))
+            if (StringUtils.isEmpty(url)) {
                 throw new IllegalArgumentException("Error find form action when redirecting to alipay auth.");
+            }
 
             String params = null;
             List<Element> list = JsoupXpathUtils.selectElements(pageContent, "//form//input[@name]|//form//textarea[@name]");
@@ -521,7 +522,7 @@ public class TaoBaoPluginSelenium implements QRPlugin, CommonPlugin {
             try {
                 String templateUrl = "https://qrlogin.taobao.com/qrcodelogin/qrcodeLoginCheck.do?lgToken={}&defaulturl={}&_ksTS={}&callback=json";
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET)
-                        .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), timestampFlag()).setReferer(preLoginUrl).invoke();
+                    .setFullUrl(templateUrl, lgToken, encodeUrl(AUTO_SIGN_ALIPAY_URL), TaobaoHelper.timestampFlag()).setReferer(PRE_LOGIN_URL).invoke();
                 String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
                 JSONObject json = JSON.parseObject(resultJson);
                 String code = json.getString("code");

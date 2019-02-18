@@ -16,13 +16,6 @@
 
 package com.treefinance.crawler.plugin.alipay.huabei;
 
-import java.io.IOException;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSON;
 import com.datatrees.common.util.GsonUtils;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
@@ -45,6 +38,13 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * User: yand
@@ -87,7 +87,7 @@ public class HuabeiOpenApiSpider extends AbstractClientPlugin {
         }
 
         if(StringUtils.isNotEmpty(responseBody)){
-            Map<String, Object> result = new HashMap<>();
+            Map<String, Object> result = new HashMap<>(1);
             result.put(PluginConstants.FIELD, responseBody);
             return GsonUtils.toJson(result);
         }
