@@ -16,7 +16,22 @@
 
 package com.datatrees.spider.ecommerce.plugin.util;
 
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.Binarizer;
+import com.google.zxing.BinaryBitmap;
+import com.google.zxing.DecodeHintType;
+import com.google.zxing.LuminanceSource;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.NotFoundException;
+import com.google.zxing.Result;
+import com.google.zxing.WriterException;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.qrcode.QRCodeWriter;
+import org.apache.commons.lang3.StringUtils;
+
 import javax.imageio.ImageIO;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,12 +40,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.zxing.*;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.qrcode.QRCodeWriter;
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 二维码 生产和解析的工具类
  * Created by guimeichao on 18/1/11.
@@ -38,33 +47,29 @@ import org.apache.commons.lang3.StringUtils;
 public class QRUtils {
 
     /**
+     * 图片的宽度
+     */
+    private static final int IMG_WIDTH = 200;
+    /**
+     * 图片的高度
+     */
+    private static final int IMG_HEIGHT = 200;
+
+    /**
      * 二维码生成
      * @param url 需要生成二维码的URL
      * @return 二维码的字节数组
-     * @exception IOException
      */
-    public byte[] createCode(String url) throws IOException {
+    public byte[] createCode(String url) throws IOException, WriterException {
         if (StringUtils.isNotEmpty(url)) {
-            int width = 200;// 图片的宽度
-            int height = 200;// 高度
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            QRCodeWriter writer = new QRCodeWriter();
-            BitMatrix m;
-            try {
-                m = writer.encode(url, BarcodeFormat.QR_CODE, height, width);
+            try (ByteArrayOutputStream stream = new ByteArrayOutputStream()) {
+                QRCodeWriter writer = new QRCodeWriter();
+                BitMatrix m = writer.encode(url, BarcodeFormat.QR_CODE, IMG_HEIGHT, IMG_WIDTH);
                 MatrixToImageWriter.writeToStream(m, "png", stream);
-                byte[] bytes = stream.toByteArray();
-                return bytes;
-            } catch (WriterException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            } finally {
-                if (stream != null) {
-                    stream.flush();
-                    stream.close();
-                }
-            }
 
+                stream.flush();
+                return stream.toByteArray();
+            }
         }
         return null;
 
@@ -75,24 +80,17 @@ public class QRUtils {
      * @param bytes 需要解析的二维码图片字节码
      * @return 二维码的内容
      */
-    public String parseCode(byte[] bytes) throws IOException {
-        InputStream input = null;
-        try {
-            MultiFormatReader formatReader = new MultiFormatReader();
-            input = new ByteArrayInputStream(bytes);
+    public String parseCode(byte[] bytes) throws IOException, NotFoundException {
+        try (InputStream input = new ByteArrayInputStream(bytes)) {
             BufferedImage image = ImageIO.read(input);
             LuminanceSource source = new BufferedImageLuminanceSource(image);
             Binarizer binarizer = new HybridBinarizer(source);
             BinaryBitmap binaryBitmap = new BinaryBitmap(binarizer);
-            Map hints = new HashMap();
-            hints.put(EncodeHintType.CHARACTER_SET, "UTF-8");
+            Map<DecodeHintType, Object> hints = new HashMap<>(1);
+            hints.put(DecodeHintType.CHARACTER_SET, "UTF-8");
+            MultiFormatReader formatReader = new MultiFormatReader();
             Result result = formatReader.decode(binaryBitmap, hints);
             return result.getText();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            input.close();
         }
-        return null;
     }
 }
