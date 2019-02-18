@@ -99,7 +99,7 @@ public class QRLoginOperation {
      */
     private static final String CNA_URL = "https://log.mmstat.com/eg.js";
 
-    private static final Pattern ETAG_PATTERN = Pattern.compile("goldlog.Etag=\"([.*]+?)\"");
+    private static final Pattern ETAG_PATTERN = Pattern.compile("goldlog.Etag=\"((.*)+?)\"");
 
     /**
      * 二维码生成请求
@@ -174,6 +174,17 @@ public class QRLoginOperation {
         if (matcher.find()) {
             cna = matcher.group(1);
         }
+
+        if (StringUtils.isEmpty(cna)) {
+            cna = response.getResponseCookie("cna");
+            if (StringUtils.isEmpty(cna)) {
+                String etag = response.getFirstHeaderValue("Etag");
+                etag = StringUtils.removeStart(etag, "\"");
+                etag = StringUtils.removeEnd(etag, "\"");
+                cna = etag;
+            }
+        }
+
         logger.error("淘宝二维码登录-->请求eg.js获取CNA值失败，taskId={}, response={}", param.getTaskId(), response);
         if (StringUtils.isEmpty(cna)) {
             throw new UnexpectedException("CNA值获取失败！请求eg.js结果 >> " + response);
