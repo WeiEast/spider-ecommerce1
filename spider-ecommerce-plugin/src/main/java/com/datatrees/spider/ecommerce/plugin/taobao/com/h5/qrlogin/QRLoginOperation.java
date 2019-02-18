@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.JSONPath;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.spider.ecommerce.plugin.util.TaobaoHelper;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.share.service.RedisService;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
@@ -52,7 +53,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -119,8 +119,6 @@ public class QRLoginOperation {
     private static final long SMS_WAIT_TIMEOUT = 120;
     private static final String QRCODE_LOGIN_PAGE_INITIAL = Boolean.TRUE.toString();
 
-    private final Random random = new Random();
-
     private RedisService redisService;
 
     private RedisService getRedisService() {
@@ -128,10 +126,6 @@ public class QRLoginOperation {
             redisService = BeanFactoryUtils.getBean(RedisService.class);
         }
         return redisService;
-    }
-
-    private String timestampFlag() {
-        return System.currentTimeMillis() + "_" + random.nextInt(1000);
     }
 
     private boolean isInitial(CommonPluginParam param) {
@@ -224,10 +218,10 @@ public class QRLoginOperation {
     private String generateQrCode(CommonPluginParam param) {
         UMID umid = getUMID(true, param);
 
-        String url = TemplateUtils.format(QRCODE_GENERATE_URL, umid.token, timestampFlag());
+        String url = TemplateUtils.format(QRCODE_GENERATE_URL, umid.token, TaobaoHelper.timestampFlag());
 
         Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), GET).setFullUrl(url).setReferer(LOGIN_PAGE_URL)
-            .addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
+            .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
 
         checkResponseStatus(response, url);
 
@@ -253,8 +247,9 @@ public class QRLoginOperation {
     public String queryQRCodeStatus(CommonPluginParam param, String lgToken) {
         Response response = null;
         try {
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), GET).setFullUrl(QRCODE_STATUS_URL, lgToken, ENCODED_GOTO_TARGET_URL, timestampFlag())
-                .setReferer(LOGIN_PAGE_URL).addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
+            response =
+                TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), GET).setFullUrl(QRCODE_STATUS_URL, lgToken, ENCODED_GOTO_TARGET_URL, TaobaoHelper.timestampFlag())
+                .setReferer(LOGIN_PAGE_URL).addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
             String code = json.getString("code");
@@ -295,7 +290,7 @@ public class QRLoginOperation {
         }
 
         Response response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), GET).setFullUrl(loginUrl).setReferer(LOGIN_PAGE_URL)
-            .addExtralCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).addExtraCookie(UAB_COLLINA_COOKIE, umid.uab, COOKIE_DOMAIN).invoke();
+            .addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).addExtraCookie(UAB_COLLINA_COOKIE, umid.uab, COOKIE_DOMAIN).invoke();
 
         checkResponseStatus(response, loginUrl);
 

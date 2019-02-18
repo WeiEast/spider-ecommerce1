@@ -61,7 +61,9 @@ public final class HttpHelper {
     }
 
     public static void addCookies(CookieStore cookieStore, Map<String, String> cookies, String[] domains) {
-        if (cookieStore == null || MapUtils.isEmpty(cookies)) return;
+        if (cookieStore == null || MapUtils.isEmpty(cookies)) {
+            return;
+        }
 
         for (Map.Entry<String, String> entry : cookies.entrySet()) {
             for (String domain : domains) {

@@ -16,6 +16,29 @@
 
 package com.treefinance.crawler.plugin.alipay.ts;
 
+import com.datatrees.common.conf.PropertiesConfiguration;
+import com.datatrees.common.util.GsonUtils;
+import com.datatrees.spider.share.common.share.service.RedisService;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
+import com.datatrees.spider.share.domain.AttributeKey;
+import com.datatrees.spider.share.domain.directive.DirectiveEnum;
+import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
+import com.datatrees.spider.share.domain.directive.DirectiveResult;
+import com.datatrees.spider.share.domain.directive.DirectiveType;
+import com.datatrees.spider.share.service.MessageService;
+import com.treefinance.crawler.framework.context.AbstractProcessorContext;
+import com.treefinance.crawler.support.selenium.SeleniumOperation;
+import org.apache.commons.lang.StringUtils;
+import org.joda.time.LocalDateTime;
+import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -25,25 +48,6 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import com.datatrees.common.conf.PropertiesConfiguration;
-import com.datatrees.common.util.GsonUtils;
-import com.treefinance.crawler.framework.context.AbstractProcessorContext;
-import com.datatrees.spider.share.common.share.service.RedisService;
-import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
-import com.datatrees.spider.share.domain.AttributeKey;
-import com.datatrees.spider.share.domain.directive.DirectiveEnum;
-import com.datatrees.spider.share.domain.directive.DirectiveRedisCode;
-import com.datatrees.spider.share.domain.directive.DirectiveResult;
-import com.datatrees.spider.share.domain.directive.DirectiveType;
-import com.datatrees.spider.share.service.MessageService;
-import com.treefinance.crawler.support.selenium.SeleniumOperation;
-import org.apache.commons.lang.StringUtils;
-import org.joda.time.LocalDateTime;
-import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedCondition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 支付宝交易记录爬取过程中的二维码扫描
@@ -59,7 +63,9 @@ public class QRCodeScanner extends SeleniumOperation {
     private static final String                   QR_CONFIRMED           = "QR_CODE_CONFIRMED";
     private static final String                   QR_SUCCESS             = "VERIFY_QR_SUCCESS";
     private static final String                   QR_FAILED              = "VERIFY_QR_FAILED";
-    // 支付宝页面二维码检测时间（轮询请求10次，间隔3秒），单位：秒
+    /**
+     * 支付宝页面二维码检测时间（轮询请求10次，间隔3秒），单位：秒
+      */
     private static final int                      CHECK_TIME             = 30;
     private static final String                   QRCODE_PAGE_URL        = "/record/checkSecurity.htm";
     private final        SearchPageAction         action;
@@ -109,7 +115,7 @@ public class QRCodeScanner extends SeleniumOperation {
     }
 
     private String buildQRCodeJson(QRCodeInfo qrCodeInfo) throws UnsupportedEncodingException {
-        Map<String, String> codeResult = new HashMap<>();
+        Map<String, String> codeResult = new HashMap<>(2);
         codeResult.put("httpQRCode", qrCodeInfo.getText());
         codeResult.put("rpcQRCode", QRCODE_APP_SCAN_PREFIX + URLEncoder.encode(qrCodeInfo.getText(), "UTF-8"));
 
