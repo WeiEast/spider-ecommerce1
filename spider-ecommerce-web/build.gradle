@@ -15,10 +15,8 @@ sourceSets {
 dependencies {
     compile project(':spider-ecommerce-service')
     compile(group: "com.datatrees.spider", name: "spider-share-web", version: "${spiderShareVersion}", changing: true)
-    compile("org.springframework.boot:spring-boot-starter-web:${springBootVersion}")
-    compile 'com.treefinance.saas:saas-knife:1.1.0'
-    compile("org.seleniumhq.selenium:selenium-java:${seleniumVersion}") {
-        exclude(module: "guava")
-    }
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("com.treefinance.saas:saas-knife:${saasKnifeVersion}")
+    compile("org.seleniumhq.selenium:selenium-java")
 }
 apply from: rootProject.file('printLib.gradle')

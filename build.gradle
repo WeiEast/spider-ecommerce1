@@ -1,3 +1,15 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+        classpath "io.spring.gradle:dependency-management-plugin:1.0.6.RELEASE"
+    }
+}
+
 allprojects {
     group = 'com.datatrees.spider'
     version = '4.2.0-SNAPSHOT'
@@ -7,22 +19,20 @@ ext {
     env = System.getProperty("env", "dev")
 }
 
-buildscript {
-    repositories {
-        maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
-        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
-    }
-    dependencies {
-        classpath 'org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE'
-    }
-}
-
 subprojects {
 
     apply plugin: "java"
     apply plugin: "idea"
     apply plugin: "eclipse"
     apply plugin: "maven"
+    apply plugin: "maven-publish"
+    apply plugin: "io.spring.dependency-management"
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+        }
+    }
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -51,9 +61,8 @@ subprojects {
     }
 
     dependencies {
-        testCompile "junit:junit:${junitVersion}"
+        testCompile ("junit:junit")
     }
-
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = "sources"
@@ -66,7 +75,7 @@ subprojects {
 
     repositories {
         mavenLocal()
-        maven { url "http://192.168.5.252:8081/nexus/content/groups/public/" }
+        maven { url NEXUS_REPO_URL }
         maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
     }
 
@@ -78,7 +87,32 @@ subprojects {
         options.encoding = "UTF-8"
     }
 
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                configuration = configurations.deployerJars
+                snapshotRepository(url: NEXUS_REPO_SNAPSHOT_URL) {
+                    authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+                }
+                repository(url: NEXUS_REPO_RELEASE_URL) {
+                    authentication(userName: NEXUS_USERNAME, password: NEXUS_PASSWORD)
+                }
+            }
 
+        }
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from components.java
+
+                artifact sourcesJar {
+                    classifier "sources"
+                }
+            }
+        }
+    }
 }
 
 
