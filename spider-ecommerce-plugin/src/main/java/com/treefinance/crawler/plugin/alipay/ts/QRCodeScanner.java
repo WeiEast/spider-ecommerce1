@@ -1,17 +1,14 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.treefinance.crawler.plugin.alipay.ts;
@@ -51,28 +48,29 @@ import java.util.regex.Pattern;
 
 /**
  * 支付宝交易记录爬取过程中的二维码扫描
+ * 
  * @author Jerry
  * @since 14:15 28/11/2017
  */
 public class QRCodeScanner extends SeleniumOperation {
 
-    private static final Logger                   logger                 = LoggerFactory.getLogger(QRCodeScanner.class);
-    private static final Pattern                  QRCODE_INFO_PATTERN    = Pattern.compile("alipay\\.security\\.riskQRCode\\(\\s*(\\{[\\s\\S]*?})\\s*\\)");
-    private static final String                   QRCODE_APP_SCAN_PREFIX = "alipayqr://platformapi/startapp?saId=10000007&qrcode=";
-    private static final String                   QR_WAITING             = "WAITING_FOR_QR_VERIFY";
-    private static final String                   QR_CONFIRMED           = "QR_CODE_CONFIRMED";
-    private static final String                   QR_SUCCESS             = "VERIFY_QR_SUCCESS";
-    private static final String                   QR_FAILED              = "VERIFY_QR_FAILED";
+    private static final Logger logger = LoggerFactory.getLogger(QRCodeScanner.class);
+    private static final Pattern QRCODE_INFO_PATTERN = Pattern.compile("alipay\\.security\\.riskQRCode\\(\\s*(\\{[\\s\\S]*?})\\s*\\)");
+    private static final String QRCODE_APP_SCAN_PREFIX = "alipayqr://platformapi/startapp?saId=10000007&qrcode=";
+    private static final String QR_WAITING = "WAITING_FOR_QR_VERIFY";
+    private static final String QR_CONFIRMED = "QR_CODE_CONFIRMED";
+    private static final String QR_SUCCESS = "VERIFY_QR_SUCCESS";
+    private static final String QR_FAILED = "VERIFY_QR_FAILED";
     /**
      * 支付宝页面二维码检测时间（轮询请求10次，间隔3秒），单位：秒
-      */
-    private static final int                      CHECK_TIME             = 30;
-    private static final String                   QRCODE_PAGE_URL        = "/record/checkSecurity.htm";
-    private final        SearchPageAction         action;
-    private final        AbstractProcessorContext context;
-    private              MessageService           messageService;
-    private              RedisService             redisService;
-    private              String                   directiveId;
+     */
+    private static final int CHECK_TIME = 30;
+    private static final String QRCODE_PAGE_URL = "/record/checkSecurity.htm";
+    private final SearchPageAction action;
+    private final AbstractProcessorContext context;
+    private MessageService messageService;
+    private RedisService redisService;
+    private String directiveId;
 
     public QRCodeScanner(AbstractProcessorContext context, SearchPageAction action) {
         super(action.getWebDriver());
@@ -94,9 +92,7 @@ public class QRCodeScanner extends SeleniumOperation {
             int timeout = getTimeout(context);
             for (int i = 0; i < 3; i++) {
                 if (notifyApp(QR_WAITING, qrcodeJson)) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Has post qrcode to app : {}", qrcodeJson);
-                    }
+                    logger.debug("Has post qrcode to app : {}", qrcodeJson);
 
                     return toScan(timeout);
                 } else if (i == 2) {
@@ -140,13 +136,14 @@ public class QRCodeScanner extends SeleniumOperation {
         long millisTimeout = timeout <= CHECK_TIME ? 0 : TimeUnit.SECONDS.toMillis(timeout - CHECK_TIME);
         long deadLine = start + millisTimeout;
 
-        logger.info("Start to check qrcode status, now: {}, deadLine: {}, timeout: {}ms", new LocalDateTime(start).toString(), new LocalDateTime(deadLine).toString(), millisTimeout);
+        logger.info("Start to check qrcode status, now: {}, deadLine: {}, timeout: {}ms", new LocalDateTime(start).toString(), new LocalDateTime(deadLine).toString(),
+            millisTimeout);
 
         do {
             // 等待页面10次检测结束后二维码是否扫描成功
             QRPageStatus status;
             try {
-                status = waitUtil((ExpectedCondition<QRPageStatus>) input -> {
+                status = waitUtil((ExpectedCondition<QRPageStatus>)input -> {
                     if (isNotQRCodePageURL(input)) {
                         return QRPageStatus.COMPLETE;
                     }
@@ -201,7 +198,8 @@ public class QRCodeScanner extends SeleniumOperation {
             long spend = end - start;
             // 用户长时间未扫二维码，超时中断
             logger.info("Time out of scanning qrcode, time: {}, deadLine: {}", new LocalDateTime(end).toString(), new LocalDateTime(deadLine).toString());
-            throw new QRCodeScanningException("QR code checking was time out! start: " + new LocalDateTime(start).toString() + ", end: " + new LocalDateTime(end).toString() + ", spend: " + spend + "ms");
+            throw new QRCodeScanningException(
+                "QR code checking was time out! start: " + new LocalDateTime(start).toString() + ", end: " + new LocalDateTime(end).toString() + ", spend: " + spend + "ms");
         }
 
         notifyApp(QR_CONFIRMED, null);
@@ -243,7 +241,7 @@ public class QRCodeScanner extends SeleniumOperation {
     }
 
     private Boolean awaitRedirect2NormalPage(long timeout) {
-        return waitUtil((ExpectedCondition<Boolean>) this::isNotQRCodePageURL, timeout);
+        return waitUtil((ExpectedCondition<Boolean>)this::isNotQRCodePageURL, timeout);
     }
 
     private boolean isNotQRCodePageURL(WebDriver webDriver) {
@@ -255,9 +253,7 @@ public class QRCodeScanner extends SeleniumOperation {
         if (action.pageLoaded()) {
             String pageSource = action.getPageSource();
 
-            if (logger.isDebugEnabled()) {
-                logger.debug("QRCode confirmed recheck page: \n{}", pageSource);
-            }
+            logger.debug("QRCode confirmed recheck page: \n{}", pageSource);
 
             if (!isQRCodePage(pageSource)) {
                 return pageSource;
@@ -366,8 +362,6 @@ public class QRCodeScanner extends SeleniumOperation {
     }
 
     private enum QRPageStatus {
-        WAIT,
-        FORCE_SUBMIT,
-        COMPLETE
+        WAIT, FORCE_SUBMIT, COMPLETE
     }
 }

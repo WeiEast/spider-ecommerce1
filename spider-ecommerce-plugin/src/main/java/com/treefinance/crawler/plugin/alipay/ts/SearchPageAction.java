@@ -1,17 +1,14 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.treefinance.crawler.plugin.alipay.ts;
@@ -35,33 +32,34 @@ import java.util.Map;
 
 /**
  * 交易记录页的搜索翻页相关操作
+ * 
  * @author Jerry
  * @since 00:20 30/11/2017
  */
 public class SearchPageAction extends SeleniumOperation {
 
-    private static final Logger     LOGGER              = LoggerFactory.getLogger(SearchPageAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchPageAction.class);
     /**
      * 超时时间，单位：秒
      */
-    private static final long       TIMEOUT             = 10;
+    private static final long TIMEOUT = 10;
     /**
      * 为了正确设置cookie，需要预加载一个资源，避免域冲突
      */
-    private static final String     PRE_LOAD_ALIPAY_URL = "https://www.alipay.com/favicon.ico";
-    private static final String     PRE_LOAD_TAOBAO_URL = "https://www.taobao.com/favicon.ico";
-    private static final String     STANDARD_URL        = "https://consumeprod.alipay.com/record/standard.htm";
-    private static final String     ADVANCED_URL        = "https://consumeprod.alipay.com/record/advanced.htm";
-    private static final String     MODEL_SWITCH_URL    = "https://consumeprod.alipay.com/record/switchVersion.htm";
-    private static final String     FORM_ID             = "topSearchForm";
-    private static final boolean    FORCE_ALIPAY        = true;
-    private final        boolean    loginByTaobao;
-    private final        String     preLoadUrl;
-    private final        String     domain;
-    private volatile     WebElement searchForm          = null;
-    private volatile     PageState  pageState           = PageState.PREPARE;
-    private volatile     int        pageNum             = 1;
-    private volatile     boolean    hasNext             = false;
+    private static final String PRE_LOAD_ALIPAY_URL = "https://www.alipay.com/favicon.ico";
+    private static final String PRE_LOAD_TAOBAO_URL = "https://www.taobao.com/favicon.ico";
+    private static final String STANDARD_URL = "https://consumeprod.alipay.com/record/standard.htm";
+    private static final String ADVANCED_URL = "https://consumeprod.alipay.com/record/advanced.htm";
+    private static final String MODEL_SWITCH_URL = "https://consumeprod.alipay.com/record/switchVersion.htm";
+    private static final String FORM_ID = "topSearchForm";
+    private static final boolean FORCE_ALIPAY = true;
+    private final boolean loginByTaobao;
+    private final String preLoadUrl;
+    private final String domain;
+    private volatile WebElement searchForm = null;
+    private volatile PageState pageState = PageState.PREPARE;
+    private volatile int pageNum = 1;
+    private volatile boolean hasNext = false;
 
     public SearchPageAction(WebDriver webDriver, boolean loginByTaobao) {
         super(webDriver);
@@ -115,9 +113,8 @@ public class SearchPageAction extends SeleniumOperation {
      * 设置cookie
      */
     private void setCookies(String cookies) {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Cookies >>> {}", cookies);
-        }
+        LOGGER.debug("Cookies >>> {}", cookies);
+
         if (StringUtils.isBlank(cookies)) {
             throw new IllegalArgumentException("未正常设置cookies，异常退出搜索器.");
         }
@@ -125,10 +122,10 @@ public class SearchPageAction extends SeleniumOperation {
         LOGGER.info(">>>>>> 开始设置cookies");
 
         getWebDriver().get(preLoadUrl);
-        //清空原有的cookies，避免cookie干扰
+        // 清空原有的cookies，避免cookie干扰
         WebDriver.Options manage = manage();
         manage.deleteAllCookies();
-        //添加最新的cookies
+        // 添加最新的cookies
         Map<String, String> cookieMap = CookieFormater.INSTANCE.parserCookieToMap(cookies);
         for (Map.Entry<String, String> entry : cookieMap.entrySet()) {
             manage.addCookie(new Cookie(entry.getKey(), entry.getValue(), domain, "/", null));
@@ -155,6 +152,7 @@ public class SearchPageAction extends SeleniumOperation {
 
     /**
      * 选择交易开始时间
+     * 
      * @param beginDate 交易开始时间
      */
     public void selectBeginDate(String beginDate) {
@@ -174,6 +172,7 @@ public class SearchPageAction extends SeleniumOperation {
 
     /**
      * 选择交易类型
+     * 
      * @param type 交易类型
      */
     public void selectTradeType(String type) {
@@ -221,7 +220,7 @@ public class SearchPageAction extends SeleniumOperation {
 
         mark(PageState.PREPARE);
         hasNext = false;
-        //获取下一页的按钮
+        // 获取下一页的按钮
         WebElement nextPageEl;
         try {
             nextPageEl = findNextPageButton(); // findElementByClass("page-next");
@@ -239,9 +238,9 @@ public class SearchPageAction extends SeleniumOperation {
             throw e;
         }
         LOGGER.info(">>>>>> 切换到下一页: {}", this.pageNum);
-        //点击下一页的按钮
+        // 点击下一页的按钮
         nextPageEl.click();
-        //等待下一页元素加载
+        // 等待下一页元素加载
         awaitPageRefresh(true);
 
         if (isNormal()) {
@@ -321,7 +320,7 @@ public class SearchPageAction extends SeleniumOperation {
         this.searchForm = null;
 
         try {
-            waitUtil((ExpectedCondition<Boolean>) driver -> {
+            waitUtil((ExpectedCondition<Boolean>)driver -> {
                 String currentUrl = driver.getCurrentUrl();
                 if (currentUrl == null) {
                     return false;
@@ -364,11 +363,10 @@ public class SearchPageAction extends SeleniumOperation {
     }
 
     private String getJsonUa(WebDriver driver) {
-        String jsonUa = (String) SeleniumHelper.evalScript(driver, "return window.json_ua");
+        String jsonUa = (String)SeleniumHelper.evalScript(driver, "return window.json_ua");
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Json_ua : {}", jsonUa);
-        }
+        LOGGER.debug("Json_ua : {}", jsonUa);
+
         return jsonUa;
     }
 
@@ -386,9 +384,7 @@ public class SearchPageAction extends SeleniumOperation {
         LOGGER.info(">>>>>> 检测是否是访问限制页");
         String pageContent = getPageSource();
 
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("页面内容 >>> \n{}", pageContent);
-        }
+        LOGGER.debug("页面内容 >>> \n{}", pageContent);
 
         if (isLimitPage(getCurrentUrl(), pageContent)) {
             LOGGER.info(">>>>>> 检测到访问限制页，开始等待滑块加载");
@@ -477,7 +473,6 @@ public class SearchPageAction extends SeleniumOperation {
     }
 
     private enum PageState {
-        PREPARE,
-        LOADED
+        PREPARE, LOADED
     }
 }

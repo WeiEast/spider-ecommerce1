@@ -1,29 +1,17 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.treefinance.crawler.plugin.alipay.detail;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import com.treefinance.crawler.plugin.alipay.AppSpider;
 import com.treefinance.toolkit.util.concurrent.NamedThreadFactory;
@@ -37,23 +25,34 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
 /**
  * APP端余额收支明细的爬取（包含银行卡明细和花呗明细），来自手机版支付宝的账单明细
+ * 
  * @author Jerry
  * @since 17:40 28/12/2017
  */
 public class BalanceDetailSpider extends AppSpider {
 
-    private static final String  APP_PREPARE_URL           = "https://login.m.taobao.com/login_to.do?from=taobao&to=375a695293093fd8d792dd16d7ad0a35&redirectUrl=https://ds.alipay.com/tbme/taobao.htm";
-    private static final String  HUA_BEI_URL               = "https://consumeweb.alipay.com/record/huabei/m/index.htm?__webview_options__=showOptionMenu%3DNO";
-    private static final String  HUA_BEI_PAGE_URL_TEMPLATE = "https://consumeweb.alipay.com/record/huabei/m/next_page.json?lastMonth=&pageNum=%s&dateBegin=%s&ctoken=%s";
-    private static final String  BANK_LIST_URL             = "https://consumeweb.alipay.com/record/bank/m/list.htm?__webview_options__=showTitleLoading%3DTRUE%26backBehavior%3Dback";
-    private static final String  BANK_URL_TEMPLATE         = "https://consumeweb.alipay.com/record/bank/m/index.htm?tradeType=&pageNum=%s&cardNo=%s&cardType=%s&beginDate=%s&endDate=%s";
-    private static final int     MONTHS                    = 6;
-    private static final Pattern PATTERN                   = Pattern.compile("</?body[^>]*>");
-    private static final int     THREADS                   = 10;
+    private static final String APP_PREPARE_URL =
+        "https://login.m.taobao.com/login_to.do?from=taobao&to=375a695293093fd8d792dd16d7ad0a35&redirectUrl=https://ds.alipay.com/tbme/taobao.htm";
+    private static final String HUA_BEI_URL = "https://consumeweb.alipay.com/record/huabei/m/index.htm?__webview_options__=showOptionMenu%3DNO";
+    private static final String HUA_BEI_PAGE_URL_TEMPLATE = "https://consumeweb.alipay.com/record/huabei/m/next_page.json?lastMonth=&pageNum=%s&dateBegin=%s&ctoken=%s";
+    private static final String BANK_LIST_URL = "https://consumeweb.alipay.com/record/bank/m/list.htm?__webview_options__=showTitleLoading%3DTRUE%26backBehavior%3Dback";
+    private static final String BANK_URL_TEMPLATE = "https://consumeweb.alipay.com/record/bank/m/index.htm?tradeType=&pageNum=%s&cardNo=%s&cardType=%s&beginDate=%s&endDate=%s";
+    private static final int MONTHS = 6;
+    private static final Pattern PATTERN = Pattern.compile("</?body[^>]*>");
+    private static final int THREADS = 10;
     private ExecutorService executor;
-    private CountDownLatch  latch;
+    private CountDownLatch latch;
 
     public BalanceDetailSpider() {
         super("taobao.com", "alipay.com");
@@ -62,9 +61,7 @@ public class BalanceDetailSpider extends AppSpider {
     @Override
     protected void process() throws Exception {
         String responseBody = sendRequest(APP_PREPARE_URL);
-        if (logger.isDebugEnabled()) {
-            logger.debug("APP prepare result >>> {}", responseBody);
-        }
+        logger.debug("APP prepare result >>> {}", responseBody);
 
         if (!isSuccess(responseBody)) {
             logger.warn("Error doing authorise action in taobao app!");
@@ -136,17 +133,13 @@ public class BalanceDetailSpider extends AppSpider {
 
             // 非银行卡明细列表页，exit
             if (StringUtils.isBlank(content) || !content.contains("银行卡明细")) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Incorrect bank detail page, stop!");
-                }
+                logger.debug("Incorrect bank detail page, stop!");
                 break;
             }
 
             // 没有更多内容，exit
             if (isNoMoreRecords(content) || !content.contains("go-detail-btn: 跳转详情")) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("No more bank records, stop!");
-                }
+                logger.debug("No more bank records, stop!");
                 break;
             }
 
@@ -169,9 +162,6 @@ public class BalanceDetailSpider extends AppSpider {
      */
     private List<Bank> requestBankCardList() throws IOException {
         String content = sendRequest(BANK_LIST_URL);
-        if (logger.isDebugEnabled()) {
-            logger.debug("APP Bank list result >>> \n{}", content);
-        }
         logger.info("APP Bank list result >>> \n{}", content);
 
         if (StringUtils.isNotEmpty(content) && content.contains("银行卡列表")) {
@@ -210,17 +200,13 @@ public class BalanceDetailSpider extends AppSpider {
 
             // 非花呗明细列表页，exit
             if (StringUtils.isBlank(content) || PATTERN.matcher(content).find()) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("Incorrect huabei detail page, stop!");
-                }
+                logger.debug("Incorrect huabei detail page, stop!");
                 break;
             }
 
             // 没有更多内容，exit
             if (isNoMoreRecords(content) || !content.contains("huabei-list: 记录详情")) {
-                if (logger.isDebugEnabled()) {
-                    logger.debug("No more huabei records, stop!");
-                }
+                logger.debug("No more huabei records, stop!");
                 break;
             }
 
@@ -254,16 +240,12 @@ public class BalanceDetailSpider extends AppSpider {
         }
         if (!executor.isShutdown()) {
             executor.shutdownNow();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Destroyed app balance executor");
-            }
+            logger.debug("Destroyed app balance executor");
         }
     }
 
     private void initial() {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Initial app balance executor");
-        }
+        logger.debug("Initial app balance executor");
         this.executor = Executors.newFixedThreadPool(THREADS, new NamedThreadFactory("app-balance"));
         this.latch = new CountDownLatch(2);
     }

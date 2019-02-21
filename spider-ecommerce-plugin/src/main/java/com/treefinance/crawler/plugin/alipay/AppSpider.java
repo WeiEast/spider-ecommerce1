@@ -1,23 +1,17 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.treefinance.crawler.plugin.alipay;
-
-import java.io.IOException;
-import java.util.Map;
 
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
 import com.treefinance.crawler.framework.extension.spider.page.SimplePage;
@@ -29,15 +23,19 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.http.client.CookieStore;
 import org.apache.http.impl.client.BasicCookieStore;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * @author Jerry
  * @since 19:55 28/12/2017
  */
 public abstract class AppSpider extends BaseSpider {
 
-    private static final String USER_AGENT = "Mozilla/5.0 (iPhone; CPU iPhone OS 11_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Mobile/15C114GCanvas/ AliApp(TB/7.2.1) WindVane/8.3.0 750x1334";
+    private static final String USER_AGENT =
+        "Mozilla/5.0 (iPhone; CPU iPhone OS 11_2 like Mac OS X) AppleWebKit/604.4.7 (KHTML, like Gecko) Mobile/15C114GCanvas/ AliApp(TB/7.2.1) WindVane/8.3.0 750x1334";
     private HttpSender sender;
-    private String[]   domains;
+    private String[] domains;
 
     public AppSpider(String... domains) {
         this.domains = domains;
@@ -117,10 +115,8 @@ public abstract class AppSpider extends BaseSpider {
     }
 
     protected void extractPageContent(String url, String content) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Url >>> {}", url);
-            logger.debug("PageContent >>> {}", content);
-        }
+        logger.debug("Url >>> {}", url);
+        logger.debug("PageContent >>> {}", content);
         if (getPageProcessor() != null) {
             getPageProcessor().process(new SimplePage(url, content, "EcommerceData"));
         }

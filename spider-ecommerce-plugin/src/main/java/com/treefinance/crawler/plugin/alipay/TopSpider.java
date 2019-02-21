@@ -1,34 +1,17 @@
 /*
  * Copyright © 2015 - 2018 杭州大树网络技术有限公司. All Rights Reserved
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
  */
 
 package com.treefinance.crawler.plugin.alipay;
-
-import javax.script.Invocable;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.extension.spider.BaseSpider;
@@ -54,16 +37,31 @@ import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.script.Invocable;
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
+
 /**
  * @author Jerry
  * @since 11:13 25/03/2018
  */
 public abstract class TopSpider extends BaseSpider {
 
-    private static final String              TOKEN_COOKIE_NAME = "_m_h5_tk";
-    protected final      Logger              logger            = LoggerFactory.getLogger(getClass());
-    protected            CloseableHttpClient httpClient;
-    protected            CookieStore         cookieStore;
+    private static final String TOKEN_COOKIE_NAME = "_m_h5_tk";
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    protected CloseableHttpClient httpClient;
+    protected CookieStore cookieStore;
 
     private String h5Token;
 
@@ -93,10 +91,8 @@ public abstract class TopSpider extends BaseSpider {
     }
 
     protected void extractPageContent(String url, String content) {
-        if (logger.isDebugEnabled()) {
-            logger.debug("Url >>> {}", url);
-            logger.debug("PageContent >>> {}", content);
-        }
+        logger.debug("Url >>> {}", url);
+        logger.debug("PageContent >>> {}", content);
         getPageProcessor().process(new SimplePage(url, content, "EcommerceData"));
     }
 
@@ -114,14 +110,15 @@ public abstract class TopSpider extends BaseSpider {
         return sendTopRequest(api, apiVersion, appKey, data, referer, () -> Collections.singletonList(new BasicNameValuePair("jsv", "2.4.8")), ignore);
     }
 
-    public Info sendTopRequest(String api, String apiVersion, String appKey, String data, String referer, Supplier<List<BasicNameValuePair>> supplier, boolean ignore) throws Exception {
+    public Info sendTopRequest(String api, String apiVersion, String appKey, String data, String referer, Supplier<List<BasicNameValuePair>> supplier, boolean ignore)
+        throws Exception {
         String h5Token = getH5Token(cookieStore);
         HttpResponse httpResponse = null;
         int times = 0;
         while (times < 3) {
             long timestamp = System.currentTimeMillis();
             String sign = mtopSign(h5Token, appKey, timestamp, data);
-            //请求参数
+            // 请求参数
             List<BasicNameValuePair> list = new ArrayList<>();
             list.add(new BasicNameValuePair("api", api));
             list.add(new BasicNameValuePair("appKey", appKey));
@@ -226,7 +223,7 @@ public abstract class TopSpider extends BaseSpider {
 
         try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream("js/mtop.sign.js")) {
             Invocable invocable = evalScript(inputStream);
-            String sign = (String) invocable.invokeFunction("h", c.toString());
+            String sign = (String)invocable.invokeFunction("h", c.toString());
             logger.info("sign is {}", sign);
             return sign;
         }
@@ -235,7 +232,7 @@ public abstract class TopSpider extends BaseSpider {
     private static Invocable evalScript(InputStream stream) throws ScriptException {
         ScriptEngine scriptEngine = new ScriptEngineManager().getEngineByName("nashorn");
         scriptEngine.eval(new InputStreamReader(stream));
-        return (Invocable) scriptEngine;
+        return (Invocable)scriptEngine;
     }
 
     private String getH5Token(CookieStore cookieStore) {
