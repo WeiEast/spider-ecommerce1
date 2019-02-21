@@ -54,7 +54,7 @@ public class SearchPageAction extends SeleniumOperation {
     private static final String     ADVANCED_URL        = "https://consumeprod.alipay.com/record/advanced.htm";
     private static final String     MODEL_SWITCH_URL    = "https://consumeprod.alipay.com/record/switchVersion.htm";
     private static final String     FORM_ID             = "topSearchForm";
-    private static final boolean    FORCE_ALIPAY        = false;
+    private static final boolean    FORCE_ALIPAY        = true;
     private final        boolean    loginByTaobao;
     private final        String     preLoadUrl;
     private final        String     domain;
