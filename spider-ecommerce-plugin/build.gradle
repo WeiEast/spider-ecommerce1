@@ -1,4 +1,3 @@
-version=""
 dependencies {
     compile project(':spider-ecommerce-service')
 }

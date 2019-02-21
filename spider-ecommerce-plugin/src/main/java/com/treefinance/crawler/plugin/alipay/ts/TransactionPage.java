@@ -32,7 +32,9 @@ public class TransactionPage {
     private final int     pageNum;
     private final String  content;
     private       boolean success;
-    //是否是最后一页
+    /**
+     * 是否是最后一页
+     */
     private       boolean end;
 
     public TransactionPage(String url, String actualUrl, String type, String beginDate, String endDate, int pageNum, String content, boolean success, boolean end) {

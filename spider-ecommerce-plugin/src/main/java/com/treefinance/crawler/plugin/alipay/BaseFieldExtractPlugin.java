@@ -16,21 +16,21 @@
 
 package com.treefinance.crawler.plugin.alipay;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.datatrees.common.util.GsonUtils;
+import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
-import com.treefinance.crawler.framework.util.xpath.XPathUtil;
-import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
+import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import com.treefinance.toolkit.util.json.Jackson;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jerry
@@ -52,7 +52,7 @@ public abstract class BaseFieldExtractPlugin<T extends AbstractProcessorContext>
             Object value = extract(content, (T) ProcessContextHolder.getProcessorContext());
 
             if ((value instanceof String && !((String) value).isEmpty()) || value != null) {
-                Map<String, Object> result = new HashMap<>();
+                Map<String, Object> result = new HashMap<>(1);
                 result.put(PluginConstants.FIELD, value);
                 return Jackson.toJSONString(result);
             }
