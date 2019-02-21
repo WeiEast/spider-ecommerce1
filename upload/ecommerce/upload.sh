@@ -16,7 +16,7 @@ fi
 
 echo "host: $host"
 
-#gradle clean install -x test
+gradle clean install -x test
 
 url="http://$host/plugin/uploadPlugin?sassEnv=$env"
 
