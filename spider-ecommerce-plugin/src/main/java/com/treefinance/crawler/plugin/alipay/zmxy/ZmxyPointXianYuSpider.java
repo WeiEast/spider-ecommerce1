@@ -16,13 +16,13 @@
 
 package com.treefinance.crawler.plugin.alipay.zmxy;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.treefinance.crawler.exception.UnexpectedException;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * User: yand
@@ -54,7 +54,7 @@ public class ZmxyPointXianYuSpider extends ZmxyTopSpider {
             throw new UnexpectedException("The useId used for zmxy top api must not be empty.");
         }
 
-        Map<String, Object> params = new HashMap<>();
+        Map<String, Object> params = new HashMap<>(2);
         params.put("ownerUserId", userId);
         params.put("ignore", false);
 

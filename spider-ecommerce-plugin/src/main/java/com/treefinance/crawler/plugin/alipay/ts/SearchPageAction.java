@@ -16,17 +16,22 @@
 
 package com.treefinance.crawler.plugin.alipay.ts;
 
-import java.util.List;
-import java.util.Map;
-
 import com.treefinance.crawler.framework.util.CookieFormater;
 import com.treefinance.crawler.support.selenium.SeleniumHelper;
 import com.treefinance.crawler.support.selenium.SeleniumOperation;
 import org.apache.commons.lang3.StringUtils;
-import org.openqa.selenium.*;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Cookie;
+import org.openqa.selenium.NoSuchElementException;
+import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 交易记录页的搜索翻页相关操作
@@ -36,16 +41,20 @@ import org.slf4j.LoggerFactory;
 public class SearchPageAction extends SeleniumOperation {
 
     private static final Logger     LOGGER              = LoggerFactory.getLogger(SearchPageAction.class);
-    // 超时时间，单位：秒
+    /**
+     * 超时时间，单位：秒
+     */
     private static final long       TIMEOUT             = 10;
-    // 为了正确设置cookie，需要预加载一个资源，避免域冲突
+    /**
+     * 为了正确设置cookie，需要预加载一个资源，避免域冲突
+     */
     private static final String     PRE_LOAD_ALIPAY_URL = "https://www.alipay.com/favicon.ico";
     private static final String     PRE_LOAD_TAOBAO_URL = "https://www.taobao.com/favicon.ico";
     private static final String     STANDARD_URL        = "https://consumeprod.alipay.com/record/standard.htm";
     private static final String     ADVANCED_URL        = "https://consumeprod.alipay.com/record/advanced.htm";
     private static final String     MODEL_SWITCH_URL    = "https://consumeprod.alipay.com/record/switchVersion.htm";
     private static final String     FORM_ID             = "topSearchForm";
-    private static final boolean    FORCE_ALIPAY        = false;
+    private static final boolean    FORCE_ALIPAY        = true;
     private final        boolean    loginByTaobao;
     private final        String     preLoadUrl;
     private final        String     domain;

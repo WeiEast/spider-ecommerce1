@@ -1,11 +1,6 @@
 dependencies {
-
     compile project(":spider-ecommerce-dao")
     compile project(":spider-ecommerce-api")
     compile(group: "com.datatrees.spider", name: "spider-share-service", version: "${spiderShareVersion}", changing: true)
-
-
-
-
 }
 

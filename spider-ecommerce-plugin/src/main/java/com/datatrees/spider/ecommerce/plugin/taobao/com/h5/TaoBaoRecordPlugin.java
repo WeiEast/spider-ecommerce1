@@ -16,24 +16,25 @@
 
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.datatrees.common.util.GsonUtils;
 import com.datatrees.common.util.PatternUtils;
+import com.datatrees.spider.ecommerce.plugin.util.TaobaoHelper;
+import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin;
+import com.datatrees.spider.share.service.plugin.login.AbstractPicPlugin;
+import com.google.common.collect.ImmutableMap;
+import com.google.gson.reflect.TypeToken;
 import com.treefinance.crawler.framework.context.AbstractProcessorContext;
 import com.treefinance.crawler.framework.context.function.LinkNode;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.PluginFactory;
 import com.treefinance.crawler.framework.util.json.JsonPathUtil;
-import com.datatrees.spider.share.service.plugin.login.AbstractLoginPlugin;
-import com.datatrees.spider.share.service.plugin.login.AbstractPicPlugin;
-import com.google.common.collect.ImmutableMap;
-import com.google.gson.reflect.TypeToken;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 此插件只能解决淘宝交易记录抓取中出现图片验证码问题
@@ -126,11 +127,13 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         String smReturn = (String) context.getAttribute("smReturn");
         String smSign = (String) context.getAttribute("smSign");
         String smPolicy = (String) context.getAttribute("smPolicy");
-        LinkNode validNode = new LinkNode("https://pin.aliyun.com/check_img?code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=&identity=" + identity + "&sessionid=" + sessionid + "&delflag=0&type=150_40");
+        LinkNode validNode =
+            new LinkNode("https://pin.aliyun.com/check_img?code=" + pidCode + "&_ksTS=" + TaobaoHelper.timestampFlag() + "&callback=&identity=" + identity + "&sessionid=" + sessionid + "&delflag=0&type=150_40");
         String pageContent = (String) getResponseByWebRequest(validNode, AbstractLoginPlugin.ContentType.Content, null);
         logger.debug("校验后交易页面1：{}", pageContent);
         if (StringUtils.isNotBlank(pageContent) && pageContent.contains("message\":\"SUCCESS.\"")) {
-            String url = "https://sec.taobao.com/query.htm?action=QueryAction&event_submit_do_unique=ok&smPolicy=" + smPolicy + "&smApp=trademanager&smReturn=" + smReturn + "&smCharset=UTF-8&smTag=" + smTag + "&captcha=&smSign=" + smSign + "&identity=" + identity + "&code=" + pidCode + "&_ksTS=" + timestampFlag() + "&callback=";
+            String url =
+                "https://sec.taobao.com/query.htm?action=QueryAction&event_submit_do_unique=ok&smPolicy=" + smPolicy + "&smApp=trademanager&smReturn=" + smReturn + "&smCharset=UTF-8&smTag=" + smTag + "&captcha=&smSign=" + smSign + "&identity=" + identity + "&code=" + pidCode + "&_ksTS=" + TaobaoHelper.timestampFlag() + "&callback=";
             logger.debug("校验后交易请求2：{}", url);
             validNode = new LinkNode(url);
             pageContent = (String) getResponseByWebRequest(validNode, AbstractLoginPlugin.ContentType.Content, null);
@@ -155,9 +158,4 @@ public class TaoBaoRecordPlugin extends AbstractPicPlugin {
         return null;
 
     }
-
-    private static String timestampFlag() {
-        return System.currentTimeMillis() + "_" + (int) (Math.random() * 1000);
-    }
-
 }

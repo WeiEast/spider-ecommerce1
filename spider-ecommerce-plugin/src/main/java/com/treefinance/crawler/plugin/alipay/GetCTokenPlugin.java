@@ -16,14 +16,14 @@
 
 package com.treefinance.crawler.plugin.alipay;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.datatrees.common.util.GsonUtils;
 import com.treefinance.crawler.framework.extension.plugin.AbstractClientPlugin;
 import com.treefinance.crawler.framework.extension.plugin.PluginConstants;
 import com.treefinance.crawler.framework.extension.plugin.ProcessContextHolder;
 import com.treefinance.toolkit.util.RegExp;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GetCTokenPlugin extends AbstractClientPlugin {
 
@@ -35,7 +35,7 @@ public class GetCTokenPlugin extends AbstractClientPlugin {
 
         logger.info("获取ctoken结果：{}", ctoken);
 
-        Map<String, Object> resultMap = new HashMap<>();
+        Map<String, Object> resultMap = new HashMap<>(1);
         resultMap.put(PluginConstants.FIELD, ctoken);
         return GsonUtils.toJson(resultMap);
     }
