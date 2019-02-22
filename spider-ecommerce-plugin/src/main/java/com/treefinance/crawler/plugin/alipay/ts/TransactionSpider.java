@@ -45,8 +45,6 @@ public class TransactionSpider extends BaseSpider {
             throw new UnexpectedException("Can not find the available cookie string when calling transaction spider!");
         }
 
-        logger.info("Spider cookies: {}", cookies);
-
         String proxyString = null;
         try {
             Proxy proxy = getContext().getProxy(MockTransactionSearcher.getSeedUrl());

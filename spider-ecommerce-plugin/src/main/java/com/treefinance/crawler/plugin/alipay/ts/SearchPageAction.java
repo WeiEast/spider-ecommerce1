@@ -114,7 +114,7 @@ public class SearchPageAction extends SeleniumOperation {
      * 设置cookie
      */
     private void setCookies(String cookies) {
-        LOGGER.debug("Cookies >>> {}", cookies);
+        LOGGER.info("Cookies >>> {}", cookies);
 
         if (StringUtils.isBlank(cookies)) {
             throw new IllegalArgumentException("未正常设置cookies，异常退出搜索器.");
