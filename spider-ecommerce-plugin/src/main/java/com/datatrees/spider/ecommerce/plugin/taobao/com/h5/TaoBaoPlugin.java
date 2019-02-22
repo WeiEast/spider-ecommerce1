@@ -216,6 +216,7 @@ public class TaoBaoPlugin extends AbstractQRPlugin {
                 result = operation.startLogin(param);
 
                 String referer = result.getRedirectUrl();
+                logger.info("taskId={}, referer: {}", param.getTaskId(), referer);
                 if (referer != null) {
                     if (referer.contains("/login/trust_login.do")) {
                         operation.doTrustLogin(param, result);
@@ -223,13 +224,19 @@ public class TaoBaoPlugin extends AbstractQRPlugin {
                         triggerAfterLogin(param, result.getAccountNo());
                         return;
                     } else if (referer.contains("/member/login_unusual.htm")) {
-                        logger.info("记录一下关键页面,taskId={},url={},page={}", param.getTaskId(), result.getRedirectUrl(), result.getPageContent());
+                        logger.info("记录一下关键页面,taskId={},url={},page={}", param.getTaskId(), referer, result.getPageContent());
                         // TODO:埋点-触发短信验证 2019-02-14 李梁杰
                         operation.doUnusualLogin(param, result);
 
                         triggerAfterLogin(param, result.getAccountNo());
                         return;
+                    } else if (referer.contains(".alipay.com/portal/i.htm")) {
+                        triggerAfterLogin(param, result.getAccountNo());
+                        return;
                     }
+                } else if (result.getPageContent().contains(QRLoginOperation.ALIPAY_MAIN_PAGE_TITLE)) {
+                    triggerAfterLogin(param, result.getAccountNo());
+                    return;
                 }
                 throw new IllegalStateException("Unexpected response!  login_result: " + result);
             } catch (Exception e) {

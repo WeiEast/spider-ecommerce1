@@ -40,6 +40,8 @@ import com.datatrees.spider.share.domain.http.Response;
 import com.treefinance.crawler.exception.UnexpectedException;
 import com.treefinance.crawler.framework.util.xpath.XPathUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -67,6 +69,8 @@ import static com.datatrees.spider.share.domain.RequestType.POST;
  * @date 2019-02-15 13:36
  */
 public class QRLoginOperation {
+    public static final String ALIPAY_MAIN_PAGE_TITLE = "我的支付宝 － 支付宝";
+
     private static final Logger logger = LoggerFactory.getLogger(QRLoginOperation.class);
 
     private static final String IS_INIT = "TAOBAO_QR_LOGIN_PAGE_INITIAL_";
@@ -90,7 +94,8 @@ public class QRLoginOperation {
     private static final String ENCODED_GOTO_TARGET_URL = "https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000";
 
     /**
-     * 二维码登录页面 https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
+     * 二维码登录页面
+     * https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
      */
     private static final String LOGIN_PAGE_URL = "https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=" + ENCODED_GOTO_TARGET_URL;
     private static final String LOGIN_MID_URL = "https://login.taobao.com/member/login_mid.htm?type=success";
@@ -260,7 +265,7 @@ public class QRLoginOperation {
         try {
             response =
                 TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), GET).setFullUrl(QRCODE_STATUS_URL, lgToken, ENCODED_GOTO_TARGET_URL, TaobaoHelper.timestampFlag())
-                .setReferer(LOGIN_PAGE_URL).addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
+                    .setReferer(LOGIN_PAGE_URL).addExtraCookie(ISG_COOKIE, generateIsg(), COOKIE_DOMAIN).invoke();
             String resultJson = PatternUtils.group(response.getPageContent(), "json\\(([^\\)]+)\\)", 1);
             JSONObject json = JSON.parseObject(resultJson);
             String code = json.getString("code");
@@ -359,7 +364,7 @@ public class QRLoginOperation {
         checkResponseStatus(response, redirectUrl);
 
         String page = response.getPageContent();
-        if (!page.contains("我的支付宝 － 支付宝")) {
+        if (!page.contains(ALIPAY_MAIN_PAGE_TITLE)) {
             throw new IllegalStateException("Incorrect response when request '" + redirectUrl + "', location: " + response.getRedirectUrl() + ", pageContent: " + page);
         }
     }
@@ -607,7 +612,7 @@ public class QRLoginOperation {
 
         @Override
         public String toString() {
-            return JSON.toJSONString(this);
+            return new ToStringBuilder(this, ToStringStyle.JSON_STYLE).append("loginUrl", loginUrl).append("accountNo", accountNo).append("response", response).toString();
         }
     }
 

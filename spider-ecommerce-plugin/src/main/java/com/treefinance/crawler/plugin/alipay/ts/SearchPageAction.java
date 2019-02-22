@@ -63,14 +63,15 @@ public class SearchPageAction extends SeleniumOperation {
 
     public SearchPageAction(WebDriver webDriver, boolean loginByTaobao) {
         super(webDriver);
-        this.loginByTaobao = loginByTaobao;
-        if (!FORCE_ALIPAY && this.loginByTaobao) {
+        this.loginByTaobao = !FORCE_ALIPAY && loginByTaobao;
+        if (this.loginByTaobao) {
             preLoadUrl = PRE_LOAD_TAOBAO_URL;
             domain = "taobao.com";
         } else {
             preLoadUrl = PRE_LOAD_ALIPAY_URL;
             domain = "alipay.com";
         }
+        LOGGER.info("preLoadUrl: {}", preLoadUrl);
     }
 
     public static String getSeedUrl() {
@@ -87,13 +88,13 @@ public class SearchPageAction extends SeleniumOperation {
     public boolean initial(String cookie) {
         setCookies(cookie);
 
-        return loadPage(!FORCE_ALIPAY);
+        return loadPage();
     }
 
-    private boolean loadPage(boolean initial) {
+    private boolean loadPage() {
         mark(PageState.PREPARE);
 
-        navigateTo(getSeedUrl() + (initial && loginByTaobao ? "?sign_from=3000" : ""));
+        navigateTo(getSeedUrl() + (loginByTaobao ? "?sign_from=3000" : ""));
 
         awaitPageRefresh(false);
 
@@ -457,7 +458,7 @@ public class SearchPageAction extends SeleniumOperation {
     public boolean refresh(int retries) {
         int num = Math.max(0, retries);
         for (int i = 0; i <= num; i++) {
-            if (loadPage(false)) {
+            if (loadPage()) {
                 return true;
             }
         }
