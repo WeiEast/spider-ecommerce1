@@ -1,7 +1,7 @@
 #!/bin/sh
 echo "input(env): $1"
 
-host="localhost:60662"
+host="192.168.5.131:60662"
 env=""
 if [[ "$1" = "prod" ]] ; then
   host="spider.yfb.saas.treefinance.com.cn"

@@ -6,6 +6,8 @@
 
     <dubbo:service interface="com.datatrees.spider.ecommerce.api.EconomicApiForTaoBaoQR" ref="economicApiForTaoBaoQRImpl"/>
 
+    <dubbo:service interface="com.datatrees.spider.ecommerce.api.EconomicApiForTaoBaoH5" ref="economicApiForTaoBaoH5Impl"/>
+
     <dubbo:service interface="com.datatrees.spider.ecommerce.api.EconomicApi" ref="economicApiImpl"/>
 </beans>
 
