@@ -65,6 +65,9 @@ import static com.datatrees.spider.share.domain.RequestType.GET;
 import static com.datatrees.spider.share.domain.RequestType.POST;
 
 /**
+ * h5短信登录地址：https://login.m.taobao.com/msg_login.htm
+ * 二维码登录地址：https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
+ *
  * @author Jerry
  * @date 2019-02-15 13:36
  */
@@ -95,7 +98,6 @@ public class QRLoginOperation {
 
     /**
      * 二维码登录页面
-     * https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
      */
     private static final String LOGIN_PAGE_URL = "https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=" + ENCODED_GOTO_TARGET_URL;
     private static final String LOGIN_MID_URL = "https://login.taobao.com/member/login_mid.htm?type=success";
