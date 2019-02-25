@@ -1,24 +1,25 @@
 package com.datatrees.spider.ecommerce.plugin.password.taobao.com.h5;
 
-import javax.script.Invocable;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
-import com.datatrees.spider.share.common.http.ScriptEngineUtil;
+import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRLoginMonitor;
+import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRStatusManager;
+import com.datatrees.spider.share.common.http.ProxyUtils;
 import com.datatrees.spider.share.common.http.TaskHttpClient;
+import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.CommonPluginParam;
-import com.datatrees.spider.share.domain.ErrorCode;
-import com.datatrees.spider.share.domain.FormType;
-import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
+import com.datatrees.spider.share.service.CommonPluginService;
 import com.datatrees.spider.share.service.plugin.CommonPlugin;
 import com.treefinance.crawler.framework.util.xpath.XPathUtil;
-import org.apache.commons.lang.StringUtils;
+import com.treefinance.crawler.plugin.util.ScriptEngineUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,17 +40,10 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
     @Override
     public HttpResult<Object> init(CommonPluginParam param) {
         HttpResult<Object> result = new HttpResult<>();
-        Response response = null;
         try {
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL).invoke();
-            String pageContent = response.getPageContent();
-            String J_NcoToken = XPathUtil.getXpath("//input[@id='J_NcoToken']/@value", pageContent).get(0);
-            String J_PBK = XPathUtil.getXpath("//input[@id='J_PBK']/@value", pageContent).get(0);
-            TaskUtils.addTaskShare(param.getTaskId(), "J_NcoToken", J_NcoToken);
-            TaskUtils.addTaskShare(param.getTaskId(), "J_PBK", J_PBK);
             return result.success();
         } catch (Exception e) {
-            logger.error("登录-->初始化失败,param={},response={}", param, response, e);
+            logger.error("登录-->初始化失败,param={}", param, e);
             return result.failure(ErrorCode.TASK_INIT_ERROR);
         }
     }
@@ -95,18 +89,21 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
         HttpResult<Object> result = new HttpResult<>();
         Response response = null;
         try {
-            String J_NcoToken = TaskUtils.getTaskShare(param.getTaskId(), "J_NcoToken");
-            String J_PBK = TaskUtils.getTaskShare(param.getTaskId(), "J_PBK");
-            Invocable invocable = ScriptEngineUtil.createInvocable(param.getWebsiteName(), "rsa.js", "GBK");
-            String encryptPassWord = invocable.invokeFunction("doRSAEncrypt", param.getPassword(), J_PBK).toString();
+            ProxyUtils.setProxyEnable(param.getTaskId(), true);
+            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(MAIN_URL).invoke();
+            String pageContent = response.getPageContent();
+            String jNcoToken = XPathUtil.getXpath("//input[@id='J_NcoToken']/@value", pageContent).get(0);
+            String jPBK = XPathUtil.getXpath("//input[@id='J_PBK']/@value", pageContent).get(0);
+
+            String encryptPassWord = (String)ScriptEngineUtil.evalScript("js/rsa.js", "doRSAEncrypt", param.getPassword(), jPBK);
             String templateData =
                 "TPL_username={}&ncoToken={}&style=taobao&from=tb&TPL_password_2={}&loginASR=1&loginASRSuc=1&osPF=MacIntel&appkey=00000000&mobileLoginLink=" + URLEncoder.encode(
                     "https://login.taobao.com/member/login.jhtml?style=taobao&goto=https://consumeprod.alipay.com/record/index.htm?sign_from=3000&useMobile=trueshowAssistantLink",
                     "UTF-8");
-            String data = TemplateUtils.format(templateData, param.getMobile().toString(), J_NcoToken, encryptPassWord);
+            String data = TemplateUtils.format(templateData, param.getUsername().toString(), jNcoToken, encryptPassWord);
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(LOGIN_URL)
                 .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
-            String pageContent = response.getPageContent();
+            pageContent = response.getPageContent();
             if (StringUtils.contains(pageContent, "self.location.href")) {
                 String selfUrl = PatternUtils.group(pageContent, "self.location.href = \"([^\"]+)\";", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "selfUrl", selfUrl);
@@ -115,6 +112,7 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(REDIRECT_URL).invoke();
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(RECORD_URL).invoke();
             }
+            triggerAfterLogin(param);
             logger.info("登陆成功,param={}", param);
             return result.success();
 
@@ -173,7 +171,7 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
             String htoken = TaskUtils.getTaskShare(param.getTaskId(), "htoken");
             String mobile = TaskUtils.getTaskShare(param.getTaskId(), "mobileString");
             String validSmsUrl = "https://passport.taobao.com/iv/identity_verify.htm?tag=8&htoken={}&app_name=";
-            Map<String, Object> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>(11);
             map.put("_fm.v._0.a", "86");
             map.put("action", "verify_action");
             map.put("event_submit_do_validate", "notNull");
@@ -198,6 +196,19 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
             logger.error("详单-->校验失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.VALIDATE_ERROR);
         }
+    }
+
+    private void triggerAfterLogin(CommonPluginParam param) {
+        QRStatusManager.setStatus(param.getTaskId(), QRStatus.SUCCESS);
+        logger.info("用户完成登录，发送登录成功消息，taskId={}, website={}", param.getTaskId(), param.getWebsiteName());
+        QRLoginMonitor.notifyLogger(param, "登录成功", "校验-->成功");
+        String cookieString = TaskUtils.getCookieString(param.getTaskId());
+        LoginMessage loginMessage = new LoginMessage();
+        loginMessage.setTaskId(param.getTaskId());
+        loginMessage.setWebsiteName(param.getWebsiteName());
+        loginMessage.setCookie(cookieString);
+        loginMessage.setAccountNo(StringUtils.defaultString(param.getUsername()));
+        BeanFactoryUtils.getBean(CommonPluginService.class).sendLoginSuccessMsg(TopicEnum.SPIDER_ECOMMERCE.getCode(), loginMessage);
     }
 
 }

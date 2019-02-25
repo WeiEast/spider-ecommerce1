@@ -7,11 +7,14 @@ import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.domain.*;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.service.CommonPluginService;
+import org.springframework.stereotype.Service;
 
 /**
  * @author guimeichao
  * @date 2019/2/25
  */
+
+@Service
 public class EconomicApiForTaoBaoH5Impl implements EconomicApiForTaoBaoH5 {
 
     @Resource

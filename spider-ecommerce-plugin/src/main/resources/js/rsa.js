@@ -2,7 +2,6 @@ function doRSAEncrypt(input,key){
     var rsa = new RSAKey();
     rsa.setPublic(key, "10001");
     var res = rsa.encrypt(input);
-
     if(res == null) return input;
     return res;
 }
