@@ -14,7 +14,7 @@ function encode(e) {
         s = s + n.charAt(o) + n.charAt(a) + n.charAt(u) + n.charAt(c);
   return s
 }
-function getData(){
+function getData(cna){
   var data = {
     xv: "3.3.7",
     xt: (new Date).getTime()+":"+Math.random(),
@@ -29,7 +29,7 @@ function getData(){
     bsh: 701,
     bsw: 640,
     cacheid: "24b25bf836ed661c",
-    eca: "BtftFA6670wCAXrpv71Zqbv6",
+    eca: cna,
     ecn: "db1eb4f2f8b403ce0f2d236e9924f41864e9e0d3",
     eloc: "https%3A%2F%2Flogin.m.taobao.com%2Fmsg_login.htm",
     ep: "2fbf4a0d34214d4fde6cc8a22897d115a7667811",

@@ -42,8 +42,8 @@ public class TopApi {
         return sign;
     }
 
-    public static String getUmData() throws Exception {
-        String sign = (String) ScriptEngineUtil.evalScript("js/um_data.js", "getData");
+    public static String getUmData(String cna) throws Exception {
+        String sign = (String) ScriptEngineUtil.evalScript("js/um_data.js", "getData", cna);
         LOGGER.info("um.data is {}", sign);
         return sign;
     }
