@@ -106,15 +106,16 @@ function random() {
 function r() {
   var o = new M(
       [2, 2, 4, 4, 4, 1, 1, 4, 4, 3, 2, 2, 2, 2, 2, 1, 2, 1, 1, 1, 1]);
-  //var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+  o[0] = 0;
   o[1] = random();
+  o[2] = timestamp();
+  o[3] = timestamp();
+  o[4] = random();
   o[5] = 2;
   o[6] = 7;
   o[7] = 3232287578;
-  o[8] = 3469158843;//1467473491;//c(userAgent);
-  o[4] = random();
-  o[3] = timestamp();
-  o[2] = timestamp();
+  //var userAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36";
+  o[8] = 1459055963;//3469158843;//1467473491;//c(userAgent);
   o[9] = 0;
   o[10] = 0;
   o[11] = 0;
@@ -122,10 +123,9 @@ function r() {
   o[13] = 0;
   o[14] = 0;
   o[15] = 186;
-  o[16] = 378;//506;
+  o[16] = 1402;//506;
   o[17] = 90;
   o[18] = 127;
-  o[0] = 0;
   var l = o.ja()
       , m = E.la(l);
   return m
