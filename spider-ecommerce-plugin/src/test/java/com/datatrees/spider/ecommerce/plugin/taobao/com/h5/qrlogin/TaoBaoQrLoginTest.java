@@ -13,6 +13,7 @@
 
 package com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin;
 
+import com.treefinance.crawler.support.selenium.SeleniumHelper;
 import com.treefinance.toolkit.util.Base64Codec;
 import com.treefinance.toolkit.util.Preconditions;
 import com.treefinance.toolkit.util.crypto.RSA;
@@ -20,6 +21,8 @@ import com.treefinance.toolkit.util.crypto.core.Decryptor;
 import com.treefinance.toolkit.util.crypto.exception.CryptoException;
 import com.treefinance.toolkit.util.io.Streams;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
@@ -35,11 +38,21 @@ import java.nio.charset.StandardCharsets;
  * @date 2019-02-23 13:29
  */
 public class TaoBaoQrLoginTest {
+    private WebDriver driver;
+
+    @Before
+    public void setUp() throws Exception {
+        System.setProperty("webdriver.chrome.driver", "/Users/Jerry/Downloads/chromedriver");
+        driver = new ChromeDriver();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        driver.quit();
+    }
 
     @Test
-    public void test() throws IOException {
-        System.setProperty("webdriver.chrome.driver", "/Users/Jerry/Downloads/chromedriver");
-        WebDriver driver = new ChromeDriver();
+    public void testMsgLoginUmToken() throws IOException {
         driver.get("https://login.m.taobao.com/msg_login.htm");
 
         String umTn = (String)new WebDriverWait(driver, 10).until(ExpectedConditions.jsReturnsValue("return localStorage.getItem('_um_cn_umsvtn');"));
@@ -54,6 +67,15 @@ public class TaoBaoQrLoginTest {
         }
 
         driver.quit();
+    }
+
+    @Test
+    public void testUA() throws IOException {
+        driver.get("https://login.taobao.com/member/login.jhtml?style=mini&newMini=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000");
+
+        Object result = SeleniumHelper.evalScript(driver, readJs());
+
+        System.out.println(result);
     }
 
     private String readJs() throws IOException {

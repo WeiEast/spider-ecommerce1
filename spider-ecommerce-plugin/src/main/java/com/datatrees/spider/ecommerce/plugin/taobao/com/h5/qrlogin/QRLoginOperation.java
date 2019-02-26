@@ -67,6 +67,7 @@ import static com.datatrees.spider.share.domain.RequestType.POST;
 /**
  * h5短信登录地址：https://login.m.taobao.com/msg_login.htm
  * 二维码登录地址：https://login.taobao.com/member/login.jhtml?style=mini&newMini2=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
+ * 账号登录地址：https://login.taobao.com/member/login.jhtml?style=mini&newMini=true&goto=https%3A%2F%2Fmy.alipay.com%2Fportal%2Fi.htm%3Fsign_from%3D3000
  *
  * @author Jerry
  * @date 2019-02-15 13:36
