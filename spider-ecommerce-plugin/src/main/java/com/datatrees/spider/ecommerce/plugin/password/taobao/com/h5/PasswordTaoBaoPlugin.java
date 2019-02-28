@@ -2,6 +2,7 @@ package com.datatrees.spider.ecommerce.plugin.password.taobao.com.h5;
 
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.datatrees.common.util.PatternUtils;
@@ -104,18 +105,35 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.POST).setFullUrl(LOGIN_URL)
                 .setRequestBody(data, ContentType.APPLICATION_FORM_URLENCODED).invoke();
             pageContent = response.getPageContent();
-            if (StringUtils.contains(pageContent, "self.location.href")) {
+            if (StringUtils.contains(pageContent, "页面跳转中") && StringUtils.contains(pageContent, "self.location.href")) {
                 String selfUrl = PatternUtils.group(pageContent, "self.location.href = \"([^\"]+)\";", 1);
                 TaskUtils.addTaskShare(param.getTaskId(), "selfUrl", selfUrl);
                 logger.info("登陆成功,但需要进行手机短信验证,param={},selfUrl={}", param, selfUrl);
-            } else {
+                triggerAfterLogin(param);
+                return result.success();
+            } else if (StringUtils.contains(pageContent, "页面跳转中") && StringUtils.contains(pageContent, "top.location.href")) {
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(REDIRECT_URL).invoke();
                 response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(RECORD_URL).invoke();
+                triggerAfterLogin(param);
+                logger.info("登陆成功,param={}", param);
+                return result.success();
+            } else {
+                List<String> errorMsgList = XPathUtil.getXpath("div#J_Message p.error/text()", pageContent);
+                String errorMsg = null;
+                if (errorMsgList != null && !errorMsgList.isEmpty()) {
+                    errorMsg = errorMsgList.get(0);
+                    String error = PatternUtils.group(errorMsg, "^([^，]+)，", 1);
+                    if (StringUtils.isNotBlank(error)) {
+                        errorMsg = error;
+                    }
+                }
+                if (StringUtils.isNotBlank(errorMsg)) {
+                    logger.error("登陆失败,param={},pageContent={}", param, pageContent);
+                    return result.failure(errorMsg);
+                }
             }
-            triggerAfterLogin(param);
-            logger.info("登陆成功,param={}", param);
-            return result.success();
-
+            logger.error("登陆失败,param={},response={}", param, response);
+            return result.failure(ErrorCode.LOGIN_ERROR);
         } catch (Exception e) {
             logger.error("登陆失败,param={},response={}", param, response, e);
             return result.failure(ErrorCode.LOGIN_ERROR);
