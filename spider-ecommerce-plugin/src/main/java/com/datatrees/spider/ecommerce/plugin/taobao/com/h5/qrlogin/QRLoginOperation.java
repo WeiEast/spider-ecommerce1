@@ -443,7 +443,7 @@ public class QRLoginOperation {
             QRLoginMonitor.notifyLogger(param, "短信验证码校验超时", "输入短信验证码-->超时", ErrorCode.VALIDATE_SMS_TIMEOUT, "用户输入短信验证码超时,任务即将失败!超时时间(单位:秒):" + SMS_WAIT_TIMEOUT);
             throw new CommonException(ErrorCode.VALIDATE_SMS_TIMEOUT);
         }
-        QRStatusManager.setStatus(param.getTaskId(), QRStatus.RECEIVED_SMS);
+        QRStatusManager.setStatus(param.getTaskId(), QRStatus.CONFIRMED);
         // TODO:为什么等待3秒 2019-02-17 李梁杰
         TimeUnit.SECONDS.sleep(3);
 
