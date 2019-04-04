@@ -512,19 +512,16 @@ public class QRLoginOperation {
      * 
      * @param taskId 任务ID
      */
-    private void checkSmsSendInterval(Long taskId) {
-        String latestSendSmsTime = TaskUtils.getTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME);
-        if (StringUtils.isNoneBlank(latestSendSmsTime) && SMS_SEND_INTERVAL > 0) {
-            long endTime = Long.parseLong(latestSendSmsTime) + TimeUnit.SECONDS.toMillis(SMS_SEND_INTERVAL);
+    private void checkSmsSendInterval(Long taskId) throws InterruptedException {
+        String latestSendSmsTime = StringUtils.trim(TaskUtils.getTaskShare(taskId, AttributeKey.LATEST_SEND_SMS_TIME));
+        if (StringUtils.isNotEmpty(latestSendSmsTime)) {
+            long lastSmsSendTime = Long.parseLong(latestSendSmsTime);
+            long endTime = lastSmsSendTime + TimeUnit.SECONDS.toMillis(SMS_SEND_INTERVAL);
             long nowTimeMillis = System.currentTimeMillis();
-            if (nowTimeMillis < endTime) {
-                try {
-                    logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(Long.parseLong(latestSendSmsTime)),
-                        DateUtils.getUsedTime(nowTimeMillis, endTime));
-                    TimeUnit.MILLISECONDS.sleep(endTime - nowTimeMillis);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException("refeshSmsCode error", e);
-                }
+            long diffTime = endTime - nowTimeMillis;
+            if (diffTime > 0) {
+                logger.info("刷新短信有间隔时间限制,latestSendSmsTime={},将等待{}秒", DateUtils.formatYmdhms(lastSmsSendTime), DateUtils.getUsedTime(nowTimeMillis, endTime));
+                TimeUnit.MILLISECONDS.sleep(diffTime);
             }
         }
     }
