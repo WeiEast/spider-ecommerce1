@@ -1,10 +1,5 @@
 package com.datatrees.spider.ecommerce.plugin.password.taobao.com.h5;
 
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.datatrees.common.util.PatternUtils;
 import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRLoginMonitor;
 import com.datatrees.spider.ecommerce.plugin.taobao.com.h5.qrlogin.QRStatusManager;
@@ -13,7 +8,13 @@ import com.datatrees.spider.share.common.http.TaskHttpClient;
 import com.datatrees.spider.share.common.utils.BeanFactoryUtils;
 import com.datatrees.spider.share.common.utils.TaskUtils;
 import com.datatrees.spider.share.common.utils.TemplateUtils;
-import com.datatrees.spider.share.domain.*;
+import com.datatrees.spider.share.domain.CommonPluginParam;
+import com.datatrees.spider.share.domain.ErrorCode;
+import com.datatrees.spider.share.domain.FormType;
+import com.datatrees.spider.share.domain.LoginMessage;
+import com.datatrees.spider.share.domain.QRStatus;
+import com.datatrees.spider.share.domain.RequestType;
+import com.datatrees.spider.share.domain.TopicEnum;
 import com.datatrees.spider.share.domain.http.HttpResult;
 import com.datatrees.spider.share.domain.http.Response;
 import com.datatrees.spider.share.service.CommonPluginService;
@@ -24,6 +25,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URLEncoder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author guimeichao
@@ -152,12 +158,12 @@ public class PasswordTaoBaoPlugin implements CommonPlugin {
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(checkUrl).invoke();
             pageContent = response.getPageContent();
 
-            checkUrl = PatternUtils.group(pageContent, "window.location.href = \"([^\"]+)\";", 1);
+            checkUrl = PatternUtils.group(pageContent, "window.location.href = \"([^\"]+)\"", 1);
             String htoken = PatternUtils.group(checkUrl, "htoken=([^&]+)", 1);
             response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(checkUrl).invoke();
-
-            checkUrl = "https://passport.taobao.com/iv/identity_verify.htm?htoken={}&tag=8";
-            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(checkUrl, htoken).invoke();
+//
+//            checkUrl = "https://passport.taobao.com/iv/identity_verify.htm?htoken={}&tag=8";
+//            response = TaskHttpClient.create(param.getTaskId(), param.getWebsiteName(), RequestType.GET).setFullUrl(checkUrl, htoken).invoke();
             pageContent = response.getPageContent();
 
             String mobile = XPathUtil.getXpath("//input[@id='J_MobileVal']/@value", pageContent).get(0);
